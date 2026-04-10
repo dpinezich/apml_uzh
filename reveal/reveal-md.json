@@ -1,0 +1,16 @@
+{
+  "theme": "reveal/assets/apml-theme.css",
+  "highlightTheme": "atom-one-dark",
+  "revealOptions": {
+    "transition": "slide",
+    "transitionSpeed": "default",
+    "slideNumber": "c/t",
+    "center": true,
+    "controls": true,
+    "progress": true,
+    "hash": true,
+    "keyboard": true,
+    "overview": true,
+    "fragments": true
+  }
+}

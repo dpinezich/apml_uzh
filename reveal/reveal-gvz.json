@@ -1,0 +1,14 @@
+{
+  "revealOptions": {
+    "transition": "fade",
+    "transitionSpeed": "fast",
+    "slideNumber": "c/t",
+    "center": false,
+    "controls": true,
+    "progress": true,
+    "hash": true,
+    "keyboard": true,
+    "overview": true,
+    "fragments": true
+  }
+}

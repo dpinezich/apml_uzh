@@ -1,0 +1,359 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   APML UZH — Slidev global stylesheet
+   Template reference: slides.com with theme-font-lato / theme-color-white-blue
+   Accent: #00CCCC  |  Font: Lato  |  Canvas: 980 × 552 (default)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── CSS Variables ─────────────────────────────────────────────────────── */
+:root {
+  --accent:       #00CCCC;
+  --accent-dark:  #009090;
+  --text:         #1a1a1a;
+  --text-muted:   #666666;
+  --border:       #e0e0e0;
+  --code-bg:      #f4f4f4;
+  --code-text:    #c7254e;
+}
+
+/* ── Base reset across all layouts ────────────────────────────────────── */
+.slidev-layout {
+  font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif !important;
+  color: var(--text);
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Headings — shared ─────────────────────────────────────────────────── */
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3,
+.slidev-layout h4 {
+  font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif !important;
+  text-transform: none !important;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DEFAULT LAYOUT  (content slides with left teal bar)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* h1 — slide title with 185 px teal underline */
+.slidev-layout.default h1 {
+  font-size: 1.55em;
+  font-weight: 700;
+  color: var(--text);
+  position: relative;
+  padding-bottom: 18px;
+  margin-top: 0;
+  margin-bottom: 22px;
+  line-height: 1.15;
+}
+
+.slidev-layout.default h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 185px;
+  height: 5px;
+  background: var(--accent);
+}
+
+/* h2 — subsection headings */
+.slidev-layout.default h2 {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* h3 */
+.slidev-layout.default h3 {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: var(--accent-dark);
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   COVER LAYOUT  (title slide — bottom-right, teal line under title)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.slidev-layout.cover h1 {
+  font-size: 2.4em;
+  font-weight: 900;
+  color: var(--text);
+  text-align: right;
+  position: relative;
+  margin: 0;
+  line-height: 1.15;
+}
+
+/* Teal line under title, right-aligned (~240 px — matches template) */
+.slidev-layout.cover h1::after {
+  content: '';
+  display: block;
+  width: 240px;
+  height: 5px;
+  background: var(--accent);
+  margin-top: 14px;
+  margin-left: auto;
+}
+
+.slidev-layout.cover h2 {
+  font-size: 0.88em;
+  font-weight: 400;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+.slidev-layout.cover p {
+  text-align: right;
+  color: var(--text-muted);
+  font-size: 0.8em;
+  margin-top: 10px;
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.slidev-layout.cover strong {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   END LAYOUT  (white top / teal bottom split — matches GVZ template exactly)
+   Canvas 980 × 552:
+     40% = 220 px → teal starts
+     h1 padding-top ≈ 100 px, font ≈ 86 px → h1 occupies 100–186 px (white ✓)
+     margin-bottom 50 px → h2 starts ≈ 236 px (teal ✓)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.slidev-layout.end h1 {
+  font-size: 4em;
+  font-weight: 900;
+  color: var(--accent) !important;
+  text-align: left;
+  /* Push h1 into the white section, keep h2 in the teal section */
+  padding: 90px 60px 0 60px !important;
+  margin: 0 0 52px 0 !important;
+  line-height: 1.0;
+  position: relative;
+}
+
+/* No underline on end-slide h1 */
+.slidev-layout.end h1::after {
+  display: none !important;
+}
+
+/* h2 — subtitle, sits in the teal section */
+.slidev-layout.end h2 {
+  font-size: 1.15em;
+  font-weight: 700;
+  color: #1a1a1a !important;
+  text-align: left;
+  padding: 0 60px 0 60px !important;
+  margin: 0 !important;
+  position: relative;
+}
+
+/* Black bar under subtitle (matches template's black SVG line) */
+.slidev-layout.end h2::after {
+  content: '';
+  display: block;
+  width: 185px;
+  height: 5px;
+  background: #000000;
+  margin-top: 12px;
+}
+
+/* Italic line / blockquote under h2 */
+.slidev-layout.end p {
+  padding: 12px 60px 0 60px !important;
+  margin: 0 !important;
+  color: #1a1a1a;
+  font-style: italic;
+  font-size: 0.82em;
+  line-height: 1.6;
+}
+
+.slidev-layout.end blockquote {
+  margin: 10px 60px 0 60px !important;
+  padding: 0 !important;
+  color: #1a1a1a;
+  font-style: italic;
+  font-size: 0.82em;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SHARED TEXT STYLES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.slidev-layout p {
+  margin: 10px 0;
+  line-height: 1.65;
+  font-size: 0.95em;
+}
+
+.slidev-layout strong,
+.slidev-layout b {
+  font-weight: 700;
+}
+
+.slidev-layout em {
+  color: var(--accent-dark);
+  font-style: italic;
+}
+
+.slidev-layout blockquote {
+  border-left: 4px solid var(--accent);
+  padding: 10px 16px;
+  margin: 14px 0;
+  color: var(--text-muted);
+  font-style: italic;
+  background: #f4fdfd;
+  font-size: 0.88em;
+  line-height: 1.65;
+  border-radius: 0 3px 3px 0;
+}
+
+/* ── Lists ─────────────────────────────────────────────────────────────── */
+.slidev-layout ul,
+.slidev-layout ol {
+  margin: 4px 0 4px 1.2em;
+  padding: 0;
+}
+
+.slidev-layout ul              { list-style-type: disc; }
+.slidev-layout ol              { list-style-type: decimal; }
+.slidev-layout ul ul           { list-style-type: circle; font-size: 0.92em; }
+.slidev-layout li              { margin-bottom: 7px; line-height: 1.55; }
+.slidev-layout ul ul,
+.slidev-layout ul ol           { margin-top: 4px; }
+
+/* ── Code — inline ─────────────────────────────────────────────────────── */
+.slidev-layout :not(pre) > code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 0.82em;
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+/* ── Code — block ──────────────────────────────────────────────────────── */
+.slidev-layout pre {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 0.72em;
+  line-height: 1.55;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  margin: 12px 0;
+  background: var(--code-bg);
+}
+
+/* Shiki wraps code in <pre><code> — reset code inside pre */
+.slidev-layout pre code {
+  font-family: inherit !important;
+  font-size: inherit;
+  background: transparent !important;
+  color: inherit;
+  padding: 14px 18px;
+  border-radius: 0;
+  display: block;
+  overflow: auto;
+  max-height: 360px;
+}
+
+/* Line numbers (Shiki) */
+.slidev-layout pre .line-numbers-wrapper {
+  border-right: 1px solid var(--border);
+  padding: 14px 10px;
+  background: #ececec;
+  color: #999;
+  font-size: 0.9em;
+  min-width: 36px;
+  text-align: right;
+  user-select: none;
+}
+
+/* ── Tables ────────────────────────────────────────────────────────────── */
+.slidev-layout table {
+  border-collapse: collapse;
+  font-size: 0.78em;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.slidev-layout table th {
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--accent);
+  padding: 9px 14px;
+  text-align: left;
+  letter-spacing: 0.01em;
+}
+
+.slidev-layout table td {
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+}
+
+.slidev-layout table tr:nth-child(even) td { background: #f6fdfd; }
+.slidev-layout table tr:hover            td { background: #e8f9f9; }
+.slidev-layout table code                   { font-size: 0.88em; }
+
+/* ── Links ─────────────────────────────────────────────────────────────── */
+.slidev-layout a {
+  color: var(--accent-dark);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.slidev-layout a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Images ────────────────────────────────────────────────────────────── */
+.slidev-layout img {
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Slide number ──────────────────────────────────────────────────────── */
+.slidev-page-number {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  background: transparent !important;
+}
+
+/* ── v-click (fragment animation) ─────────────────────────────────────── */
+.slidev-vclick-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Progress bar ──────────────────────────────────────────────────────── */
+.slidev-progress {
+  height: 3px;
+  background: var(--accent) !important;
+}

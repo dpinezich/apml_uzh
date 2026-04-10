@@ -1,0 +1,13 @@
+{
+  "name": "apml-uzh-slides",
+  "private": true,
+  "scripts": {
+    "dev": "slidev",
+    "build": "slidev build",
+    "export": "slidev export --format pdf"
+  },
+  "devDependencies": {
+    "@slidev/cli": "^0.50.0",
+    "@slidev/theme-default": "latest"
+  }
+}

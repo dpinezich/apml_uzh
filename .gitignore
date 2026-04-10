@@ -1,5 +1,8 @@
 .idea
 .claude
+.venv
+node_modules
+.DS_Store
 
 # reveal.js exports (generated, not committed)
 reveal/exports/*.pdf
