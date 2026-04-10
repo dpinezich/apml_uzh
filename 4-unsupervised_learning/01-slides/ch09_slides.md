@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch09 — Dimensionality Reduction"
 ---
 
 # Dimensionality Reduction
@@ -206,6 +205,8 @@ Visualize, choose components, use as preprocessing.
 - t-SNE: non-linear, local structure, visualization ONLY
 - Never interpret t-SNE distances as meaningful
 
+---
+layout: end
 ---
 
 # Next: Session 4

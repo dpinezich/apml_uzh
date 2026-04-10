@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch06 — Metrics & Evaluation"
 ---
 
 # Metrics & Evaluation
@@ -208,6 +207,8 @@ Look at both mean AND standard deviation.
 - AUC: overall model quality, threshold-independent
 - Cross-validation: always use it for model comparison
 
+---
+layout: end
 ---
 
 # Next: Session 3

@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch08 — Clustering Techniques"
 ---
 
 # Clustering Techniques
@@ -230,6 +229,8 @@ Apply K-Means, choose k with Elbow + Silhouette, then profile the clusters.
 - DBSCAN: density-based, arbitrary shapes, finds outliers
 - Always validate clusters with domain knowledge!
 
+---
+layout: end
 ---
 
 # Next: Chapter 9

@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch02 — Data Selection, Cleaning & Preparing"
 ---
 
 # Data Selection, Cleaning & Preparing
@@ -205,6 +204,8 @@ X_test_clean = pipe.transform(X_test)   # apply to test
 - Scale features when using distance or gradient-based algorithms
 - **Always split first, then preprocess**
 
+---
+layout: end
 ---
 
 # Next: Chapter 3

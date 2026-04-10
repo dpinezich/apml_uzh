@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch07 — Introduction to Unsupervised Learning"
 ---
 
 # Introduction to Unsupervised Learning
@@ -148,6 +147,8 @@ We will:
 - Evaluation is hard — domain knowledge matters
 - Most real-world data is unlabeled → unsupervised is powerful
 
+---
+layout: end
 ---
 
 # Next: Chapter 8

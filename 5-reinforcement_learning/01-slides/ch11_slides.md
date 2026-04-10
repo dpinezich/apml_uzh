@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch11 — Basic RL Algorithms"
 ---
 
 # Basic RL Algorithms
@@ -210,6 +209,8 @@ Train the agent, tune epsilon, visualize progress.
 - SARSA: on-policy, safer in risky environments
 - Policy Gradient: learn the policy directly (for continuous actions)
 
+---
+layout: end
 ---
 
 # Next: Chapter 12

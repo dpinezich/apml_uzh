@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch10 — Introduction to Reinforcement Learning"
 ---
 
 # Introduction to Reinforcement Learning
@@ -189,6 +188,8 @@ We will:
 - Exploration vs Exploitation: the core dilemma
 - Q-values: estimate of long-term value of each (state, action) pair
 
+---
+layout: end
 ---
 
 # Next: Chapter 11

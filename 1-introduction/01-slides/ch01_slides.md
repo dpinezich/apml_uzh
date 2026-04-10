@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch01 — Introduction to Machine Learning"
 ---
 
 # Introduction to Machine Learning
@@ -180,6 +179,8 @@ We will:
 - Workflow is a **cycle** — expect iteration
 - Great ML starts with **understanding the data**
 
+---
+layout: end
 ---
 
 # Next: Chapter 2

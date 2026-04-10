@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch12 — Capstone: End-to-End ML Workflow"
 ---
 
 # Chapter 12
@@ -150,6 +149,8 @@ Cross-validate all → compare F1 + accuracy
 - **Fast.ai** — practical deep learning
 - **"Hands-On ML"** — Aurélien Géron (the book)
 
+---
+layout: end
 ---
 
 # Now — open the notebook

@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch04 — Regression Models"
 ---
 
 # Regression Models
@@ -187,6 +186,8 @@ Compare their performance. Which model wins?
 - Random Forest: robust, non-linear, feature importances
 - Always compare multiple models with cross-validation
 
+---
+layout: end
 ---
 
 # Next: Chapter 5

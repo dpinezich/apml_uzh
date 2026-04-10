@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch03 — Introduction to Supervised Learning"
 ---
 
 # Introduction to Supervised Learning
@@ -161,6 +160,8 @@ then fix it with cross-validation.
 - Cross-validation: robust performance estimation
 - sklearn API: fit → predict → score
 
+---
+layout: end
 ---
 
 # Next: Chapter 4

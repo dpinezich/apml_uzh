@@ -1,7 +1,6 @@
 ---
-marp: true
-theme: default
-paginate: true
+layout: cover
+title: "Ch05 — Classification Models"
 ---
 
 # Classification Models
@@ -199,6 +198,8 @@ Apply multiple models, compare performance.
 - Random Forest: robust ensemble, feature importances
 - SVM: maximum margin, powerful with kernels
 
+---
+layout: end
 ---
 
 # Next: Chapter 6
