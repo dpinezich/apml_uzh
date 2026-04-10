@@ -4,13 +4,20 @@
 #
 # Usage:
 #   ./slides.sh 2          → serve Ch02 with hot-reload (http://localhost:3030)
+#   ./slides.sh 2 fresh    → serve Ch02 with Vite cache cleared
 #   ./slides.sh 2 pdf      → export Ch02 → exports/ch02_slides.pdf
 #   ./slides.sh 2 build    → build static site → exports/ch02/
+#   ./slides.sh flush      → delete Vite cache without serving
 #   ./slides.sh            → list all chapters
+#
+# Slides are always served from the slidev/ directory so that style.css,
+# layouts/, and public/ are resolved from real files (no symlink ambiguity).
 
 set -e
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+SLIDEV_DIR="$ROOT/slidev"
 EXPORTS="$ROOT/exports"
+ENTRY="$SLIDEV_DIR/current.md"
 
 CHAPTERS=(
   ""
@@ -31,7 +38,13 @@ CHAPTERS=(
 CH="${1:-}"
 MODE="${2:-serve}"
 
-cd "$ROOT"
+# ── flush → delete Vite cache ────────────────────────────────────────────
+if [ "$CH" = "flush" ]; then
+  echo "Flushing Vite cache..."
+  rm -rf "$ROOT/node_modules/.vite"
+  echo "Done. Run ./slides.sh <chapter> to start fresh."
+  exit 0
+fi
 
 # ── No chapter → list available chapters ─────────────────────────────────
 if [ -z "$CH" ]; then
@@ -41,10 +54,13 @@ if [ -z "$CH" ]; then
     echo "  $i  ${CHAPTERS[$i]}"
   done
   echo ""
-  echo "Usage: ./slides.sh <chapter> [serve|pdf|build]"
+  echo "Usage: ./slides.sh <chapter> [serve|fresh|pdf|build]"
   echo "  serve  → hot-reload dev server (default)"
+  echo "  fresh  → serve with Vite cache cleared"
   echo "  pdf    → export to PDF"
   echo "  build  → build static site"
+  echo ""
+  echo "  flush  → delete Vite cache (./slides.sh flush)"
   exit 0
 fi
 
@@ -54,8 +70,16 @@ if [ -z "$FILE" ]; then
   exit 1
 fi
 
-BASENAME="$(basename "$FILE" .md)"
 CHPAD="$(printf '%02d' "$CH")"
+
+# ── Symlink the chapter's slide file into slidev/ as current.md ──────────
+# This makes slidev/ the userRoot so layouts/, style.css, public/ are
+# resolved from real files — not from per-chapter symlinks.
+cleanup() { rm -f "$ENTRY"; }
+trap cleanup EXIT INT TERM
+
+ln -sf "$ROOT/$FILE" "$ENTRY"
+cd "$SLIDEV_DIR"
 
 case "$MODE" in
 
@@ -64,7 +88,7 @@ case "$MODE" in
     mkdir -p "$EXPORTS"
     OUT="$EXPORTS/${CHPAD}_slides.pdf"
     echo "Exporting Ch$CH → $OUT"
-    npx slidev export "$FILE" \
+    npx --prefix "$ROOT" slidev export "current.md" \
       --output "$OUT" \
       --format pdf \
       --with-clicks
@@ -76,17 +100,26 @@ case "$MODE" in
     OUT_DIR="$EXPORTS/ch${CHPAD}"
     mkdir -p "$OUT_DIR"
     echo "Building Ch$CH → $OUT_DIR"
-    npx slidev build "$FILE" \
+    npx --prefix "$ROOT" slidev build "current.md" \
       --out "$OUT_DIR" \
       --base "/ch${CHPAD}/"
     echo "Done: $OUT_DIR"
+    ;;
+
+  # ── Dev server with cache cleared ────────────────────────────────────────
+  fresh)
+    echo "Flushing Vite cache..."
+    rm -rf "$ROOT/node_modules/.vite"
+    echo "Serving Ch$CH (cache cleared) → http://localhost:3030"
+    echo "Press O to open, S for speaker notes."
+    npx --prefix "$ROOT" slidev "current.md" --force
     ;;
 
   # ── Dev server with hot-reload ────────────────────────────────────────────
   serve|*)
     echo "Serving Ch$CH → http://localhost:3030"
     echo "Press O to open, S for speaker notes."
-    npx slidev "$FILE"
+    npx --prefix "$ROOT" slidev "current.md"
     ;;
 
 esac

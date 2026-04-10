@@ -1,5 +1,5 @@
 <template>
-  <div class="apml-end">
+  <div class="slidev-layout end apml-end">
     <slot />
   </div>
 </template>

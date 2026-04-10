@@ -1,6 +1,11 @@
 ---
 layout: cover
 title: "Ch08 — Clustering Techniques"
+controls: false
+fonts:
+  sans: Lato
+  mono: JetBrains Mono
+  weights: '300,400,700,900'
 ---
 
 # Clustering Techniques

@@ -1,6 +1,11 @@
 ---
 layout: cover
 title: "Ch01 — Introduction to Machine Learning"
+controls: false
+fonts:
+  sans: Lato
+  mono: JetBrains Mono
+  weights: '300,400,700,900'
 ---
 
 # Introduction to Machine Learning

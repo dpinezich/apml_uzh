@@ -1,6 +1,11 @@
 ---
 layout: cover
 title: "Ch12 — Capstone: End-to-End ML Workflow"
+controls: false
+fonts:
+  sans: Lato
+  mono: JetBrains Mono
+  weights: '300,400,700,900'
 ---
 
 # Chapter 12

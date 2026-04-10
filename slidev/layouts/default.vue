@@ -1,5 +1,5 @@
 <template>
-  <div class="apml-default">
+  <div class="slidev-layout default apml-default">
     <div class="teal-bar" />
     <div class="content">
       <slot />

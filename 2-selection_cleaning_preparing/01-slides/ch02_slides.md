@@ -1,6 +1,11 @@
 ---
 layout: cover
 title: "Ch02 — Data Selection, Cleaning & Preparing"
+controls: false
+fonts:
+  sans: Lato
+  mono: JetBrains Mono
+  weights: '300,400,700,900'
 ---
 
 # Data Selection, Cleaning & Preparing
@@ -9,16 +14,11 @@ title: "Ch02 — Data Selection, Cleaning & Preparing"
 
 ---
 
-# Why Data Cleaning Matters
+# The ML Pipeline
 
-> "Data scientists spend 80% of their time cleaning data and 20% complaining about it."
-> — Everyone in data science
+![pipeline_overview](/images/ch02/pipeline_overview.png)
 
-- Real data is **messy by default**
-- A great model on bad data → bad results
-- A simple model on clean data → good results
-
-**The quality of your model is bounded by the quality of your data.**
+**Garbage in — garbage out.** This chapter = the data cleaning step.
 
 ---
 
@@ -38,14 +38,11 @@ title: "Ch02 — Data Selection, Cleaning & Preparing"
 ```python
 df.isnull().sum()          # count per column
 df.isnull().mean()         # proportion per column
-
-import seaborn as sns
-sns.heatmap(df.isnull(), cbar=False)  # visual overview
 ```
 
-**Rule of thumb:**
-- < 5% missing → usually safe to drop rows
-- > 50% missing in a column → consider dropping the column
+![missing_values_heatmap](/images/ch02/missing_values_heatmap.png)
+
+**Rule of thumb:** < 5% missing → drop rows · > 50% in a column → drop column
 
 ---
 
@@ -66,18 +63,11 @@ sns.heatmap(df.isnull(), cbar=False)  # visual overview
 
 # Outliers
 
-An outlier = a value unusually far from the rest.
+![outlier_boxplot](/images/ch02/outlier_boxplot.png)
 
-**Detection:**
-- Visual: boxplot, histogram
-- IQR: values outside `[Q1 - 1.5·IQR, Q3 + 1.5·IQR]`
-- Z-score: values with `|z| > 3`
+**Detection:** boxplot · IQR rule (`Q1 − 1.5·IQR` / `Q3 + 1.5·IQR`) · Z-score `|z| > 3`
 
-**Treatment:**
-- Remove (if clearly wrong)
-- Cap / clip to boundary
-- Log-transform (shrinks large values)
-- Keep (if it's real signal!)
+**Treatment:** Remove · Cap/clip · Log-transform · Keep (if real signal)
 
 ---
 
@@ -95,37 +85,22 @@ An outlier = a value unusually far from the rest.
 
 # Encoding Categorical Features
 
-**One-Hot Encoding** (for nominal categories)
-```
-City:  [NYC, LA, CHI]
-→ is_NYC  is_LA  is_CHI
-     1       0      0     ← NYC
-     0       1      0     ← LA
-     0       0      1     ← CHI
-```
+![onehot_encoding](/images/ch02/onehot_encoding.png)
 
 ```python
-pd.get_dummies(df, columns=['city'])
+pd.get_dummies(df, columns=['city'])   # pandas
 # or: sklearn OneHotEncoder
 ```
 
-⚠️ With 100 cities → 100 new columns. Consider alternatives for high-cardinality features.
+⚠️ With 100 cities → 100 new columns. Consider target encoding for high-cardinality features.
 
 ---
 
 # Feature Scaling
 
-Many algorithms are **scale-sensitive** (KNN, SVM, Linear models, Neural Nets).
+![feature_scaling](/images/ch02/feature_scaling.png)
 
-**StandardScaler** → mean=0, std=1
-```python
-x_scaled = (x - mean) / std
-```
-
-**MinMaxScaler** → range [0, 1]
-```python
-x_scaled = (x - min) / (max - min)
-```
+**StandardScaler** → mean=0, std=1 · **MinMaxScaler** → [0, 1]
 
 **Tree-based models** (Decision Tree, Random Forest) → no scaling needed.
 
@@ -133,16 +108,12 @@ x_scaled = (x - min) / (max - min)
 
 # Train / Test Split
 
-**Golden rule:** Never evaluate on data you trained on.
+![train_test_split](/images/ch02/train_test_split.png)
 
 ```python
 from sklearn.model_selection import train_test_split
-
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y,
-    test_size=0.2,    # 80% train, 20% test
-    random_state=42,  # for reproducibility
-    stratify=y        # keep class balance
+    X, y, test_size=0.2, random_state=42, stratify=y
 )
 ```
 
@@ -152,12 +123,9 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Data Leakage ⚠️
 
-**What is it?** When information from the test set "leaks" into the training process.
+![data_leakage](/images/ch02/data_leakage.png)
 
-**Example:** Computing the mean on the full dataset, then imputing.  
-→ The imputed training values were influenced by test set statistics.
-
-**Fix:** Use sklearn Pipelines — they fit only on train, then apply to test.
+**Fix:** Use sklearn Pipelines — `fit()` only on train, `transform()` on both.
 
 ```python
 from sklearn.pipeline import Pipeline
@@ -165,8 +133,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 
 pipe = Pipeline([('imputer', SimpleImputer()), ('scaler', StandardScaler())])
-pipe.fit(X_train)        # fit only on train
-X_test_clean = pipe.transform(X_test)   # apply to test
+pipe.fit(X_train)
+X_test_clean = pipe.transform(X_test)
 ```
 
 ---

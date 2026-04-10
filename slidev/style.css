@@ -1,0 +1,356 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   APML UZH — Slidev global stylesheet
+   Template: slides.com / GVZ — white bg, teal #00CCCC, Lato, left teal bar
+   Loaded AFTER theme-default; uses !important to beat UnoCSS __uno.css cascade
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── CSS Variables ─────────────────────────────────────────────────────── */
+:root {
+  --accent:       #00CCCC;
+  --accent-dark:  #009090;
+  --text:         #1a1a1a;
+  --text-muted:   #666666;
+  --border:       #e0e0e0;
+  --code-bg:      #f4f4f4;
+  --code-text:    #c7254e;
+}
+
+/* ── Hide Slidev navigation UI ─────────────────────────────────────────── */
+/* The nav bar renders as <nav> inside #page-root; keyboard nav still works */
+#page-root nav { display: none !important; }
+
+/* ── Reset layout padding (layouts-base.css adds px-14 py-10 via UnoCSS) ─ */
+.slidev-layout {
+  padding: 0 !important;
+  font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif !important;
+  color: var(--text) !important;
+  background: #ffffff !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Headings — reset UnoCSS text-4xl / text-3xl / margins ─────────────── */
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3,
+.slidev-layout h4 {
+  font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif !important;
+  text-transform: none !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.2 !important;
+  color: var(--text) !important;
+  margin-left: 0 !important;   /* override -ml-[0.05em] from theme */
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DEFAULT LAYOUT  (content slides — left teal bar via default.vue)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.slidev-layout.default h1 {
+  font-size: 1.55em !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  position: relative !important;
+  padding-bottom: 18px !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 22px !important;
+  line-height: 1.15 !important;
+}
+
+.slidev-layout.default h1::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 185px !important;
+  height: 5px !important;
+  background: var(--accent) !important;
+}
+
+.slidev-layout.default h2 {
+  font-size: 1.1em !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin-top: 20px !important;
+  margin-bottom: 10px !important;
+}
+
+.slidev-layout.default h3 {
+  font-size: 0.95em !important;
+  font-weight: 600 !important;
+  color: var(--accent-dark) !important;
+  margin-top: 14px !important;
+  margin-bottom: 8px !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   COVER LAYOUT  (title slide — bottom-right aligned via cover.vue)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* theme-default sets display:grid on .slidev-layout.cover — override it  */
+.slidev-layout.cover {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: flex-end !important;
+  padding: 0 !important;
+}
+
+.slidev-layout.cover h1 {
+  font-size: 2.4em !important;
+  font-weight: 900 !important;
+  color: var(--text) !important;
+  text-align: right !important;
+  position: relative !important;
+  margin: 0 !important;
+  line-height: 1.15 !important;
+}
+
+.slidev-layout.cover h1::after {
+  content: '' !important;
+  display: block !important;
+  width: 240px !important;
+  height: 5px !important;
+  background: var(--accent) !important;
+  margin-top: 14px !important;
+  margin-left: auto !important;
+}
+
+.slidev-layout.cover h2 {
+  font-size: 0.88em !important;
+  font-weight: 400 !important;
+  color: var(--text-muted) !important;
+  text-align: right !important;
+  margin-top: 16px !important;
+  margin-bottom: 0 !important;
+}
+
+.slidev-layout.cover p {
+  text-align: right !important;
+  color: var(--text-muted) !important;
+  font-size: 0.8em !important;
+  margin-top: 10px !important;
+  margin-bottom: 0 !important;
+  line-height: 1.5 !important;
+}
+
+.slidev-layout.cover strong {
+  font-weight: 600 !important;
+  color: var(--text-muted) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   END LAYOUT  (white top 40% / teal mid 57% / black bottom 3%)
+   Canvas 980 × 552: 40% = 220 px boundary
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.slidev-layout.end h1 {
+  font-size: 4em !important;
+  font-weight: 900 !important;
+  color: var(--accent) !important;
+  text-align: left !important;
+  padding: 90px 60px 0 60px !important;
+  margin: 0 0 52px 0 !important;
+  line-height: 1.0 !important;
+  position: relative !important;
+}
+
+.slidev-layout.end h1::after {
+  display: none !important;
+}
+
+.slidev-layout.end h2 {
+  font-size: 1.15em !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  text-align: left !important;
+  padding: 0 60px 0 60px !important;
+  margin: 0 !important;
+  position: relative !important;
+  line-height: 1.3 !important;
+}
+
+.slidev-layout.end h2::after {
+  content: '' !important;
+  display: block !important;
+  width: 185px !important;
+  height: 5px !important;
+  background: #000000 !important;
+  margin-top: 12px !important;
+}
+
+.slidev-layout.end p {
+  padding: 12px 60px 0 60px !important;
+  margin: 0 !important;
+  color: #1a1a1a !important;
+  font-style: italic !important;
+  font-size: 0.82em !important;
+  line-height: 1.6 !important;
+}
+
+.slidev-layout.end blockquote {
+  margin: 10px 60px 0 60px !important;
+  padding: 0 !important;
+  color: #1a1a1a !important;
+  font-style: italic !important;
+  font-size: 0.82em !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SHARED TEXT STYLES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.slidev-layout p {
+  margin: 10px 0 !important;
+  line-height: 1.65 !important;
+  font-size: 0.95em !important;
+}
+
+.slidev-layout strong,
+.slidev-layout b {
+  font-weight: 700 !important;
+}
+
+.slidev-layout em {
+  color: var(--accent-dark) !important;
+  font-style: italic !important;
+}
+
+.slidev-layout blockquote {
+  border-left: 4px solid var(--accent) !important;
+  padding: 10px 16px !important;
+  margin: 14px 0 !important;
+  color: var(--text-muted) !important;
+  font-style: italic !important;
+  background: #f4fdfd !important;
+  font-size: 0.88em !important;
+  line-height: 1.65 !important;
+  border-radius: 0 3px 3px 0 !important;
+  box-shadow: none !important;
+}
+
+/* ── Lists ─────────────────────────────────────────────────────────────── */
+.slidev-layout ul,
+.slidev-layout ol {
+  margin: 4px 0 4px 1.2em !important;
+  padding: 0 !important;
+}
+
+.slidev-layout ul              { list-style-type: disc !important; }
+.slidev-layout ol              { list-style-type: decimal !important; }
+.slidev-layout ul ul           { list-style-type: circle !important; font-size: 0.92em !important; }
+.slidev-layout li              { margin-bottom: 7px !important; line-height: 1.55 !important; }
+.slidev-layout ul ul,
+.slidev-layout ul ol           { margin-top: 4px !important; }
+
+/* ── Code — inline ─────────────────────────────────────────────────────── */
+.slidev-layout :not(pre) > code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 0.82em !important;
+  background: var(--code-bg) !important;
+  color: var(--code-text) !important;
+  padding: 2px 6px !important;
+  border-radius: 3px !important;
+}
+
+/* ── Code — block ──────────────────────────────────────────────────────── */
+.slidev-layout pre {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 0.72em !important;
+  line-height: 1.55 !important;
+  border-radius: 6px !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.07) !important;
+  overflow: hidden !important;
+  margin: 12px 0 !important;
+  background: var(--code-bg) !important;
+}
+
+.slidev-layout pre code {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  background: transparent !important;
+  color: inherit !important;
+  padding: 14px 18px !important;
+  border-radius: 0 !important;
+  display: block !important;
+  overflow: auto !important;
+  max-height: 360px !important;
+}
+
+/* ── Tables ────────────────────────────────────────────────────────────── */
+.slidev-layout table {
+  border-collapse: collapse !important;
+  font-size: 0.78em !important;
+  width: 100% !important;
+  margin: 12px 0 !important;
+  display: table !important;    /* override UnoCSS prose which sets display:block */
+}
+
+.slidev-layout table th {
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background: var(--accent) !important;
+  padding: 9px 14px !important;
+  text-align: left !important;
+  letter-spacing: 0.01em !important;
+  border: none !important;
+}
+
+.slidev-layout table td {
+  padding: 7px 14px !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  color: var(--text) !important;
+  vertical-align: top !important;
+}
+
+.slidev-layout table tr:nth-child(even) td { background: #f6fdfd !important; }
+.slidev-layout table tr:hover            td { background: #e8f9f9 !important; }
+.slidev-layout table code                   { font-size: 0.88em !important; }
+
+/* ── Links ─────────────────────────────────────────────────────────────── */
+.slidev-layout a {
+  color: var(--accent-dark) !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid transparent !important;
+  transition: border-color 0.15s !important;
+}
+
+.slidev-layout a:hover {
+  color: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+/* ── Images ────────────────────────────────────────────────────────────── */
+.slidev-layout img {
+  max-width: 100% !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 5px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ── Slide number ──────────────────────────────────────────────────────── */
+.slidev-page-number {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  background: transparent !important;
+}
+
+/* ── Progress bar ──────────────────────────────────────────────────────── */
+.slidev-progress {
+  height: 3px !important;
+  background: var(--accent) !important;
+}
+
+/* ── v-click (fragment animation) ─────────────────────────────────────── */
+.slidev-vclick-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

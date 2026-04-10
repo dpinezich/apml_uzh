@@ -1,6 +1,11 @@
 ---
 layout: cover
 title: "Ch06 — Metrics & Evaluation"
+controls: false
+fonts:
+  sans: Lato
+  mono: JetBrains Mono
+  weights: '300,400,700,900'
 ---
 
 # Metrics & Evaluation

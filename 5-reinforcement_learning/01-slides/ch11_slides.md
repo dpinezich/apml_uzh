@@ -1,6 +1,11 @@
 ---
 layout: cover
 title: "Ch11 — Basic RL Algorithms"
+controls: false
+fonts:
+  sans: Lato
+  mono: JetBrains Mono
+  weights: '300,400,700,900'
 ---
 
 # Basic RL Algorithms

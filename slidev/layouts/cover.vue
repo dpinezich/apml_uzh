@@ -1,5 +1,5 @@
 <template>
-  <div class="apml-cover">
+  <div class="slidev-layout cover apml-cover">
     <div class="cover-content">
       <slot />
     </div>
@@ -11,9 +11,9 @@
   height: 100%;
   width: 100%;
   background: #ffffff;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: flex-end !important;
   overflow: hidden;
 }
 

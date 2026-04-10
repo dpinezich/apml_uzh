@@ -4,10 +4,8 @@
 node_modules
 .DS_Store
 
-# reveal.js exports (generated, not committed)
-reveal/exports/*.pdf
-reveal/exports/*.html
-!reveal/exports/.gitkeep
+# Slidev exports (generated, not committed)
+exports/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
