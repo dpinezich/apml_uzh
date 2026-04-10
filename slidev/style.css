@@ -16,8 +16,8 @@
 }
 
 /* ── Hide Slidev navigation UI ─────────────────────────────────────────── */
-/* The nav bar renders as <nav> inside #page-root; keyboard nav still works */
-#page-root nav { display: none !important; }
+/* Belt: CSS selector. Suspenders: setup/main.ts injects a runtime <style>. */
+nav.flex.flex-col { display: none !important; }
 
 /* ── Reset layout padding (layouts-base.css adds px-14 py-10 via UnoCSS) ─ */
 .slidev-layout {
@@ -330,6 +330,11 @@
 /* ── Images ────────────────────────────────────────────────────────────── */
 .slidev-layout img {
   max-width: 100% !important;
+  max-height: 260px !important;   /* keep images from bursting dense slides */
+  width: auto !important;
+  height: auto !important;
+  display: block !important;
+  margin: 8px 0 !important;
   border: 1px solid var(--border) !important;
   border-radius: 5px !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;

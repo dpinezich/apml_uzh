@@ -7,6 +7,10 @@ node_modules
 # Slidev exports (generated, not committed)
 exports/
 
+# Temp symlinks created by slides.sh
+slidev/current.md
+slidev/public/ch*/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

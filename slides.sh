@@ -72,13 +72,26 @@ fi
 
 CHPAD="$(printf '%02d' "$CH")"
 
-# ── Symlink the chapter's slide file into slidev/ as current.md ──────────
-# This makes slidev/ the userRoot so layouts/, style.css, public/ are
-# resolved from real files — not from per-chapter symlinks.
-cleanup() { rm -f "$ENTRY"; }
+# ── Wire up this chapter's directory ─────────────────────────────────────
+# 1. Symlink current.md → chapter slide file  (sets slidev/ as userRoot)
+# 2. Symlink public/chNN/ → chapter 01-slides/ (images served as /chNN/X.png)
+CHAPTER_DIR="$(dirname "$ROOT/$FILE")"
+PUBLIC_IMG="$SLIDEV_DIR/public/ch${CHPAD}"
+
+cleanup() {
+  rm -f "$ENTRY"
+  # Leave the public symlink in place so repeated runs skip re-linking
+}
 trap cleanup EXIT INT TERM
 
 ln -sf "$ROOT/$FILE" "$ENTRY"
+
+# Create/refresh the public image symlink for this chapter
+if [ ! -L "$PUBLIC_IMG" ] && [ -d "$PUBLIC_IMG" ]; then
+  rm -rf "$PUBLIC_IMG"          # replace old real directory with symlink
+fi
+ln -sfn "$CHAPTER_DIR" "$PUBLIC_IMG"
+
 cd "$SLIDEV_DIR"
 
 case "$MODE" in

@@ -16,7 +16,7 @@ fonts:
 
 # The ML Pipeline
 
-![pipeline_overview](/images/ch02/pipeline_overview.png)
+![pipeline_overview](/ch02/pipeline_overview.png)
 
 **Garbage in — garbage out.** This chapter = the data cleaning step.
 
@@ -40,7 +40,7 @@ df.isnull().sum()          # count per column
 df.isnull().mean()         # proportion per column
 ```
 
-![missing_values_heatmap](/images/ch02/missing_values_heatmap.png)
+![missing_values_heatmap](/ch02/missing_values_heatmap.png)
 
 **Rule of thumb:** < 5% missing → drop rows · > 50% in a column → drop column
 
@@ -63,7 +63,7 @@ df.isnull().mean()         # proportion per column
 
 # Outliers
 
-![outlier_boxplot](/images/ch02/outlier_boxplot.png)
+![outlier_boxplot](/ch02/outlier_boxplot.png)
 
 **Detection:** boxplot · IQR rule (`Q1 − 1.5·IQR` / `Q3 + 1.5·IQR`) · Z-score `|z| > 3`
 
@@ -85,7 +85,7 @@ df.isnull().mean()         # proportion per column
 
 # Encoding Categorical Features
 
-![onehot_encoding](/images/ch02/onehot_encoding.png)
+![onehot_encoding](/ch02/onehot_encoding.png)
 
 ```python
 pd.get_dummies(df, columns=['city'])   # pandas
@@ -98,7 +98,7 @@ pd.get_dummies(df, columns=['city'])   # pandas
 
 # Feature Scaling
 
-![feature_scaling](/images/ch02/feature_scaling.png)
+![feature_scaling](/ch02/feature_scaling.png)
 
 **StandardScaler** → mean=0, std=1 · **MinMaxScaler** → [0, 1]
 
@@ -108,7 +108,7 @@ pd.get_dummies(df, columns=['city'])   # pandas
 
 # Train / Test Split
 
-![train_test_split](/images/ch02/train_test_split.png)
+![train_test_split](/ch02/train_test_split.png)
 
 ```python
 from sklearn.model_selection import train_test_split
@@ -123,7 +123,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Data Leakage ⚠️
 
-![data_leakage](/images/ch02/data_leakage.png)
+![data_leakage](/ch02/data_leakage.png)
 
 **Fix:** Use sklearn Pipelines — `fit()` only on train, `transform()` on both.
 
