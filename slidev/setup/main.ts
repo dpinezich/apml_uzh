@@ -1,19 +1,13 @@
-import { showEditor } from '@slidev/client/state/index'
-
 export default function () {
-  // ── Close the SideEditor panel if it was left open ─────────────────────
-  // showEditor is a useLocalStorage ref; setting it here also clears the
-  // persisted value so it stays closed across restarts.
-  showEditor.value = false
+  // ── Close the SideEditor panel ─────────────────────────────────────────
+  // showEditor is persisted via useLocalStorage('slidev-show-editor').
+  // Setting it here before Vue reads the key ensures it stays closed.
+  localStorage.setItem('slidev-show-editor', 'false')
 
-  // ── Hide the NavControls arrow bar ─────────────────────────────────────
-  // Injected at runtime so it wins over UnoCSS cascade regardless of order.
+  // ── Runtime style overrides ─────────────────────────────────────────────
+  // Injected after the full CSS bundle so nothing can override these.
+  // SideEditor panel — belt-and-suspenders in case localStorage races
   const style = document.createElement('style')
-  style.textContent = `
-    /* Prev/Next arrow toolbar — hidden; keyboard navigation still works */
-    nav.flex.flex-col { display: none !important; }
-    /* SideEditor panel — belt-and-suspenders in case the ref reset races */
-    #page-root > .shadow { display: none !important; }
-  `
+  style.textContent = `#page-root > [class*="shadow"] { display: none !important; }`
   document.head.appendChild(style)
 }

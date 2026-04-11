@@ -15,10 +15,6 @@
   --code-text:    #c7254e;
 }
 
-/* ── Hide Slidev navigation UI ─────────────────────────────────────────── */
-/* Belt: CSS selector. Suspenders: setup/main.ts injects a runtime <style>. */
-nav.flex.flex-col { display: none !important; }
-
 /* ── Reset layout padding (layouts-base.css adds px-14 py-10 via UnoCSS) ─ */
 .slidev-layout {
   padding: 0 !important;
@@ -358,4 +354,9 @@ nav.flex.flex-col { display: none !important; }
 .slidev-vclick-hidden {
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+
+#slidev-goto-dialog {
+  display: none !important;
 }

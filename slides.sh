@@ -72,26 +72,14 @@ fi
 
 CHPAD="$(printf '%02d' "$CH")"
 
-# ── Wire up this chapter's directory ─────────────────────────────────────
-# 1. Symlink current.md → chapter slide file  (sets slidev/ as userRoot)
-# 2. Symlink public/chNN/ → chapter 01-slides/ (images served as /chNN/X.png)
-CHAPTER_DIR="$(dirname "$ROOT/$FILE")"
-PUBLIC_IMG="$SLIDEV_DIR/public/ch${CHPAD}"
-
-cleanup() {
-  rm -f "$ENTRY"
-  # Leave the public symlink in place so repeated runs skip re-linking
-}
+# ── Symlink the chapter's slide file into slidev/ as current.md ──────────
+# slidev/ becomes the Vite userRoot so style.css, layouts/, and public/
+# are resolved from real files. The vite.config.ts plugin re-routes image
+# imports to the real chapter directory via realpathSync(current.md).
+cleanup() { rm -f "$ENTRY"; }
 trap cleanup EXIT INT TERM
 
 ln -sf "$ROOT/$FILE" "$ENTRY"
-
-# Create/refresh the public image symlink for this chapter
-if [ ! -L "$PUBLIC_IMG" ] && [ -d "$PUBLIC_IMG" ]; then
-  rm -rf "$PUBLIC_IMG"          # replace old real directory with symlink
-fi
-ln -sfn "$CHAPTER_DIR" "$PUBLIC_IMG"
-
 cd "$SLIDEV_DIR"
 
 case "$MODE" in

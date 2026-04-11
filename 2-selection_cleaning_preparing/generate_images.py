@@ -3,8 +3,10 @@ Ch02 — Slide image generator
 Saves PNG diagrams to:
   2-selection_cleaning_preparing/01-slides/
 
-slides.sh symlinks slidev/public/ch02/ → that directory, so images are
-served by Slidev as /ch02/X.png without any duplication.
+Images are referenced in ch02_slides.md as ./X.png (relative path).
+  • Slidev: slides.sh symlinks current.md → ch02_slides.md; Vite follows
+    the symlink so ./X.png resolves against 01-slides/ correctly.
+  • VSCode markdown preview: ./X.png is relative to the .md file → works.
 
 Run from anywhere inside the project:
   python 2-selection_cleaning_preparing/generate_images.py
