@@ -16,15 +16,7 @@ fonts:
 
 # The Key Difference
 
-**Supervised Learning:**
-```
-Input: (X, y)  →  Learn to predict y
-```
-
-**Unsupervised Learning:**
-```
-Input: X only  →  Discover structure in X
-```
+![supervised_vs_unsupervised](./supervised_vs_unsupervised.png)
 
 No labels. No "right answer." Just data.
 
@@ -117,6 +109,23 @@ Applications:
 - Does it help a downstream task?
 
 > **Domain knowledge is essential in unsupervised learning.**
+
+---
+
+# Practical Evaluation Approach
+
+**Step 1 — Visualize:** Project to 2D (PCA/t-SNE), look for structure
+
+**Step 2 — Internal metrics:** Silhouette score, inertia elbow
+
+**Step 3 — External validation:** Compare with known labels if available (ARI)
+
+**Step 4 — Downstream task:** Does clustering improve a supervised model?
+
+**Step 5 — Domain expert:** Does this grouping make real-world sense?
+
+> There is no single "correct" answer in unsupervised learning.  
+> Multiple valid groupings can exist — choose the most useful.
 
 ---
 

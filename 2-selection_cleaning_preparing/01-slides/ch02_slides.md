@@ -147,8 +147,8 @@ X_test_clean = pipe.transform(X_test)
 ✅ Handle missing values (impute or drop)
 ✅ Detect and treat outliers
 ✅ Encode categorical features
-✅ Scale numerical features
-✅ Train / test split (LAST!)
+✅ Train / test split ← SPLIT FIRST!
+✅ Scale numerical features (fit on train only, transform both)
 ```
 
 ---

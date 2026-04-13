@@ -67,12 +67,7 @@ A good R² depends on the domain:
 
 # The Confusion Matrix
 
-For binary classification (0=Negative, 1=Positive):
-
-|  | Predicted: 0 | Predicted: 1 |
-|--|:---:|:---:|
-| **Actual: 0** | True Negative (TN) | False Positive (FP) |
-| **Actual: 1** | False Negative (FN) | True Positive (TP) |
+![confusion_matrix_viz](./confusion_matrix_viz.png)
 
 ```python
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -130,6 +125,8 @@ F1 = 2 × Precision × Recall / (Precision + Recall)
 
 # The Precision-Recall Trade-off
 
+![precision_recall](./precision_recall.png)
+
 Adjusting the decision threshold:
 
 ```
@@ -151,19 +148,10 @@ y_pred_custom = (y_proba > 0.3).astype(int)
 **ROC = plot of True Positive Rate vs False Positive Rate**  
 across all possible decision thresholds.
 
-```
-TPR
-1.0 |   ___
-    |  /   \___
-0.5 |         \___
-0.0 |_____________
-    0.0    0.5   1.0
-              FPR
-```
+![roc_curve](./roc_curve.png)
 
 - **AUC = 1.0:** Perfect
 - **AUC = 0.5:** Random guessing (the diagonal)
-- **AUC = 0.0:** Perfectly wrong
 
 **AUC is threshold-independent** → overall discriminative power.
 
@@ -194,7 +182,7 @@ Look at both mean AND standard deviation.
 → Open `03-exercises/ch06_metrics_exercises.ipynb`
 
 **You will:**
-- Compute regression metrics for a housing model
+- Compute regression metrics for a diabetes progression model
 - Build and read a confusion matrix
 - Calculate precision, recall, F1
 - Plot an ROC curve

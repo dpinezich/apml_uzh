@@ -28,16 +28,9 @@ RMS Titanic strikes an iceberg.
 
 ## The Full ML Workflow
 
-```
-① Define the Problem
-② Load & Explore (EDA)
-③ Clean & Preprocess
-④ Feature Engineering
-⑤ Train Multiple Models
-⑥ Evaluate & Compare
-⑦ Interpret Results
-⑧ Reflect & Conclude
-```
+![workflow_cycle](./workflow_cycle.png)
+
+① Define → ② Explore → ③ Clean → ④ Engineer → ⑤ Train → ⑥ Evaluate → ⑦ Interpret → back to ①
 
 ---
 
@@ -114,6 +107,22 @@ Cross-validate all → compare F1 + accuracy
 - Which features matter most? (Random Forest importances)
 - Confusion matrix: where does the model fail?
 - What does Sex importance tell us about history?
+
+---
+
+## Typical Results on Titanic
+
+| Model | Accuracy | F1-Score |
+|-------|---------|---------|
+| Logistic Regression | ~80% | ~75% |
+| Random Forest | ~82% | ~78% |
+| Gradient Boosting | ~83% | ~79% |
+
+**What this tells us:**
+- All models substantially beat the "always predict majority" baseline (~62%)
+- Tree ensembles tend to win on tabular data with categorical features
+- The gap between models is small → feature engineering matters more than algorithm choice
+- Sex + Pclass are consistently the top features across all models
 
 ---
 

@@ -36,6 +36,8 @@ Examples:
 
 **Learning:** Minimize sum of squared residuals (OLS)
 
+![linear_reg_fit](./linear_reg_fit.png)
+
 ```python
 from sklearn.linear_model import LinearRegression
 model = LinearRegression()
@@ -108,14 +110,10 @@ lasso = Lasso(alpha=0.1)
 
 # Regularization Intuition
 
-**Without regularization:** Model free to use any coefficient value → can overfit.
+![regularization_coefs](./regularization_coefs.png)
 
-**With Ridge (L2):** "You can use large coefficients, but I'll penalize you."  
-→ Keeps all features but smaller weights.
-
-**With Lasso (L1):** "Use fewer features — I'll remove irrelevant ones entirely."  
-→ Automatic feature selection.
-
+**With Ridge (L2):** Keeps all features but smaller weights.  
+**With Lasso (L1):** Removes irrelevant features entirely → automatic feature selection.  
 **α (alpha):** Higher = stronger regularization = simpler model.
 
 ---
@@ -161,7 +159,7 @@ importances = rf.feature_importances_
 
 ---
 
-# Model Comparison
+# Choosing a Regression Model
 
 | Model | Interpretable | Non-linear | Scaling needed | Handles outliers |
 |-------|:---:|:---:|:---:|:---:|
@@ -170,13 +168,15 @@ importances = rf.feature_importances_
 | Decision Tree | ✅ | ✅ | ❌ | ✅ |
 | Random Forest | ⚠️ | ✅ | ❌ | ✅ |
 
+**Rule of thumb:** Start with Linear/Ridge as baseline. Add tree models if non-linearity suspected.
+
 ---
 
 # Now: Exercises!
 
 → Open `03-exercises/ch04_regression_exercises.ipynb`
 
-**Task:** Predict house prices using all four model types.  
+**Task:** Predict diabetes disease progression using four regression models.  
 Compare their performance. Which model wins?
 
 ~10 minutes

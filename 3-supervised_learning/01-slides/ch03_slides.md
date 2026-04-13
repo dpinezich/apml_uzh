@@ -76,14 +76,7 @@ Training = finding parameters that **minimize** the loss.
 
 # Underfitting vs Overfitting
 
-```
-Underfitting          Good Fit           Overfitting
-(too simple)         (just right)        (too complex)
-
-  •  •  •         •  •  •  •          •  •  •  •
-   ———————         ~~~~~~~~~~~         ~~W~~~~~W~~
-  •  •  •         •  •  •  •          •  •  •  •
-```
+![overfit_curves](./overfit_curves.png)
 
 - **Underfitting:** High bias, high train error AND high test error
 - **Overfitting:** Low bias, low train error BUT high test error
@@ -92,14 +85,7 @@ Underfitting          Good Fit           Overfitting
 
 # The Bias-Variance Tradeoff
 
-```
-Total Error = Bias² + Variance + Irreducible Noise
-```
-
-| | Bias | Variance |
-|-|------|----------|
-| Simple model | HIGH | LOW |
-| Complex model | LOW | HIGH |
+![bias_variance](./bias_variance.png)
 
 **Goal:** Find the sweet spot where total error is minimized.
 
@@ -109,14 +95,7 @@ Total Error = Bias² + Variance + Irreducible Noise
 
 **Problem:** Single train/test split gives noisy performance estimates.
 
-**5-Fold Cross-Validation:**
-```
-Fold 1: [TEST | TRAIN | TRAIN | TRAIN | TRAIN] → score₁
-Fold 2: [TRAIN | TEST | TRAIN | TRAIN | TRAIN] → score₂
-Fold 3: [TRAIN | TRAIN | TEST | TRAIN | TRAIN] → score₃
-...
-Final score = mean(score₁, score₂, ..., score₅)
-```
+![cross_val_folds](./cross_val_folds.png)
 
 ```python
 from sklearn.model_selection import cross_val_score

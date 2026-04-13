@@ -28,12 +28,7 @@ fonts:
 
 **An agent learns to make decisions by interacting with an environment.**
 
-```
-         Action aₜ
-Agent ──────────────→ Environment
-  ↑                        ↓
-  ←── State sₜ₊₁ + Reward rₜ ──
-```
+![rl_loop](./rl_loop.png)
 
 **Goal:** Maximize total cumulative reward over time.
 
@@ -88,9 +83,7 @@ Agent ──────────────→ Environment
 
 How much do we value future rewards?
 
-```
-Total return = r₀ + γ·r₁ + γ²·r₂ + γ³·r₃ + ...
-```
+![discount_factor](./discount_factor.png)
 
 - **γ = 0:** Only care about immediate reward (greedy, shortsighted)
 - **γ = 1:** Care equally about all future rewards
@@ -132,6 +125,27 @@ else:
 
 ---
 
+# Epsilon Decay Schedule
+
+```
+ε = max(ε × decay_rate, min_epsilon)
+```
+
+| Phase | Episodes | ε range | Behavior |
+|-------|---------|---------|----------|
+| Early | 0–200 | 0.9 → 0.5 | Mostly exploring |
+| Mid | 200–600 | 0.5 → 0.1 | Balancing |
+| Late | 600–1000 | 0.1 → 0.01 | Mostly exploiting |
+
+**Why decay?**  
+→ At start: know nothing → explore everything  
+→ At end: know the environment → use that knowledge
+
+> Too fast decay = stops exploring before learning enough  
+> Too slow decay = wastes episodes on random actions
+
+---
+
 # Value Functions
 
 **Q(s, a):** Expected total reward after taking action a in state s
@@ -149,6 +163,23 @@ State 1:  0.0   0.8   0.2   0.1
 ```python
 optimal_action(s) = argmax_a Q(s, a)
 ```
+
+---
+
+# Deterministic vs Stochastic Environments
+
+Our grid world is **deterministic** — actions always go as planned.
+
+Real environments are often **stochastic** — the agent may slip!
+
+```
+Deterministic: action=Right → always move Right
+Stochastic:    action=Right → 70% Right, 15% Up, 15% Down
+```
+
+> Our grid world in the examples is deterministic.  
+> FrozenLake (Ch11) adds **stochasticity** — the agent slips!  
+> The Q-Learning algorithm handles both.
 
 ---
 

@@ -51,13 +51,7 @@ proba = model.predict_proba(X_test)  # ← probabilities
 
 # The Sigmoid Function
 
-```
-σ(z)
-1.0 |         ___________
-0.5 |        /
-0.0 |_______/
-         z=0
-```
+![sigmoid_curve](./sigmoid_curve.png)
 
 - σ(0) = 0.5 → decision boundary
 - σ(very large) → 1
@@ -152,13 +146,7 @@ importances.sort_values().plot(kind='barh')
 
 **Find the hyperplane with maximum margin.**
 
-```
-Class -1                  Class +1
-   • •   |  margin  |  ○ ○
-   • •   | ←→|←→  |  ○ ○
-         | support  |
-         | vectors  |
-```
+![svm_margin](./svm_margin.png)
 
 ```python
 from sklearn.svm import SVC
@@ -172,13 +160,7 @@ svm = SVC(kernel='rbf', C=1.0, probability=True)
 
 # Decision Boundaries: What Each Model Learns
 
-| Model | Boundary Type |
-|-------|--------------|
-| Logistic Regression | Linear (straight line) |
-| KNN | Irregular, local |
-| Decision Tree | Rectangular regions |
-| Random Forest | Smooth, non-linear |
-| SVM (RBF) | Smooth curves |
+![decision_boundaries](./decision_boundaries.png)
 
 → See examples notebook for visual comparison!
 
@@ -188,7 +170,7 @@ svm = SVC(kernel='rbf', C=1.0, probability=True)
 
 → Open `03-exercises/ch05_classification_exercises.ipynb`
 
-**Task:** Classify breast cancer tumors (malignant vs benign)  
+**Task:** Classify wine types using multiple classifiers.  
 Apply multiple models, compare performance.
 
 ~12 minutes

@@ -41,12 +41,7 @@ Data + Output → Rules
 
 # Three Paradigms of ML
 
-| | Supervised | Unsupervised | Reinforcement |
-|--|--|--|--|
-| Input | (X, y) pairs | X only | State, Actions |
-| Signal | Labels | None | Rewards |
-| Goal | Predict y | Find structure | Maximize reward |
-| Example | Spam filter | Segmentation | Game agent |
+![ml_paradigms](./ml_paradigms.png)
 
 ---
 
@@ -88,15 +83,7 @@ Agent → Action → Environment
 
 # The Data Science Workflow
 
-```
-① Define Problem
-② Collect & Select Data
-③ Explore & Clean (EDA)
-④ Preprocess & Engineer Features
-⑤ Train Model
-⑥ Evaluate
-⑦ Interpret & Deploy → back to ①
-```
+![workflow_cycle](./workflow_cycle.png)
 
 **This is a cycle, not a pipeline.**
 
@@ -153,6 +140,22 @@ Agent → Action → Environment
 
 ---
 
+# Why Iteration Matters
+
+**Most projects fail not because of bad algorithms — but because of bad iterations.**
+
+| What goes wrong | How iteration fixes it |
+|----------------|----------------------|
+| Wrong problem definition | Early feedback from stakeholders |
+| Dirty / biased data | EDA catches this before training |
+| Model doesn't generalize | Evaluation reveals overfitting |
+| Features miss signal | Domain experts improve features |
+| Production drift | Monitoring triggers retraining |
+
+> **The cycle is the method. Expect at least 3 full loops.**
+
+---
+
 # The Python ML Ecosystem
 
 | Tool | Role |
@@ -165,7 +168,7 @@ Agent → Action → Environment
 
 ---
 
-# Let's Explore Data Together
+# Now: Examples!
 
 → Open `ch01_introduction_examples.ipynb`
 

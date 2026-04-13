@@ -50,14 +50,7 @@ Example: millions of face photos
 
 **Find the directions of maximum variance.**
 
-```
-Original (2D)          After PCA
-    •    •
-  •  •• •           PC1 →→→→→→→→
-•  ••• •  •    →    PC2 ↑ (orthogonal)
-  •  •• •
-    •    •
-```
+![pca_directions](./pca_directions.png)
 
 - **PC1:** direction of most variance
 - **PC2:** direction of most remaining variance, ⊥ PC1
@@ -90,6 +83,8 @@ print(f'Variance explained: {ratios.sum():.1%}')
 # Choosing the Number of Components
 
 **Scree plot:** plot cumulative explained variance vs. n_components
+
+![scree_plot](./scree_plot.png)
 
 ```python
 pca_full = Pipeline([('s', StandardScaler()), ('p', PCA())])
@@ -158,6 +153,25 @@ X_tsne = TSNE(
     random_state=42
 ).fit_transform(X_scaled)
 ```
+
+---
+
+# t-SNE: Common Mistake
+
+> "This t-SNE shows 5 clusters → the data has 5 natural groups."
+
+**Wrong!** t-SNE cluster size and distance are NOT meaningful.
+
+✅ **What t-SNE does well:**
+- Shows local neighborhood structure
+- Reveals which samples are similar to each other
+
+❌ **What t-SNE does NOT show:**
+- Global distances between clusters
+- The actual number of clusters (perplexity changes this!)
+- Anything useful for further ML steps
+
+> **Use t-SNE for exploration only — never for preprocessing.**
 
 ---
 

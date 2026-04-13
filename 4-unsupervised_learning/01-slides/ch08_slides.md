@@ -37,12 +37,7 @@ labels = kmeans.fit_predict(X)
 **Step 3:** Move centroid to mean of its cluster  
 **Step 4:** Repeat until convergence
 
-```
-Iteration 1:    Iteration 2:    Converged:
-  ×   ○ ×         × ○   ×       [×] [○] [×]
-× × ○   ×    →  × × ○   ×  →    [×] [○]
-  ×  ○            × ○            [×]
-```
+![kmeans_steps](./kmeans_steps.png)
 
 **Optimizes:** Sum of squared distances from points to their centroid.
 
@@ -75,19 +70,7 @@ kmeans.inertia_            # within-cluster sum of squares
 
 Run K-Means for k = 1 to N, plot inertia:
 
-```
-Inertia
-↑
-|  \\
-|   \\
-|    \\____
-|          ¯¯¯¯¯¯
-+-------------------→ k
-1  2  3  4  5  6  7
-
-    ↑
-  "Elbow" → choose this k
-```
+![elbow_curve](./elbow_curve.png)
 
 ```python
 inertias = [KMeans(k).fit(X).inertia_ for k in range(1, 11)]
@@ -180,11 +163,7 @@ Height
 
 **Clusters = dense regions separated by sparse regions.**
 
-```
-Core point: has ≥ min_samples neighbors within radius eps
-Border point: within eps of a core point
-Noise: neither → labeled -1
-```
+![dbscan_points](./dbscan_points.png)
 
 ```python
 from sklearn.cluster import DBSCAN
@@ -219,8 +198,8 @@ print(f'Clusters: {n_clusters} | Noise points: {n_noise}')
 
 → Open `03-exercises/ch08_clustering_exercises.ipynb`
 
-**Task:** Cluster a customer dataset into meaningful segments.  
-Apply K-Means, choose k with Elbow + Silhouette, then profile the clusters.
+**Task:** Cluster the Iris dataset (without labels) and see how well  
+the algorithm recovers the true species groups.
 
 ~10 minutes
 

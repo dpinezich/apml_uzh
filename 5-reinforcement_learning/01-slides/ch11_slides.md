@@ -57,6 +57,8 @@ Q(s, a) ← Q(s, a) + α · [r + γ · max Q(s', a') - Q(s, a)]
                                TD Error
 ```
 
+![td_error_flow](./td_error_flow.png)
+
 **Each term:**
 - `Q(s, a)`: current estimate
 - `r`: reward we just received
@@ -183,6 +185,24 @@ HFFG       G = Goal   (+1 reward)
 
 ---
 
+# Why FrozenLake Is Hard
+
+**Problem 1 — Sparse rewards:**  
+Only one reward (+1 at goal). All other transitions give 0.  
+The agent must explore many steps before seeing any signal.
+
+**Problem 2 — Stochasticity:**  
+Even good actions may fail. The agent slips randomly.  
+→ Same action, same state → different outcome each time.
+
+**Problem 3 — Delayed credit:**  
+The goal is far from the start.  
+Which earlier actions caused the success? (Credit assignment problem)
+
+**This is why RL is hard — and why Q-Learning with enough episodes works anyway.**
+
+---
+
 # Now: Live Example!
 
 → Open `02-examples/ch11_rl_algorithms_examples.ipynb`
@@ -192,6 +212,8 @@ We will:
 2. Implement Q-Learning step by step
 3. Watch the agent improve over thousands of episodes
 4. Visualize the learned Q-table
+
+![learning_curve](./learning_curve.png)
 
 ---
 
