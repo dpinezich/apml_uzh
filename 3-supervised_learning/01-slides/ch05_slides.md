@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 2, Chapter 2**
 
+<!--
+~50 min. 12 min exercises (extra time — classification is complex).
+-->
+
 ---
 
 # Classification: What We're Doing
@@ -24,6 +28,10 @@ fonts:
 **What the model outputs:**
 - Hard prediction: `model.predict(X)` → class label
 - Probability: `model.predict_proba(X)` → [P(class 0), P(class 1), ...]
+
+<!--
+Binary (2 classes) vs multi-class (3+). Model can output hard labels or probabilities.
+-->
 
 ---
 
@@ -47,6 +55,11 @@ proba = model.predict_proba(X_test)  # ← probabilities
 
 **Linear decision boundary** — fast, interpretable, great baseline.
 
+<!--
+~8 min. Address the name confusion: 'Despite the name, this is a classification model!'
+Linear decision boundary.
+-->
+
 ---
 
 # The Sigmoid Function
@@ -58,6 +71,11 @@ proba = model.predict_proba(X_test)  # ← probabilities
 - σ(very negative) → 0
 
 **Decision:** If P(y=1) > 0.5 → predict class 1
+
+<!--
+S-shape maps any number to [0,1]. Above 0.5 → class 1.
+Threshold can be adjusted (Ch06).
+-->
 
 ---
 
@@ -77,6 +95,10 @@ knn = KNeighborsClassifier(n_neighbors=5)
 ⚠️ **Requires feature scaling** — distance is scale-sensitive!  
 ⚠️ Slow at prediction time for large datasets
 
+<!--
+~7 min. 'Vote among your neighbors.' Requires feature scaling — distance is scale-sensitive!
+-->
+
 ---
 
 # Choosing k in KNN
@@ -95,6 +117,10 @@ for k in [1, 3, 5, 7, 10]:
     score = cross_val_score(KNeighborsClassifier(k), X, y, cv=5).mean()
     print(f'k={k}: {score:.3f}')
 ```
+
+<!--
+k=1 overfits (too complex). Large k underfits (too smooth). Always cross-validate.
+-->
 
 ---
 
@@ -119,6 +145,11 @@ plot_tree(dt, feature_names=feature_names, filled=True)
 
 **Perfectly interpretable** — you can explain every decision.
 
+<!--
+~8 min. Perfectly interpretable — you can explain every decision.
+Great for business contexts.
+-->
+
 ---
 
 # Random Forest Classifier
@@ -140,6 +171,11 @@ importances.sort_values().plot(kind='barh')
 - More robust to outliers
 - Less prone to overfitting than single DT
 
+<!--
+Ensemble power: reduces variance, more robust to outliers.
+Feature importances are a bonus.
+-->
+
 ---
 
 # Support Vector Machines (SVM)
@@ -156,6 +192,11 @@ svm = SVC(kernel='rbf', C=1.0, probability=True)
 - **C:** Smaller = wider margin (more regularization)
 - **kernel='rbf':** Non-linear boundaries (very powerful)
 
+<!--
+~5 min. Keep intuitive — 'find the widest highway between classes.'
+Kernel trick for non-linear boundaries.
+-->
+
 ---
 
 # Decision Boundaries: What Each Model Learns
@@ -163,6 +204,10 @@ svm = SVC(kernel='rbf', C=1.0, probability=True)
 ![decision_boundaries](./decision_boundaries.png)
 
 → See examples notebook for visual comparison!
+
+<!--
+This is a key visualization. Run it live — students see how each model draws different boundaries.
+-->
 
 ---
 
@@ -175,6 +220,11 @@ Apply multiple models, compare performance.
 
 ~12 minutes
 
+<!--
+~12 min. Wine dataset (3 classes) — harder than binary examples.
+Students apply multiple models.
+-->
+
 ---
 
 # Key Takeaways
@@ -184,6 +234,10 @@ Apply multiple models, compare performance.
 - Decision Tree: rule-based, interpretable, overfits easily
 - Random Forest: robust ensemble, feature importances
 - SVM: maximum margin, powerful with kernels
+
+<!--
+Transition: 'Which model is best? That depends on how you measure it — next: Metrics.'
+-->
 
 ---
 layout: end

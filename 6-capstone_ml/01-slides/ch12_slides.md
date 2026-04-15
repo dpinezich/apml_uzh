@@ -14,6 +14,11 @@ fonts:
 **Session 4 | Final Chapter**
 Putting it all together
 
+<!--
+~50 min total. 35 min hands-on coding.
+This is the climax of the course.
+-->
+
 ---
 
 ## Today's Mission
@@ -24,6 +29,11 @@ RMS Titanic strikes an iceberg.
 
 **Can we predict who survived?**
 
+<!--
+~5 min framing. The historical context creates real engagement.
+1,502 of 2,224 died.
+-->
+
 ---
 
 ## The Full ML Workflow
@@ -31,6 +41,11 @@ RMS Titanic strikes an iceberg.
 ![workflow_cycle](./workflow_cycle.png)
 
 ① Define → ② Explore → ③ Clean → ④ Engineer → ⑤ Train → ⑥ Evaluate → ⑦ Interpret → back to ①
+
+<!--
+This IS the workflow from Ch01. Students have now done every step
+individually — now all together.
+-->
 
 ---
 
@@ -49,6 +64,11 @@ RMS Titanic strikes an iceberg.
 
 **Target:** `Survived` (0 = No, 1 = Yes)
 
+<!--
+Mention: Age has many missing values, Cabin is mostly missing (drop it).
+Real messiness.
+-->
+
 ---
 
 ## What Does "Success" Mean?
@@ -59,6 +79,11 @@ RMS Titanic strikes an iceberg.
 
 A False Negative here = predicted dead, actually survived
 
+<!--
+F1-score balances precision and recall.
+A False Negative = predicted dead, actually survived.
+-->
+
 ---
 
 ## Step 1 — Explore
@@ -66,6 +91,11 @@ A False Negative here = predicted dead, actually survived
 - `df.shape`, `df.dtypes`, `df.isnull().sum()`
 - Survival rate by gender, class, age
 - **The "women and children first" signal is in the data**
+
+<!--
+Let students discover the 'women and children first' pattern
+themselves through visualization.
+-->
 
 ---
 
@@ -75,6 +105,11 @@ A False Negative here = predicted dead, actually survived
 - `Embarked` → fill with mode (only 2 missing)
 - Drop: `Cabin` (too sparse), `Name`, `Ticket`, `PassengerId`
 - Encode: `Sex` → 0/1, `Embarked` → one-hot
+
+<!--
+Impute Age by class (not global median!) — this is a good
+feature engineering insight.
+-->
 
 ---
 
@@ -88,6 +123,11 @@ df['IsAlone'] = (df['FamilySize'] == 1).astype(int)
 **Why?** Solo travelers had different survival odds
 **Domain knowledge + creativity = better features**
 
+<!--
+FamilySize and IsAlone: creativity meets domain knowledge.
+Solo travelers had different odds.
+-->
+
 ---
 
 ## Step 4 — Train Multiple Models
@@ -100,6 +140,10 @@ df['IsAlone'] = (df['FamilySize'] == 1).astype(int)
 
 Cross-validate all → compare F1 + accuracy
 
+<!--
+3 models minimum. Cross-validate all. ~12 min for this block.
+-->
+
 ---
 
 ## Step 5 — Interpret
@@ -107,6 +151,11 @@ Cross-validate all → compare F1 + accuracy
 - Which features matter most? (Random Forest importances)
 - Confusion matrix: where does the model fail?
 - What does Sex importance tell us about history?
+
+<!--
+Feature importances: Sex and Pclass dominate.
+Ask: 'What does this tell us about history?'
+-->
 
 ---
 
@@ -124,6 +173,11 @@ Cross-validate all → compare F1 + accuracy
 - The gap between models is small → feature engineering matters more than algorithm choice
 - Sex + Pclass are consistently the top features across all models
 
+<!--
+~80-83% accuracy. The gap between models is small —
+feature engineering matters more than algorithm choice.
+-->
+
 ---
 
 ## What We've Covered
@@ -136,6 +190,10 @@ Cross-validate all → compare F1 + accuracy
 | Ch07–09 | Clustering and dimensionality reduction |
 | Ch10–11 | Reinforcement learning — a different paradigm |
 
+<!--
+~5 min reflection. Connect every chapter back to what students just did.
+-->
+
 ---
 
 ## You Can Now
@@ -146,6 +204,10 @@ Cross-validate all → compare F1 + accuracy
 - Understand clustering and dimensionality reduction
 - Know what reinforcement learning is
 
+<!--
+This should feel empowering. Students have real skills now.
+-->
+
 ---
 
 ## What Comes Next
@@ -155,6 +217,11 @@ Cross-validate all → compare F1 + accuracy
 - **Model deployment** — serving predictions in production
 - **MLOps** — monitoring, retraining, pipelines
 
+<!--
+Deep learning, hyperparameter tuning, deployment, MLOps.
+The journey continues.
+-->
+
 ---
 
 ## Keep Going
@@ -162,6 +229,10 @@ Cross-validate all → compare F1 + accuracy
 - **Kaggle** — real competitions, real data
 - **Fast.ai** — practical deep learning
 - **"Hands-On ML"** — Aurélien Géron (the book)
+
+<!--
+Kaggle, Fast.ai, Geron's book. Concrete next steps.
+-->
 
 ---
 layout: end
@@ -172,3 +243,9 @@ layout: end
 `03-exercises/ch12_capstone_exercises.ipynb`
 
 **35 minutes. Full workflow. You've got this.**
+
+<!--
+35 minutes. Do NOT interrupt during the exercise phase. Walk around, help,
+but no frontal teaching. Debriefing in last 5-10 minutes: compare results,
+discuss what helped most.
+-->

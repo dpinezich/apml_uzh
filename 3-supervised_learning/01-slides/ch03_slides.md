@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 1, Chapter 3**
 
+<!--
+~50 min. 10 min exercises. This chapter is foundational — bias/variance and cross-validation.
+-->
+
 ---
 
 # Supervised Learning
@@ -30,6 +34,11 @@ Output: f(X_new) → ŷ_new
 - **y** = label / target (what we want to predict)
 - **ŷ** = prediction (what the model says)
 
+<!--
+X = features (what we know), y = label (what we want to predict).
+The model learns the mapping.
+-->
+
 ---
 
 # Regression vs Classification
@@ -38,6 +47,10 @@ Output: f(X_new) → ŷ_new
 |------|--------|---------|
 | **Regression** | Continuous number | House price: €285,000 |
 | **Classification** | Discrete category | Spam / Not Spam |
+
+<!--
+Simple distinction: continuous number vs. discrete category.
+-->
 
 ---
 
@@ -53,6 +66,10 @@ Output: f(X_new) → ŷ_new
 
 **Training error** = error on data the model has already seen  
 **Test error** = error on new, unseen data ← **what we actually care about**
+
+<!--
+Training error is always low — it's the test error we care about. Emphasize generalization.
+-->
 
 ---
 
@@ -72,6 +89,12 @@ Cross-Entropy Loss = -Σ yᵢ · log(ŷᵢ)
 
 Training = finding parameters that **minimize** the loss.
 
+<!--
+Don't go deep into math. Key: MSE penalizes large errors more. Cross-entropy for classification.
+Note: The cross-entropy formula shown is simplified (multi-class form). The full binary cross-entropy
+is: -Σ[yᵢ·log(ŷᵢ) + (1-yᵢ)·log(1-ŷᵢ)]. No need to show this — just be aware if a student asks.
+-->
+
 ---
 
 # Underfitting vs Overfitting
@@ -81,6 +104,11 @@ Training = finding parameters that **minimize** the loss.
 - **Underfitting:** High bias, high train error AND high test error
 - **Overfitting:** Low bias, low train error BUT high test error
 
+<!--
+~8 min. Draw on board: line (underfit), good curve, wiggly curve (overfit).
+This is the most important concept.
+-->
+
 ---
 
 # The Bias-Variance Tradeoff
@@ -88,6 +116,10 @@ Training = finding parameters that **minimize** the loss.
 ![bias_variance](./bias_variance.png)
 
 **Goal:** Find the sweet spot where total error is minimized.
+
+<!--
+The U-curve: increasing complexity reduces bias but increases variance. Sweet spot in the middle.
+-->
 
 ---
 
@@ -101,6 +133,11 @@ Training = finding parameters that **minimize** the loss.
 from sklearn.model_selection import cross_val_score
 scores = cross_val_score(model, X, y, cv=5)
 ```
+
+<!--
+~5 min. Analogy: studying with different 80/20 splits of material each time.
+More robust than single split.
+-->
 
 ---
 
@@ -124,6 +161,10 @@ model.score(X_test, y_test)
 
 Every sklearn model works exactly this way. ✅
 
+<!--
+This is a selling point: once you know fit/predict/score, you know ALL models. Emphasize consistency.
+-->
+
 ---
 
 # Now: Examples!
@@ -132,6 +173,10 @@ Every sklearn model works exactly this way. ✅
 
 We'll see overfitting and underfitting live,  
 then fix it with cross-validation.
+
+<!--
+Show overfitting/underfitting live with polynomial regression. Very visual and impactful.
+-->
 
 ---
 
@@ -143,6 +188,10 @@ then fix it with cross-validation.
 - Overfitting: model memorizes noise
 - Cross-validation: robust performance estimation
 - sklearn API: fit → predict → score
+
+<!--
+Transition: 'Now let's meet the actual algorithms — starting with regression.'
+-->
 
 ---
 layout: end

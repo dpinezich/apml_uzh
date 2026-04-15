@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 2, Chapter 1**
 
+<!--
+~50 min. 10 min exercises. Session 2 starts here.
+-->
+
 ---
 
 # Regression: What We're Doing
@@ -27,6 +31,10 @@ Examples:
 - MAE: average absolute error
 - RMSE: penalizes large errors
 - R²: how much variance we explain
+
+<!--
+Ask: 'How would you estimate a house price?' — intuitive entry point.
+-->
 
 ---
 
@@ -50,6 +58,10 @@ print(model.intercept_)  # bias
 **Strengths:** Fast, interpretable, great baseline  
 **Weakness:** Assumes linear relationship
 
+<!--
+~10 min. Make students interpret coefficients in plain language: 'each extra sqm → +X in price.'
+-->
+
 ---
 
 # Interpreting Coefficients
@@ -64,6 +76,10 @@ for feature, coef in zip(feature_names, model.coef_):
 (all other features held constant)
 
 This is the power of linear models: **interpretability**.
+
+<!--
+This is the power of linear models: interpretability. Business stakeholders love this.
+-->
 
 ---
 
@@ -86,6 +102,10 @@ model = Pipeline([
 ⚠️ Higher degree → risk of overfitting  
 → Always cross-validate!
 
+<!--
+~7 min. Higher degree → overfitting risk. Degree 2 is often enough. Always cross-validate.
+-->
+
 ---
 
 # Regularization: Why?
@@ -106,6 +126,10 @@ ridge = Ridge(alpha=1.0)   # alpha = regularization strength
 lasso = Lasso(alpha=0.1)
 ```
 
+<!--
+~8 min. Penalty analogy: we want simple explanations, not overly complex ones.
+-->
+
 ---
 
 # Regularization Intuition
@@ -115,6 +139,11 @@ lasso = Lasso(alpha=0.1)
 **With Ridge (L2):** Keeps all features but smaller weights.  
 **With Lasso (L1):** Removes irrelevant features entirely → automatic feature selection.  
 **α (alpha):** Higher = stronger regularization = simpler model.
+
+<!--
+Ridge: shrinks all coefficients (keeps all features).
+Lasso: can zero out features (automatic feature selection).
+-->
 
 ---
 
@@ -137,6 +166,10 @@ dt = DecisionTreeRegressor(max_depth=3)
 - Captures non-linearity and interactions
 - ⚠️ Prone to overfitting → limit `max_depth`
 
+<!--
+No scaling needed! Captures non-linearity and interactions. But overfits easily — limit max_depth.
+-->
+
 ---
 
 # Random Forest
@@ -157,6 +190,10 @@ importances = rf.feature_importances_
 
 **Almost always better than a single tree.** ✅
 
+<!--
+'Wisdom of crowds' for models. Almost always better than a single tree.
+-->
+
 ---
 
 # Choosing a Regression Model
@@ -164,11 +201,21 @@ importances = rf.feature_importances_
 | Model | Interpretable | Non-linear | Scaling needed | Handles outliers |
 |-------|:---:|:---:|:---:|:---:|
 | Linear Regression | ✅ | ❌ | ✅ | ❌ |
-| Ridge / Lasso | ✅ | ❌ | ✅ | ✅ |
+| Ridge / Lasso | ✅ | ❌ | ✅ | ⚠️ |
 | Decision Tree | ✅ | ✅ | ❌ | ✅ |
 | Random Forest | ⚠️ | ✅ | ❌ | ✅ |
 
+<!--
+Ridge/Lasso: ⚠️ for outliers — regularization reduces overfitting but does NOT make the model outlier-robust.
+The loss function is still squared error, so outliers still dominate. Only tree-based models are truly outlier-robust
+because they use threshold-based splits, not distance calculations.
+-->
+
 **Rule of thumb:** Start with Linear/Ridge as baseline. Add tree models if non-linearity suspected.
+
+<!--
+Rule of thumb: start with Linear/Ridge as baseline, add tree models if non-linearity suspected.
+-->
 
 ---
 
@@ -181,6 +228,10 @@ Compare their performance. Which model wins?
 
 ~10 minutes
 
+<!--
+~10 min. Diabetes dataset — different from examples (California housing). Forces transfer.
+-->
+
 ---
 
 # Key Takeaways
@@ -190,6 +241,10 @@ Compare their performance. Which model wins?
 - Ridge/Lasso: regularization prevents overfitting
 - Random Forest: robust, non-linear, feature importances
 - Always compare multiple models with cross-validation
+
+<!--
+Transition: 'What if the answer is a category, not a number? → Classification.'
+-->
 
 ---
 layout: end

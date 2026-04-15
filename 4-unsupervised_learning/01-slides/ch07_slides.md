@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 3, Chapter 1**
 
+<!--
+~50 min. No formal exercises — this is a conceptual chapter. Lots of discussion.
+-->
+
 ---
 
 # The Key Difference
@@ -19,6 +23,10 @@ fonts:
 ![supervised_vs_unsupervised](./supervised_vs_unsupervised.png)
 
 No labels. No "right answer." Just data.
+
+<!--
+~10 min. Spend time on motivation: WHY does unsupervised learning exist?
+-->
 
 ---
 
@@ -31,6 +39,10 @@ No labels. No "right answer." Just data.
 
 > Most data in the world is unlabeled.  
 > Supervised learning is the exception, not the rule.
+
+<!--
+Most data in the world is unlabeled. Labeling is expensive, impossible, or undefined.
+-->
 
 ---
 
@@ -45,6 +57,11 @@ No labels. No "right answer." Just data.
 You find your own groupings — by sender, size, topic.  
 Different people might sort differently. Both can be valid.
 
+<!--
+Supervised: 'What is this?' Unsupervised: 'What is IN this?'
+Use the mail-sorting analogy.
+-->
+
 ---
 
 # Three Types of Unsupervised Learning
@@ -57,6 +74,10 @@ Different people might sort differently. Both can be valid.
 
 **3. Density Estimation**
 → Model the probability distribution of the data
+
+<!--
+~8 min. Clustering (Ch08), Dimensionality Reduction (Ch09), Density Estimation (briefly).
+-->
 
 ---
 
@@ -77,6 +98,11 @@ Applications:
 - Document topic modeling
 - Gene expression grouping
 
+<!--
+Customer segmentation is the most relatable example.
+Ask: 'How would you group these customers?'
+-->
+
 ---
 
 # Dimensionality Reduction
@@ -92,6 +118,10 @@ Applications:
 - Visualization (2D or 3D plots of high-dim data)
 - Preprocessing (fewer features → faster, less overfitting)
 - Noise reduction
+
+<!--
+100 features → 2 features → you can plot it! Very powerful for exploration.
+-->
 
 ---
 
@@ -110,6 +140,10 @@ Applications:
 
 > **Domain knowledge is essential in unsupervised learning.**
 
+<!--
+~7 min. No labels = no 'right answer.' Domain knowledge is essential.
+-->
+
 ---
 
 # Practical Evaluation Approach
@@ -127,6 +161,10 @@ Applications:
 > There is no single "correct" answer in unsupervised learning.  
 > Multiple valid groupings can exist — choose the most useful.
 
+<!--
+5 steps: Visualize → Internal metrics → External validation → Downstream task → Domain expert.
+-->
+
 ---
 
 # Real-World Applications
@@ -140,6 +178,11 @@ Applications:
 | Vision | Image compression | PCA |
 | Any | Data visualization | t-SNE / UMAP |
 
+<!--
+~5 min. Ask students which applications surprise them most.
+Let it breathe — good discussion moment.
+-->
+
 ---
 
 # Let's Explore Together
@@ -151,6 +194,10 @@ We will:
 2. See what "structure" looks like without labels
 3. Preview what clustering will find in Chapter 8
 
+<!--
+~20 min for the live example. Generate blobs, moons, show clustering preview.
+-->
+
 ---
 
 # Key Takeaways
@@ -160,6 +207,10 @@ We will:
 - Three main types: clustering, dim. reduction, density
 - Evaluation is hard — domain knowledge matters
 - Most real-world data is unlabeled → unsupervised is powerful
+
+<!--
+Transition: 'Now let's make the machine actually find the groups — K-Means and friends.'
+-->
 
 ---
 layout: end

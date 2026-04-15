@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 3, Chapter 3**
 
+<!--
+~50 min. 10 min exercises.
+-->
+
 ---
 
 # The Curse of Dimensionality
@@ -32,6 +36,11 @@ As dimensions grow, data becomes increasingly **sparse**.
 - Visualization impossible beyond 3D
 - Overfitting risk increases
 
+<!--
+~7 min. As dimensions grow, data becomes increasingly sparse.
+Distance-based algorithms fail.
+-->
+
 ---
 
 # The Blessing of Dimensionality
@@ -44,6 +53,11 @@ Example: millions of face photos
 
 **Dimensionality reduction finds this low-dimensional structure.**
 
+<!--
+The face example: billions of pixels but ~50 meaningful dimensions.
+High-dim data often has low intrinsic dimensionality.
+-->
+
 ---
 
 # PCA: Principal Component Analysis
@@ -55,6 +69,11 @@ Example: millions of face photos
 - **PC1:** direction of most variance
 - **PC2:** direction of most remaining variance, ⊥ PC1
 - Keep top k components → compression!
+
+<!--
+~15 min for PCA block. Find directions of maximum variance.
+PC1 = most variance, PC2 = next most, perpendicular.
+-->
 
 ---
 
@@ -78,6 +97,11 @@ ratios = pca_pipe['pca'].explained_variance_ratio_
 print(f'Variance explained: {ratios.sum():.1%}')
 ```
 
+<!--
+MUST scale before PCA — it's scale-sensitive.
+Always use Pipeline with StandardScaler.
+-->
+
 ---
 
 # Choosing the Number of Components
@@ -99,6 +123,11 @@ plt.ylabel('Cumulative explained variance')
 
 **Choose:** fewest components that explain ≥ 95% variance
 
+<!--
+Scree plot: let students choose the cutoff themselves.
+Observe that choices differ — there's no single right answer.
+-->
+
 ---
 
 # PCA Visualization
@@ -113,6 +142,11 @@ plt.title('PCA: 2D projection of high-dimensional data')
 ```
 
 **Even 2 components often reveal clear class structure!**
+
+<!--
+Even 2 components often reveal class structure.
+Great for initial data exploration.
+-->
 
 ---
 
@@ -132,6 +166,11 @@ pipeline.fit(X_train, y_train)
 print('Components used:', pipeline['pca'].n_components_)
 print('Accuracy:', pipeline.score(X_test, y_test))
 ```
+
+<!--
+~5 min. Float parameter = keep 95% variance.
+Can speed up training and reduce overfitting.
+-->
 
 ---
 
@@ -154,6 +193,11 @@ X_tsne = TSNE(
 ).fit_transform(X_scaled)
 ```
 
+<!--
+~8 min. Non-linear, preserves local structure.
+Great for visualization — NEVER for preprocessing.
+-->
+
 ---
 
 # t-SNE: Common Mistake
@@ -173,6 +217,11 @@ X_tsne = TSNE(
 
 > **Use t-SNE for exploration only — never for preprocessing.**
 
+<!--
+CRITICAL: 't-SNE cluster sizes and distances are NOT meaningful.'
+Address this head-on. Students WILL overinterpret t-SNE.
+-->
+
 ---
 
 # t-SNE: What You CAN and CANNOT Conclude
@@ -186,6 +235,11 @@ X_tsne = TSNE(
 - "This t-SNE has 5 clusters → data has 5 groups" — perplexity matters
 
 > **Never over-interpret t-SNE plots!**
+
+<!--
+Can: 'these samples are similar.' Cannot: 'cluster A is farther from B.'
+Perplexity changes the picture entirely.
+-->
 
 ---
 
@@ -202,6 +256,10 @@ X_tsne = TSNE(
 
 **Default choice:** PCA for preprocessing, t-SNE/UMAP for visualization.
 
+<!--
+~5 min. Default: PCA for preprocessing, t-SNE/UMAP for visualization only.
+-->
+
 ---
 
 # Now: Exercises!
@@ -213,6 +271,11 @@ Visualize, choose components, use as preprocessing.
 
 ~10 minutes
 
+<!--
+~10 min. Apply PCA to high-dimensional dataset.
+Visualize, choose components, use as preprocessing.
+-->
+
 ---
 
 # Key Takeaways
@@ -223,6 +286,10 @@ Visualize, choose components, use as preprocessing.
 - Choose components that explain ≥ 95% variance
 - t-SNE: non-linear, local structure, visualization ONLY
 - Never interpret t-SNE distances as meaningful
+
+<!--
+Transition: 'What if the machine learns by trial and error — like us? -> Reinforcement Learning.'
+-->
 
 ---
 layout: end

@@ -41,7 +41,7 @@
 
 | Zeit | Kapitel | Block | Methode | Hinweis |
 |------|---------|-------|---------|---------|
-| 0–50 min | **[Ch01 — Einführung](1-introduction/01-slides/ch01_slides.md)** | Überblick ML, Typen, Workflow, Tools | Slides + Live-Demo | Keine Übungen — Überblickskapitel |
+| 0–50 min | **[Ch01 — Einführung](1-introduction/01-slides/ch01_slides.md)** | Überblick ML, Typen, Workflow, Tools | Slides + Live-Demo | Optionale Übung (Penguins EDA) als Bonus |
 | 50–100 min | **[Ch02 — Daten selektieren & vorbereiten](2-selection_cleaning_preparing/01-slides/ch02_slides.md)** | Missing Values, Outlier, Encoding, Scaling, Split | Slides + Übungen | ⚠️ Data Leakage ist das zentrale Konzept |
 | 100–150 min | **[Ch03 — Supervised Learning Intro](3-supervised_learning/01-slides/ch03_slides.md)** | Bias/Variance, Overfitting, KNN | Slides + Übungen | Erstes echtes Modell → motivierend! |
 
@@ -55,7 +55,8 @@
 **Materialien Session 1:**
 - Slides: [`ch01_slides.md`](1-introduction/01-slides/ch01_slides.md) · [`ch02_slides.md`](2-selection_cleaning_preparing/01-slides/ch02_slides.md) · [`ch03_slides.md`](3-supervised_learning/01-slides/ch03_slides.md)
 - Outline/Lehrplan: [`ch01_outline.md`](1-introduction/00-material/ch01_outline.md) · [`ch02_outline.md`](2-selection_cleaning_preparing/00-material/ch02_outline.md) · [`ch03_outline.md`](3-supervised_learning/00-material/ch03_outline.md)
-- Übungen: [`ch02_data_cleaning_exercises.ipynb`](2-selection_cleaning_preparing/03-exercises/) · [`ch03_supervised_intro_exercises.ipynb`](3-supervised_learning/03-exercises/)
+- Übungen: [`ch01_introduction_exercises.ipynb`](1-introduction/03-exercises/) (Bonus) · [`ch02_data_cleaning_exercises.ipynb`](2-selection_cleaning_preparing/03-exercises/) · [`ch03_supervised_intro_exercises.ipynb`](3-supervised_learning/03-exercises/)
+- Animationen: [`02_knn_decision_boundary.ipynb`](0-animations/02_knn_decision_boundary.ipynb) · [`05_polynomial_overfitting.ipynb`](0-animations/05_polynomial_overfitting.ipynb)
 
 ---
 
@@ -85,6 +86,7 @@
 - Slides: [`ch04_slides.md`](3-supervised_learning/01-slides/ch04_slides.md) · [`ch05_slides.md`](3-supervised_learning/01-slides/ch05_slides.md) · [`ch06_slides.md`](3-supervised_learning/01-slides/ch06_slides.md)
 - Outline/Lehrplan: [`ch04_outline.md`](3-supervised_learning/00-material/ch04_outline.md) · [`ch05_outline.md`](3-supervised_learning/00-material/ch05_outline.md) · [`ch06_outline.md`](3-supervised_learning/00-material/ch06_outline.md)
 - Übungen: [`ch04_regression_exercises.ipynb`](3-supervised_learning/03-exercises/) · [`ch05_classification_exercises.ipynb`](3-supervised_learning/03-exercises/) · [`ch06_metrics_exercises.ipynb`](3-supervised_learning/03-exercises/)
+- Animationen: [`03_gradient_descent.ipynb`](0-animations/03_gradient_descent.ipynb)
 
 ---
 
@@ -98,7 +100,7 @@
 
 | Zeit | Kapitel | Block | Methode | Hinweis |
 |------|---------|-------|---------|---------|
-| 0–50 min | **[Ch07 — Unsupervised Learning Intro](4-unsupervised_learning/01-slides/ch07_slides.md)** | Konzepte, Anwendungen, kein Label-Problem | Slides + Diskussion | Keine Übungen — konzeptuelles Kapitel |
+| 0–50 min | **[Ch07 — Unsupervised Learning Intro](4-unsupervised_learning/01-slides/ch07_slides.md)** | Konzepte, Anwendungen, kein Label-Problem | Slides + Diskussion | Optionale Übung (PCA + K-Means auf Digits) als Bonus |
 | 50–100 min | **[Ch08 — Clustering (K-Means)](4-unsupervised_learning/01-slides/ch08_slides.md)** | K-Means, Elbow-Method, Silhouette Score | Slides + Übungen | K-Means Animation zeigen (siehe [`animations/`](0-animations/)) |
 | 100–150 min | **[Ch09 — Dimensionsreduktion (PCA)](4-unsupervised_learning/01-slides/ch09_slides.md)** | Curse of Dimensionality, PCA, t-SNE | Slides + Übungen | PCA auf Iris visuell erklären |
 
@@ -112,7 +114,7 @@
 **Materialien Session 3:**
 - Slides: [`ch07_slides.md`](4-unsupervised_learning/01-slides/ch07_slides.md) · [`ch08_slides.md`](4-unsupervised_learning/01-slides/ch08_slides.md) · [`ch09_slides.md`](4-unsupervised_learning/01-slides/ch09_slides.md)
 - Outline/Lehrplan: [`ch07_outline.md`](4-unsupervised_learning/00-material/ch07_outline.md) · [`ch08_outline.md`](4-unsupervised_learning/00-material/ch08_outline.md) · [`ch09_outline.md`](4-unsupervised_learning/00-material/ch09_outline.md)
-- Übungen: [`ch08_clustering_exercises.ipynb`](4-unsupervised_learning/03-exercises/) · [`ch09_dimreduction_exercises.ipynb`](4-unsupervised_learning/03-exercises/)
+- Übungen: [`ch07_unsupervised_intro_exercises.ipynb`](4-unsupervised_learning/03-exercises/) (Bonus) · [`ch08_clustering_exercises.ipynb`](4-unsupervised_learning/03-exercises/) · [`ch09_dimensionality_reduction_exercises.ipynb`](4-unsupervised_learning/03-exercises/)
 - Animationen: [`01_kmeans_convergence.ipynb`](0-animations/01_kmeans_convergence.ipynb)
 
 ---
@@ -127,7 +129,7 @@
 
 | Zeit | Kapitel | Block | Methode | Hinweis |
 |------|---------|-------|---------|---------|
-| 0–50 min | **[Ch10 — RL Einführung](5-reinforcement_learning/01-slides/ch10_slides.md)** | Agent, Environment, Reward, Policy, Q-Values | Slides + Demo | Keine Übungen — konzeptuelles Kapitel |
+| 0–50 min | **[Ch10 — RL Einführung](5-reinforcement_learning/01-slides/ch10_slides.md)** | Agent, Environment, Reward, Policy, Q-Values | Slides + Demo | Optionale Übung (Reward Shaping) als Bonus |
 | 50–100 min | **[Ch11 — Q-Learning](5-reinforcement_learning/01-slides/ch11_slides.md)** | Q-Table, Bellman Equation, Epsilon-Greedy | Slides + Übungen | RL-Agent Animation zeigen |
 | 100–150 min | **[Ch12 — Capstone: Titanic](6-capstone_ml/01-slides/ch12_slides.md)** | End-to-End Projekt: von Rohdaten zum Modell | Geführtes Projekt | **35 min Selbstarbeit** — alles aus Sessions 1-4 |
 
@@ -135,13 +137,13 @@
 
 - **Ch10 Einstieg:** *"Wie lernt ein Hund, einen Trick zu machen?"* → Belohnung → Verstärkendes Lernen. Dann: AlphaGo, Roboter, Trading-Algorithmen.
 - **Ch11 Bellman Equation:** Sehr abstrakt — mit GridWorld-Beispiel visuell einführen. Die RL-Agent Animation nutzen.
-- **Ch12 Capstone:** Das ist der Höhepunkt des Kurses. **Nicht unterbrechen während der 35 Min Übungsphase.** Herumgehen, helfen, aber keine Frontalphase einschalten.
+- **Ch12 Capstone:** Das ist der Höhepunkt des Kurses. **Nicht unterbrechen während der 35 Min Übungsphase.** Herumgehen, helfen, aber keine Frontalphase einschalten. (Kein separates Example-Notebook — die geführte Übung IST das Beispiel.)
 - **Ch12 Debriefing (letzte 10 min):** Gemeinsam Ergebnisse vergleichen — wer hat welche Accuracy erreicht? Was hat geholfen? Verbindung zu allen vorherigen Kapiteln ziehen.
 
 **Materialien Session 4:**
 - Slides: [`ch10_slides.md`](5-reinforcement_learning/01-slides/ch10_slides.md) · [`ch11_slides.md`](5-reinforcement_learning/01-slides/ch11_slides.md) · [`ch12_slides.md`](6-capstone_ml/01-slides/ch12_slides.md)
 - Outline/Lehrplan: [`ch10_outline.md`](5-reinforcement_learning/00-material/ch10_outline.md) · [`ch11_outline.md`](5-reinforcement_learning/00-material/ch11_outline.md) · [`ch12_outline.md`](6-capstone_ml/00-material/ch12_outline.md)
-- Übungen: [`ch11_qlearning_exercises.ipynb`](5-reinforcement_learning/03-exercises/) · [`ch12_capstone_exercises.ipynb`](6-capstone_ml/03-exercises/)
+- Übungen: [`ch10_rl_intro_exercises.ipynb`](5-reinforcement_learning/03-exercises/) (Bonus) · [`ch11_rl_algorithms_exercises.ipynb`](5-reinforcement_learning/03-exercises/) · [`ch12_capstone_exercises.ipynb`](6-capstone_ml/03-exercises/)
 - Animationen: [`04_rl_agent_learning.ipynb`](0-animations/04_rl_agent_learning.ipynb)
 
 ---
@@ -150,16 +152,16 @@
 
 | Ch | Titel | Session | Format | Übung | Slides | Outline |
 |----|-------|---------|--------|-------|--------|---------|
-| 01 | Einführung in ML | S1 | Slides + Demo | — | [↗](1-introduction/01-slides/ch01_slides.md) | [↗](1-introduction/00-material/ch01_outline.md) |
+| 01 | Einführung in ML | S1 | Slides + Demo | (Bonus) | [↗](1-introduction/01-slides/ch01_slides.md) | [↗](1-introduction/00-material/ch01_outline.md) |
 | 02 | Daten auswählen & vorbereiten | S1 | Slides + Übung | 10 min | [↗](2-selection_cleaning_preparing/01-slides/ch02_slides.md) | [↗](2-selection_cleaning_preparing/00-material/ch02_outline.md) |
 | 03 | Supervised Learning Intro | S1 | Slides + Übung | 10 min | [↗](3-supervised_learning/01-slides/ch03_slides.md) | [↗](3-supervised_learning/00-material/ch03_outline.md) |
 | 04 | Regression | S2 | Slides + Übung | 10 min | [↗](3-supervised_learning/01-slides/ch04_slides.md) | [↗](3-supervised_learning/00-material/ch04_outline.md) |
 | 05 | Klassifikation | S2 | Slides + Übung | 12 min | [↗](3-supervised_learning/01-slides/ch05_slides.md) | [↗](3-supervised_learning/00-material/ch05_outline.md) |
 | 06 | Evaluation & Metriken | S2 | Slides + Übung | 10 min | [↗](3-supervised_learning/01-slides/ch06_slides.md) | [↗](3-supervised_learning/00-material/ch06_outline.md) |
-| 07 | Unsupervised Learning Intro | S3 | Slides + Diskussion | — | [↗](4-unsupervised_learning/01-slides/ch07_slides.md) | [↗](4-unsupervised_learning/00-material/ch07_outline.md) |
+| 07 | Unsupervised Learning Intro | S3 | Slides + Diskussion | (Bonus) | [↗](4-unsupervised_learning/01-slides/ch07_slides.md) | [↗](4-unsupervised_learning/00-material/ch07_outline.md) |
 | 08 | Clustering (K-Means) | S3 | Slides + Übung | 10 min | [↗](4-unsupervised_learning/01-slides/ch08_slides.md) | [↗](4-unsupervised_learning/00-material/ch08_outline.md) |
 | 09 | Dimensionsreduktion (PCA) | S3 | Slides + Übung | 10 min | [↗](4-unsupervised_learning/01-slides/ch09_slides.md) | [↗](4-unsupervised_learning/00-material/ch09_outline.md) |
-| 10 | Reinforcement Learning Intro | S4 | Slides + Demo | — | [↗](5-reinforcement_learning/01-slides/ch10_slides.md) | [↗](5-reinforcement_learning/00-material/ch10_outline.md) |
+| 10 | Reinforcement Learning Intro | S4 | Slides + Demo | (Bonus) | [↗](5-reinforcement_learning/01-slides/ch10_slides.md) | [↗](5-reinforcement_learning/00-material/ch10_outline.md) |
 | 11 | Q-Learning | S4 | Slides + Übung | 10 min | [↗](5-reinforcement_learning/01-slides/ch11_slides.md) | [↗](5-reinforcement_learning/00-material/ch11_outline.md) |
 | 12 | Capstone: Titanic | S4 | Guided Project | **35 min** | [↗](6-capstone_ml/01-slides/ch12_slides.md) | [↗](6-capstone_ml/00-material/ch12_outline.md) |
 
@@ -209,13 +211,15 @@ Erstes Modell        →   Evaluieren & Metriken  →   PCA / t-SNE         → 
 
 | Datensatz | Herkunft | Verwendet in |
 |-----------|---------|-------------|
-| Titanic | `seaborn.load_dataset('titanic')` | Ch02, Ch05, Ch12 |
-| Iris | `sklearn.datasets.load_iris()` | Ch03, Ch07, Ch09 |
-| California Housing | `sklearn.datasets.fetch_california_housing()` | Ch04 |
-| Breast Cancer | `sklearn.datasets.load_breast_cancer()` | Ch05, Ch06 |
-| Diabetes | `sklearn.datasets.load_diabetes()` | Ch04 |
-| Wine | `sklearn.datasets.load_wine()` | Ch08 |
-| Digits | `sklearn.datasets.load_digits()` | Ch09 |
+| Iris | `sklearn.datasets.load_iris()` | Ch01, Ch03, Ch07, Ch08 |
+| Penguins | `seaborn.load_dataset('penguins')` | Ch01 (Exercises) |
+| California Housing | `sklearn.datasets.fetch_california_housing()` | Ch04, Ch06 |
+| Breast Cancer | `sklearn.datasets.load_breast_cancer()` | Ch05, Ch06, Ch09 |
+| Diabetes | `sklearn.datasets.load_diabetes()` | Ch04 (Exercises), Ch06 |
+| Wine | `sklearn.datasets.load_wine()` | Ch05 (Exercises) |
+| Digits | `sklearn.datasets.load_digits()` | Ch07, Ch09 |
+| Titanic | `seaborn.load_dataset('titanic')` | Ch12 |
+| Synthetische Daten | `make_blobs`, `make_moons`, eigene | Ch02, Ch03, Ch07, Ch08 |
 
 ---
 
@@ -224,13 +228,13 @@ Erstes Modell        →   Evaluieren & Metriken  →   PCA / t-SNE         → 
 ```
 Vor jeder Session:
 ✅ Jupyter Notebook Server starten
-✅ reveal-md bereit: `./slides.sh <N>` startet die Slides
+✅ Slidev bereit: `./slides.sh <N>` startet die Slides
 ✅ Lösungs-Notebooks bereit (aber nicht geöffnet)
 ✅ Kurze Review der Übungsaufgaben der letzten Session
 
 Session 1:
 ✅ seaborn + sklearn installiert (requirements.txt)
-✅ Titanic-Datensatz erreichbar
+✅ Iris-Datensatz erreichbar (sklearn, offline verfügbar)
 
 Session 4 (Capstone):
 ✅ 35 Minuten ungestörte Arbeitszeit einplanen
@@ -239,38 +243,44 @@ Session 4 (Capstone):
 
 ---
 
-## Slides starten (reveal.js)
+## Slides starten (Slidev)
 
-Alle Slides sind im **reveal.js** Format (via `reveal-md`). Voraussetzung: `npm install -g reveal-md`
+Alle Slides sind im **Slidev** Markdown-Format. Voraussetzung: `npm install` im Projektverzeichnis.
 
 ```bash
 # Einzelnes Kapitel starten (mit Hot-Reload):
-./slides.sh 2          # → Ch02 auf http://localhost:1948
+./slides.sh 2          # → Ch02 auf http://localhost:3030
 
 # Alle Kapitel als Listing:
 ./slides.sh
 
+# Vite-Cache leeren und starten:
+./slides.sh 2 fresh
+
 # Als PDF exportieren:
-./slides.sh 2 pdf      # → reveal/exports/ch02_slides.pdf
+./slides.sh 2 pdf      # → exports/02_slides.pdf
+
+# Als statische Seite bauen:
+./slides.sh 2 build    # → exports/ch02/
 ```
 
-**Speaker Notes** sind in allen Slides eingebaut — im Presenter-Modus mit `S` öffnen.
+**Speaker Notes** sind in den Slides eingebaut — im Presenter-Modus mit `S` öffnen.
 
-**reveal/ Verzeichnisstruktur:**
+**slidev/ Verzeichnisstruktur:**
 ```
-reveal/
-├── reveal-md.json          ← Konfiguration
-├── assets/
-│   └── apml-theme.css      ← Custom Dark-Theme
-├── images/
-│   └── ch02/               ← Bilder für Ch02 Slides
-│       ├── generate_ch02_images.py
-│       └── *.png
-└── exports/                ← Generierte PDFs (nicht im Git)
+slidev/
+├── style.css               ← Globales Stylesheet (Brand-Farben, Layout)
+├── vite.config.ts          ← Asset-Resolution Plugin
+├── setup/
+│   └── main.ts             ← Runtime-Setup
+├── layouts/
+│   ├── cover.vue           ← Titel-Slides
+│   ├── default.vue         ← Content-Slides (mit Teal-Akzent)
+│   └── end.vue             ← Abschluss-/Übergangs-Slides
+└── public/                 ← Generierte PNG-Bilder für alle Kapitel
 ```
 
-**Bilder für Ch02** bei Bedarf neu generieren:
+**Bilder** bei Bedarf neu generieren:
 ```bash
-cd reveal/images/ch02
-python generate_ch02_images.py
+python generate_images.py   # → Bilder in slidev/public/ und Kapitel-Ordner
 ```

@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 3, Chapter 2**
 
+<!--
+~50 min. 10 min exercises. Show the K-Means animation from 0-animations/ if possible.
+-->
+
 ---
 
 # What Is Clustering?
@@ -28,6 +32,10 @@ kmeans = KMeans(n_clusters=3)
 labels = kmeans.fit_predict(X)
 ```
 
+<!--
+Similar within, dissimilar between. No labels — we discover the groups.
+-->
+
 ---
 
 # K-Means: The Algorithm
@@ -40,6 +48,11 @@ labels = kmeans.fit_predict(X)
 ![kmeans_steps](./kmeans_steps.png)
 
 **Optimizes:** Sum of squared distances from points to their centroid.
+
+<!--
+~12 min. Animate the iterations if possible — very visual and impactful.
+4 steps: choose centroids → assign → move → repeat.
+-->
 
 ---
 
@@ -64,6 +77,10 @@ kmeans.cluster_centers_    # centroid coordinates
 kmeans.inertia_            # within-cluster sum of squares
 ```
 
+<!--
+k-means++ is smarter than random init. n_init=10 runs 10 times, takes best.
+-->
+
 ---
 
 # How to Choose k? — Elbow Method
@@ -76,6 +93,10 @@ Run K-Means for k = 1 to N, plot inertia:
 inertias = [KMeans(k).fit(X).inertia_ for k in range(1, 11)]
 plt.plot(range(1, 11), inertias, 'o-')
 ```
+
+<!--
+~8 min. Warn students: the 'elbow' is often ambiguous. Not always a clear bend.
+-->
 
 ---
 
@@ -102,6 +123,10 @@ for k in range(2, 8):
 
 **Choose k with highest silhouette score.**
 
+<!--
++1 = well clustered, 0 = boundary, -1 = wrong cluster. Choose k with highest score.
+-->
+
 ---
 
 # K-Means Limitations
@@ -112,6 +137,11 @@ for k in range(2, 8):
 ⚠️ Can get stuck in **local optima** (use `n_init > 1`)
 
 → Different algorithms solve these limitations!
+
+<!--
+Assumes spherical clusters, needs k upfront, sensitive to outliers.
+This motivates the next algorithms.
+-->
 
 ---
 
@@ -137,6 +167,11 @@ dendrogram(Z)
 
 **No k needed!** Cut the dendrogram at any height to get k clusters.
 
+<!--
+~8 min. No k needed! Cut the dendrogram at any height.
+Bottom-up (agglomerative) is most common.
+-->
+
 ---
 
 # Reading a Dendrogram
@@ -156,6 +191,11 @@ Height
 - **Vertical lines:** height at which clusters were merged
 - **Long vertical lines:** natural gap — good place to cut
 - Cut horizontally to get desired number of clusters
+
+<!--
+Long vertical lines = natural gaps = good places to cut.
+Students often struggle here — go slowly.
+-->
 
 ---
 
@@ -177,6 +217,11 @@ print(f'Clusters: {n_clusters} | Noise points: {n_noise}')
 
 **DBSCAN advantage:** Finds arbitrary shapes, identifies outliers!
 
+<!--
+~7 min. Density-based: finds arbitrary shapes, identifies outliers as noise.
+eps is the hardest parameter to tune.
+-->
+
 ---
 
 # Algorithm Comparison
@@ -192,6 +237,11 @@ print(f'Clusters: {n_clusters} | Noise points: {n_noise}')
 - Want hierarchy → Agglomerative
 - Non-spherical shapes, outliers → DBSCAN
 
+<!--
+~5 min. No algorithm is universally best.
+Rule of thumb: K-Means first, DBSCAN for non-spherical + outliers.
+-->
+
 ---
 
 # Now: Exercises!
@@ -203,6 +253,10 @@ the algorithm recovers the true species groups.
 
 ~10 minutes
 
+<!--
+~10 min. Cluster Iris without labels — can the algorithm recover the true species?
+-->
+
 ---
 
 # Key Takeaways
@@ -212,6 +266,10 @@ the algorithm recovers the true species groups.
 - Hierarchical: no k needed, dendrogram reveals structure
 - DBSCAN: density-based, arbitrary shapes, finds outliers
 - Always validate clusters with domain knowledge!
+
+<!--
+Transition: 'Sometimes 2 dimensions reveal more than 100 — next: PCA and t-SNE.'
+-->
 
 ---
 layout: end

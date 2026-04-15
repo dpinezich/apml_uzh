@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 1, Chapter 2**
 
+<!--
+~50 min. 10 min exercises at end. Central message: 'Data quality bounds model quality.'
+-->
+
 ---
 
 # The ML Pipeline
@@ -19,6 +23,10 @@ fonts:
 ![pipeline_overview](./pipeline_overview.png)
 
 **Garbage in — garbage out.** This chapter = the data cleaning step.
+
+<!--
+Garbage in — garbage out. Use messy dataset to make students FEEL the pain of bad data.
+-->
 
 ---
 
@@ -30,6 +38,10 @@ fonts:
 - Outliers (age = `999`, salary = `-1`)
 - Duplicate rows
 - Mixed scales (salary in thousands vs. age in years)
+
+<!--
+Ask students if they've seen these problems. Real examples are powerful.
+-->
 
 ---
 
@@ -43,6 +55,10 @@ df.isnull().mean()         # proportion per column
 ![missing_values_heatmap](./missing_values_heatmap.png)
 
 **Rule of thumb:** < 5% missing → drop rows · > 50% in a column → drop column
+
+<!--
+~8 min for missing values block. Rule of thumb: <5% drop rows, >50% drop column.
+-->
 
 ---
 
@@ -59,6 +75,11 @@ df.isnull().mean()         # proportion per column
 
 ⚠️ **Always impute AFTER train/test split** — otherwise data leakage!
 
+<!--
+CRITICAL: 'Always impute AFTER train/test split!' Repeat this multiple times.
+Data leakage is the central concept of this chapter.
+-->
+
 ---
 
 # Outliers
@@ -68,6 +89,10 @@ df.isnull().mean()         # proportion per column
 **Detection:** boxplot · IQR rule (`Q1 − 1.5·IQR` / `Q3 + 1.5·IQR`) · Z-score `|z| > 3`
 
 **Treatment:** Remove · Cap/clip · Log-transform · Keep (if real signal)
+
+<!--
+Context matters! A $1M salary is an outlier in general population but normal in a CEO dataset.
+-->
 
 ---
 
@@ -80,6 +105,10 @@ df.isnull().mean()         # proportion per column
 | Categorical nominal | City, color | Need encoding |
 | Categorical ordinal | S / M / L / XL | Need ordered encoding |
 | Binary | Yes / No | Encode as 0 / 1 |
+
+<!--
+~7 min for encoding block. One-hot encoding can be shown visually on the board.
+-->
 
 ---
 
@@ -94,6 +123,10 @@ pd.get_dummies(df, columns=['city'])   # pandas
 
 ⚠️ With 100 cities → 100 new columns. Consider target encoding for high-cardinality features.
 
+<!--
+Warning: 100 cities → 100 columns. Mention target encoding for high-cardinality.
+-->
+
 ---
 
 # Feature Scaling
@@ -103,6 +136,10 @@ pd.get_dummies(df, columns=['city'])   # pandas
 **StandardScaler** → mean=0, std=1 · **MinMaxScaler** → [0, 1]
 
 **Tree-based models** (Decision Tree, Random Forest) → no scaling needed.
+
+<!--
+Key: tree-based models don't need scaling. Distance/gradient-based models do.
+-->
 
 ---
 
@@ -118,6 +155,10 @@ X_train, X_test, y_train, y_test = train_test_split(
 ```
 
 **Always set `random_state`** — makes results reproducible.
+
+<!--
+Always set random_state for reproducibility. Stratify for imbalanced classes.
+-->
 
 ---
 
@@ -137,19 +178,31 @@ pipe.fit(X_train)
 X_test_clean = pipe.transform(X_test)
 ```
 
+<!--
+This is the KEY slide. Use sklearn Pipelines — fit() on train only, transform() on both.
+Plant this seed now, reinforce in Ch06.
+-->
+
 ---
 
 # The Preprocessing Checklist
 
 ```
 ✅ Inspect shape, dtypes, head
-✅ Check missing values
-✅ Handle missing values (impute or drop)
-✅ Detect and treat outliers
+✅ Check missing values & outliers (visual inspection)
+✅ Fix obvious errors (typos, wrong dtypes)
+✅ Train / test split ← BEFORE any fitting!
+✅ Impute missing values (fit on train, transform both)
+✅ Detect and treat outliers (based on train statistics)
 ✅ Encode categorical features
-✅ Train / test split ← SPLIT FIRST!
-✅ Scale numerical features (fit on train only, transform both)
+✅ Scale numerical features (fit on train, transform both)
 ```
+
+**Golden rule:** Everything that computes statistics (mean, median, IQR, scaler params) must be **fit on train only**.
+
+<!--
+Golden rule: everything that computes statistics must be fit on train only.
+-->
 
 ---
 
@@ -162,6 +215,10 @@ X_test_clean = pipe.transform(X_test)
 - Apply all today's techniques step by step
 - ~10 minutes
 
+<!--
+~10 min. Students work with a messy housing dataset. Walk around and help.
+-->
+
 ---
 
 # Key Takeaways
@@ -171,6 +228,10 @@ X_test_clean = pipe.transform(X_test)
 - Encode all categories to numbers
 - Scale features when using distance or gradient-based algorithms
 - **Always split first, then preprocess**
+
+<!--
+Transition: 'Now that our data is clean, let's teach a machine to learn from it.'
+-->
 
 ---
 layout: end

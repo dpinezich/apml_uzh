@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 2, Chapter 3**
 
+<!--
+~50 min. 10 min exercises. Often underestimated — protect time for this chapter.
+-->
+
 ---
 
 # The Metric Defines Success
@@ -23,6 +27,10 @@ fonts:
 → But it catches 0% of sick patients.
 
 **Choosing the wrong metric = optimizing for the wrong thing.**
+
+<!--
+~3 min. The accuracy paradox is memorable: 99% accuracy but 0% recall. Open with this.
+-->
 
 ---
 
@@ -41,6 +49,10 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 **RMSE vs MAE:** RMSE penalizes large errors more (because of squaring).  
 Use RMSE when big mistakes are costly.
+
+<!--
+~8 min. RMSE vs MAE: RMSE penalizes large errors. Use RMSE when big mistakes are costly.
+-->
 
 ---
 
@@ -63,6 +75,10 @@ A good R² depends on the domain:
 - Finance: R²=0.1 can be impressive
 - Physics: R²=0.99 is expected
 
+<!--
+A good R² depends on domain: finance R²=0.1 impressive, physics R²=0.99 expected.
+-->
+
 ---
 
 # The Confusion Matrix
@@ -74,6 +90,10 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 cm = confusion_matrix(y_test, y_pred)
 ConfusionMatrixDisplay(cm).plot()
 ```
+
+<!--
+~8 min. Spend time here — students MUST be able to read this. Draw it on the board.
+-->
 
 ---
 
@@ -90,6 +110,11 @@ Actual: Spam       FN=3         |    TP=2    ← caught spam ✅
 - **FN (False Negative):** Spam not caught → Gets through to inbox
 
 *Different errors have different costs — always think about consequences.*
+
+<!--
+Different errors have different costs. FP in spam filter: lost email.
+FN in disease detection: missed patient.
+-->
 
 ---
 
@@ -110,6 +135,11 @@ Recall = TP / (TP + FN)
 F1 = 2 × Precision × Recall / (Precision + Recall)
 ```
 
+<!--
+~8 min. Precision: 'When I say positive, am I right?'
+Recall: 'Did I find all positives?'
+-->
+
 ---
 
 # When to Use Which
@@ -120,6 +150,11 @@ F1 = 2 × Precision × Recall / (Precision + Recall)
 | Recall | FN is costly | Disease screening (don't miss sick patients) |
 | F1 | Both matter | General classification |
 | Accuracy | Classes are balanced | Digit recognition (10 balanced classes) |
+
+<!--
+Precision for spam (don't lose good email). Recall for disease (don't miss sick patients).
+F1 when both matter.
+-->
 
 ---
 
@@ -141,6 +176,11 @@ y_pred_custom = (y_proba > 0.3).astype(int)
 
 **Choose threshold based on business requirements, not just 0.5.**
 
+<!--
+Moving the threshold: lower → more positives → higher recall, lower precision.
+Choose based on business needs.
+-->
+
 ---
 
 # ROC Curve & AUC
@@ -154,6 +194,11 @@ across all possible decision thresholds.
 - **AUC = 0.5:** Random guessing (the diagonal)
 
 **AUC is threshold-independent** → overall discriminative power.
+
+<!--
+~7 min. AUC is threshold-independent — overall discriminative power.
+0.5 = random, 1.0 = perfect.
+-->
 
 ---
 
@@ -175,6 +220,10 @@ for name, model in models.items():
 
 Look at both mean AND standard deviation.
 
+<!--
+~6 min. Professional standard. Look at both mean AND std — consistency matters.
+-->
+
 ---
 
 # Now: Exercises!
@@ -189,6 +238,11 @@ Look at both mean AND standard deviation.
 
 ~10 minutes
 
+<!--
+~10 min. Both regression and classification metrics.
+Students must interpret, not just compute.
+-->
+
 ---
 
 # Key Takeaways
@@ -199,6 +253,10 @@ Look at both mean AND standard deviation.
 - Precision vs Recall trade-off — adjust threshold
 - AUC: overall model quality, threshold-independent
 - Cross-validation: always use it for model comparison
+
+<!--
+Transition: 'We've mastered supervised learning. What if we don't have labels?'
+-->
 
 ---
 layout: end

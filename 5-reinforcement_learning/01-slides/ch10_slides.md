@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 4, Chapter 1**
 
+<!--
+~50 min. No formal exercises — conceptual chapter. Session 4 starts here.
+-->
+
 ---
 
 # The Third Paradigm
@@ -22,6 +26,11 @@ fonts:
 | Unsupervised | None | Find customer groups |
 | **Reinforcement** | **Rewards from trial & error** | **Train a game agent** |
 
+<!--
+~10 min. Position RL relative to supervised/unsupervised:
+different signal type entirely.
+-->
+
 ---
 
 # What Is Reinforcement Learning?
@@ -31,6 +40,11 @@ fonts:
 ![rl_loop](./rl_loop.png)
 
 **Goal:** Maximize total cumulative reward over time.
+
+<!--
+Use the dog training analogy: treats = positive reward, no treat = no reward.
+Dog learns which actions lead to treats.
+-->
 
 ---
 
@@ -49,6 +63,11 @@ fonts:
 **Playing a video game:**
 - Score = reward. Controls = actions. Game = environment.
 
+<!--
+Dog, bike, video game — all trial-and-error learning.
+Ask students for their own examples.
+-->
+
 ---
 
 # Core Components
@@ -60,6 +79,11 @@ fonts:
 | **Reward (r)** | Feedback signal | +1 at goal, -1 in hole |
 | **Policy (π)** | Strategy: s → a | "If at (3,2), go North" |
 | **Episode** | One full run | Start → goal (or failure) |
+
+<!--
+~12 min. State, Action, Reward, Policy, Episode.
+Grid world makes these concrete.
+-->
 
 ---
 
@@ -77,6 +101,11 @@ fonts:
 
 → You only need to know *where you are*, not *how you got there*.
 
+<!--
+Keep intuitive. Markov Property: 'You only need to know where you are,
+not how you got there.' Like GPS.
+-->
+
 ---
 
 # The Discount Factor γ
@@ -90,6 +119,11 @@ How much do we value future rewards?
 - **γ = 0.9:** Typical — future rewards worth 90% of current
 
 **Intuition:** €100 today > €100 next year (same in RL — nearby rewards matter more).
+
+<!--
+€100 today > €100 next year. gamma=0.9 means nearby rewards matter more.
+gamma=0 is shortsighted.
+-->
 
 ---
 
@@ -105,6 +139,11 @@ Restaurant analogy:
   Exploit → go to your favorite restaurant (safe)
   Explore → try somewhere new (risky, but maybe amazing!)
 ```
+
+<!--
+~8 min. Restaurant analogy: exploit (go to favorite) vs explore (try something new).
+The fundamental dilemma.
+-->
 
 ---
 
@@ -122,6 +161,11 @@ else:
 
 **Epsilon decay:** Start high (0.9), reduce over time (end at 0.01)
 → "Learn first, then use what you learned."
+
+<!--
+With probability epsilon = random. With 1-epsilon = best known.
+Simple but effective.
+-->
 
 ---
 
@@ -144,6 +188,11 @@ else:
 > Too fast decay = stops exploring before learning enough  
 > Too slow decay = wastes episodes on random actions
 
+<!--
+Start high (explore everything), reduce over time (use what you learned).
+Too fast = didn't learn enough. Too slow = wasted episodes.
+-->
+
 ---
 
 # Value Functions
@@ -164,6 +213,11 @@ State 1:  0.0   0.8   0.2   0.1
 optimal_action(s) = argmax_a Q(s, a)
 ```
 
+<!--
+~5 min. Q(s,a) = expected total reward. Optimal policy = always pick highest Q.
+This leads to Q-Learning in Ch11.
+-->
+
 ---
 
 # Deterministic vs Stochastic Environments
@@ -181,6 +235,11 @@ Stochastic:    action=Right → 70% Right, 15% Up, 15% Down
 > FrozenLake (Ch11) adds **stochasticity** — the agent slips!  
 > The Q-Learning algorithm handles both.
 
+<!--
+Our grid world is deterministic. FrozenLake (Ch11) adds stochasticity —
+the agent slips!
+-->
+
 ---
 
 # Real-World Applications
@@ -193,6 +252,10 @@ Stochastic:    action=Right → 70% Right, 15% Up, 15% Down
 | Healthcare | Treatment planner | Patient | Health outcome |
 | Traffic | Signal controller | Road network | Reduced delays |
 
+<!--
+~5 min. Ask which applications surprise students most.
+-->
+
 ---
 
 # Famous Milestones
@@ -201,6 +264,11 @@ Stochastic:    action=Right → 70% Right, 15% Up, 15% Down
 - **2016:** AlphaGo — defeats world Go champion
 - **2019:** AlphaStar — defeats top StarCraft II players
 - **2022:** AlphaCode — competitive programming
+
+<!--
+AlphaGo 2016 is the hook. Show the progression —
+games to robotics to real-world.
+-->
 
 ---
 
@@ -214,6 +282,11 @@ We will:
 3. Compare it to an optimal policy
 4. See the learning problem clearly
 
+<!--
+~10 min. Build grid world, watch random agent, compare to optimal policy.
+Very visual.
+-->
+
 ---
 
 # Key Takeaways
@@ -223,6 +296,10 @@ We will:
 - MDP: formal framework (S, A, P, R, γ)
 - Exploration vs Exploitation: the core dilemma
 - Q-values: estimate of long-term value of each (state, action) pair
+
+<!--
+Transition: 'Now let's teach the agent to learn on its own — with Q-Learning.'
+-->
 
 ---
 layout: end

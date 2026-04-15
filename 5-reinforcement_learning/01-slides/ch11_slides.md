@@ -12,6 +12,10 @@ fonts:
 
 **Applied Machine Learning — Session 4, Chapter 2**
 
+<!--
+~50 min. 10 min exercises.
+-->
+
 ---
 
 # Two Approaches to RL
@@ -25,6 +29,11 @@ fonts:
 **Today: Model-Free RL**
 - Value-based: learn Q(s, a) → Q-Learning
 - Policy-based: learn π directly → Policy Gradient
+
+<!--
+~5 min. Model-free is more practical. Today: value-based (Q-Learning)
+and briefly policy-based.
+-->
 
 ---
 
@@ -44,6 +53,11 @@ State 15:[0.0, 0.0, 0.0, 0.0]  ← goal
 **Optimal policy:** `a* = argmax_a Q(s, a)`
 
 **Learning:** Update Q-values using observed experience.
+
+<!--
+~15 min for Q-Learning block. Build a table of Q(s,a).
+Optimal policy = pick highest Q value per state.
+-->
 
 ---
 
@@ -66,6 +80,11 @@ Q(s, a) ← Q(s, a) + α · [r + γ · max Q(s', a') - Q(s, a)]
 - `α`: learning rate (how fast we update)
 - TD Error: "how wrong was our estimate?"
 
+<!--
+Go through SLOWLY. Each term: current estimate, reward, discounted future,
+learning rate, TD error. This is the heart of Q-Learning.
+-->
+
 ---
 
 # TD Error Intuition
@@ -83,6 +102,11 @@ Observed reward: 0 + future value: 0.8
 TD Error: 0.8 - 0.5 = +0.3
 Updated Q: 0.5 + α * 0.3
 ```
+
+<!--
+GPS analogy: GPS predicts 30 min, road closed adds 10 = update to 40.
+Same idea: correct your estimate based on new info.
+-->
 
 ---
 
@@ -115,6 +139,11 @@ for episode in range(n_episodes):
     epsilon = max(epsilon * epsilon_decay, min_epsilon)
 ```
 
+<!--
+Show the full pseudocode. Epsilon-greedy for action selection,
+Bellman update, epsilon decay.
+-->
+
 ---
 
 # Hyperparameters
@@ -127,6 +156,11 @@ for episode in range(n_episodes):
 | Epsilon decay | | 0.99 – 0.999 | Slow shift to exploitation |
 | Min epsilon | | 0.01 | Always keep a little exploration |
 | Episodes | | 1,000 – 10,000 | More = better learning |
+
+<!--
+alpha=0.1-0.5, gamma=0.95-0.99, epsilon starts high.
+More episodes = better learning but slower.
+-->
 
 ---
 
@@ -145,6 +179,11 @@ Q(s, a) ← Q(s, a) + α · [r + γ · Q(s', a') - Q(s, a)]
 | Type | Off-policy | On-policy |
 | Updates with | max Q(s', a') | Q(s', a') actually taken |
 | Risk | Can be dangerous during exploration | Safer — avoids risky paths |
+
+<!--
+~5 min. Key difference: uses actual next action, not best possible.
+On-policy = safer, avoids risky paths.
+-->
 
 ---
 
@@ -167,6 +206,11 @@ optimizer.step(loss)
 
 **Modern algorithms:** PPO, A3C, SAC — all extend this idea with neural networks.
 
+<!--
+~5 min. Keep conceptual. Directly learn the policy.
+Modern RL: PPO, A3C, SAC all extend this.
+-->
+
 ---
 
 # The FrozenLake Environment
@@ -182,6 +226,11 @@ HFFG       G = Goal   (+1 reward)
 - 4 actions (Left=0, Down=1, Right=2, Up=3)
 - Reward: +1 at goal, 0 everywhere else
 - Slippery ice: actions don't always go as planned!
+
+<!--
+~10 min. 16 states, 4 actions. Only +1 reward at goal.
+The ice is slippery!
+-->
 
 ---
 
@@ -201,6 +250,11 @@ Which earlier actions caused the success? (Credit assignment problem)
 
 **This is why RL is hard — and why Q-Learning with enough episodes works anyway.**
 
+<!--
+Three challenges: sparse rewards, stochasticity, delayed credit.
+This is why RL is hard in general.
+-->
+
 ---
 
 # Now: Live Example!
@@ -215,6 +269,11 @@ We will:
 
 ![learning_curve](./learning_curve.png)
 
+<!--
+Show Q-Learning converging on FrozenLake.
+Q-table heatmap is very visual.
+-->
+
 ---
 
 # Now: Exercises!
@@ -226,6 +285,11 @@ Train the agent, tune epsilon, visualize progress.
 
 ~10 minutes
 
+<!--
+~10 min. Students implement Q-Learning from scratch.
+Step-by-step scaffolding provided.
+-->
+
 ---
 
 # Key Takeaways
@@ -235,6 +299,10 @@ Train the agent, tune epsilon, visualize progress.
 - ε-greedy: start exploring, gradually exploit
 - SARSA: on-policy, safer in risky environments
 - Policy Gradient: learn the policy directly (for continuous actions)
+
+<!--
+Transition: 'Time to put everything together — the Capstone project.'
+-->
 
 ---
 layout: end

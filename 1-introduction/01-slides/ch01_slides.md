@@ -13,6 +13,10 @@ fonts:
 
 **Applied Machine Learning — Session 1, Chapter 1**
 
+<!--
+~50 min total. No exercises — overview chapter. Ask: 'Who has used ML today?' — everyone has (Spotify, Google Maps, Netflix).
+-->
+
 ---
 
 # What Is Machine Learning?
@@ -26,6 +30,11 @@ Data + Output → Rules
 > _"A computer program is said to learn from experience E with respect to some task T and performance measure P..."_
 > — Tom Mitchell, 1997
 
+<!--
+Use the analogy: teaching a child to recognize dogs — show examples, not a rulebook.
+Traditional = explicit rules; ML = learn from data.
+-->
+
 ---
 
 # Why Machine Learning?
@@ -37,11 +46,19 @@ Data + Output → Rules
 
 **Key insight:** When rules are too complex to write — let data write them.
 
+<!--
+Keep it motivational. These examples show ML is everywhere, not just in research.
+-->
+
 ---
 
 # Three Paradigms of ML
 
 ![ml_paradigms](./ml_paradigms.png)
+
+<!--
+High-level overview only — each paradigm gets its own session later.
+-->
 
 ---
 
@@ -52,6 +69,10 @@ Data + Output → Rules
 - Two flavors:
   - **Regression** → continuous output (price, temperature)
   - **Classification** → discrete output (spam/not spam, disease/no disease)
+
+<!--
+Two flavors: regression (continuous) and classification (discrete). Will be covered in Sessions 1-2.
+-->
 
 ---
 
@@ -64,6 +85,10 @@ Data + Output → Rules
   - Anomaly detection
   - Dimensionality reduction
   - Topic modeling
+
+<!--
+No labels — the machine finds structure on its own. Session 3 topic.
+-->
 
 ---
 
@@ -79,6 +104,10 @@ Agent → Action → Environment
   ←←← Reward + State ←←←
 ```
 
+<!--
+Agent learns by trial and error. Session 4 topic. Mention AlphaGo as a hook.
+-->
+
 ---
 
 # The Data Science Workflow
@@ -86,6 +115,11 @@ Agent → Action → Environment
 ![workflow_cycle](./workflow_cycle.png)
 
 **This is a cycle, not a pipeline.**
+
+<!--
+Emphasize: this is a CYCLE, not a pipeline. Expect at least 3 full loops.
+Steps 2-4 consume ~80% of project time.
+-->
 
 ---
 
@@ -97,6 +131,10 @@ Agent → Action → Environment
 
 > Most ML project failures happen here, not in the model.
 
+<!--
+Most ML failures happen here, not in modeling. Ask: 'What are we really trying to predict?'
+-->
+
 ---
 
 # Step ② — Data
@@ -107,6 +145,10 @@ Agent → Action → Environment
 - What are the legal/ethical constraints?
 
 **Garbage in → Garbage out.**
+
+<!--
+Garbage in, garbage out. This gets its own chapter next (Ch02).
+-->
 
 ---
 
@@ -120,6 +162,10 @@ Agent → Action → Environment
 
 > ~80% of project time lives here.
 
+<!--
+~80% of project time lives here. Students will experience this in Ch02.
+-->
+
 ---
 
 # Steps ⑤⑥ — Train & Evaluate
@@ -129,6 +175,10 @@ Agent → Action → Environment
 - Measure performance on held-out data
 - Avoid overfitting
 
+<!--
+The 'fun part' — but only works if previous steps are solid.
+-->
+
 ---
 
 # Step ⑦ — Deploy & Iterate
@@ -137,6 +187,10 @@ Agent → Action → Environment
 - Deployment = value creation
 - Monitor: data drifts, model degrades
 - Retrain, improve, repeat
+
+<!--
+A model in a notebook helps no one. Deployment creates value.
+-->
 
 ---
 
@@ -154,6 +208,10 @@ Agent → Action → Environment
 
 > **The cycle is the method. Expect at least 3 full loops.**
 
+<!--
+Drive home: the cycle IS the method. No perfect first attempt.
+-->
+
 ---
 
 # The Python ML Ecosystem
@@ -165,6 +223,10 @@ Agent → Action → Environment
 | `matplotlib` / `seaborn` | Visualization |
 | `scikit-learn` | Algorithms & pipelines |
 | `gymnasium` | RL environments |
+
+<!--
+If students are comfortable with pandas, speed through this. Gymnasium is optional (RL only).
+-->
 
 ---
 
@@ -178,6 +240,10 @@ We will:
 3. Visualize features
 4. Build first intuitions — **before any model**
 
+<!--
+Open the notebook live. ~15 min for the demo. Let students follow along.
+-->
+
 ---
 
 # Key Takeaways
@@ -186,6 +252,10 @@ We will:
 - Three paradigms: supervised / unsupervised / reinforcement
 - Workflow is a **cycle** — expect iteration
 - Great ML starts with **understanding the data**
+
+<!--
+Quick recap. Transition: 'Now that we know what ML is, let's get our hands dirty with real data.'
+-->
 
 ---
 layout: end
