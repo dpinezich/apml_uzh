@@ -46,6 +46,12 @@ Ask: 'How would you estimate a house price?' — intuitive entry point.
 
 ![linear_reg_fit](./linear_reg_fit.png)
 
+---
+
+# Linear Regression
+
+**Model:** ŷ = β₀ + β₁x₁ + β₂x₂ + ... + βₙxₙ
+
 ```python
 from sklearn.linear_model import LinearRegression
 model = LinearRegression()

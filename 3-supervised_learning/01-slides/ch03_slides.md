@@ -129,6 +129,12 @@ The U-curve: increasing complexity reduces bias but increases variance. Sweet sp
 
 ![cross_val_folds](./cross_val_folds.png)
 
+---
+
+# Cross-Validation
+
+**Problem:** Single train/test split gives noisy performance estimates.
+
 ```python
 from sklearn.model_selection import cross_val_score
 scores = cross_val_score(model, X, y, cv=5)
