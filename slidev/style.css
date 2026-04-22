@@ -136,6 +136,77 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
+   TWO-COLS LAYOUT  (upstream slidev layout — add teal bar + padding
+   so it matches default; use ::right:: separator in markdown)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.slidev-layout.two-columns {
+  display: grid !important;
+  grid-template-columns: 10px 1fr 1fr !important;
+  column-gap: 32px !important;
+  padding: 38px 56px 28px 0 !important;
+  position: relative !important;
+}
+
+/* Teal bar as first grid column */
+.slidev-layout.two-columns::before {
+  content: '' !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  background: var(--accent) !important;
+  width: 10px !important;
+  height: 100% !important;
+  margin-left: 0 !important;
+}
+
+.slidev-layout.two-columns .col-left {
+  grid-column: 2 !important;
+  padding-left: 58px !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.slidev-layout.two-columns .col-right {
+  grid-column: 3 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Re-apply default heading treatment (teal underline on h1) inside columns */
+.slidev-layout.two-columns h1 {
+  font-size: 1.55em !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  position: relative !important;
+  padding-bottom: 18px !important;
+  margin: 0 0 22px 0 !important;
+  line-height: 1.15 !important;
+}
+
+.slidev-layout.two-columns h1::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 140px !important;
+  height: 5px !important;
+  background: var(--accent) !important;
+}
+
+.slidev-layout.two-columns h2 {
+  font-size: 1.1em !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin-top: 14px !important;
+  margin-bottom: 10px !important;
+}
+
+/* Shrink images inside columns so two side-by-side plots fit the canvas */
+.slidev-layout.two-columns img {
+  max-height: 340px !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
    END LAYOUT  (white top 40% / teal mid 57% / black bottom 3%)
    Canvas 980 × 552: 40% = 220 px boundary
    ══════════════════════════════════════════════════════════════════════════ */
@@ -255,26 +326,41 @@
 /* ── Code — block ──────────────────────────────────────────────────────── */
 .slidev-layout pre {
   font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
-  font-size: 0.72em !important;
-  line-height: 1.55 !important;
+  font-size: 0.78em !important;
+  line-height: 1.6 !important;
   border-radius: 6px !important;
   border: 1px solid var(--border) !important;
   box-shadow: 0 2px 14px rgba(0, 0, 0, 0.07) !important;
   overflow: hidden !important;
   margin: 12px 0 !important;
-  background: var(--code-bg) !important;
+  background: #fafafa !important;
 }
 
 .slidev-layout pre code {
   font-family: inherit !important;
   font-size: inherit !important;
   background: transparent !important;
-  color: inherit !important;
   padding: 14px 18px !important;
   border-radius: 0 !important;
   display: block !important;
   overflow: auto !important;
   max-height: 360px !important;
+}
+
+/* Slidev sets html.dark from OS preference, which flips Shiki to its
+   dark-theme color (pale cream #dbd7caee) and sets color-scheme:dark on
+   the root. Our slides always render light-themed over white — force
+   light-theme rendering regardless of html.dark so code stays readable
+   and images aren't tone-mapped by the browser's dark color-scheme. */
+html.dark:root,
+html.dark {
+  color-scheme: light !important;
+}
+
+html.dark .slidev-layout .shiki,
+html.dark .slidev-layout .shiki span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
 }
 
 /* ── Tables ────────────────────────────────────────────────────────────── */
@@ -321,6 +407,15 @@
 .slidev-layout a:hover {
   color: var(--accent) !important;
   border-bottom-color: var(--accent) !important;
+}
+
+/* Slidev theme-default applies `opacity: .5` to any <p> directly following
+   an <h1> (intended for subtitles). Markdown wraps images in <p>, so
+   `# Title` + `![img](...)` renders the image at 50% opacity — looks
+   faded. Restore full opacity when the paragraph contains an image. */
+.slidev-layout h1 + p:has(img),
+.slidev-layout h1 + p img {
+  opacity: 1 !important;
 }
 
 /* ── Images ────────────────────────────────────────────────────────────── */
