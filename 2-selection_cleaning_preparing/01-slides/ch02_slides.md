@@ -13,7 +13,8 @@ fonts:
 **Applied Machine Learning — Session 1, Chapter 2**
 
 <!--
-~50 min. 10 min exercises at end. Central message: 'Data quality bounds model quality.'
+~50 min: 3 min why · 6 min missing values · 3 min outliers · 5 min encoding · 3 min scaling · 6 min split + leakage (KEY) · 2 min quiz · 8 min live demo · 10 min exercises = 46 min; solution discussion in the buffer / start of Ch03.
+Central message: "Split first. Fit on train. Transform both." — say it at least three times.
 -->
 
 ---
@@ -25,7 +26,7 @@ fonts:
 **Garbage in — garbage out.** This chapter = the data cleaning step.
 
 <!--
-Garbage in — garbage out. Use messy dataset to make students FEEL the pain of bad data.
+~1 min. Point at the step in the workflow ring from Ch01 (steps ②–④). "This is where 80 % of the time goes."
 -->
 
 ---
@@ -35,12 +36,13 @@ Garbage in — garbage out. Use messy dataset to make students FEEL the pain of 
 - Missing values (`NaN`, empty strings, `-999`)
 - Wrong data types (age as string)
 - Inconsistent categories (`"Male"`, `"male"`, `"M"`)
-- Outliers (age = `999`, salary = `-1`)
+- Impossible values (age = `999`, salary = `-1`)
 - Duplicate rows
 - Mixed scales (salary in thousands vs. age in years)
+- A feature that secretly *is* the answer (**target leakage**)
 
 <!--
-Ask students if they've seen these problems. Real examples are powerful.
+~2 min. Ask: "Who has seen one of these in a spreadsheet?" — collect 2 anecdotes. The last bullet is new for most: e.g. predicting hospital re-admission with a feature "discharge letter mentions readmission" — that only exists AFTER the event.
 -->
 
 ---
@@ -50,14 +52,13 @@ Ask students if they've seen these problems. Real examples are powerful.
 ```python
 df.isnull().sum()          # count per column
 df.isnull().mean()         # proportion per column
+df.duplicated().sum()      # while we're at it: duplicate rows
 ```
 
 ![missing_values_heatmap](./missing_values_heatmap.png)
 
-**Rule of thumb:** < 5% missing → drop rows · > 50% in a column → drop column
-
 <!--
-~8 min for missing values block. Rule of thumb: <5% drop rows, >50% drop column.
+~2 min. The heatmap makes structure visible: is a column missing at random or in blocks? Ask WHY a value is missing (sensor broken? people refusing to answer? — the second is informative and should not just be averaged away).
 -->
 
 ---
@@ -66,18 +67,17 @@ df.isnull().mean()         # proportion per column
 
 | Strategy | When to use |
 |---------|------------|
-| Drop rows | Few missing, random missingness |
-| Drop column | More than 50% missing |
+| Drop rows | Few missing (< 5 %), random missingness |
+| Drop column | Mostly missing (> 50 %) |
 | Fill with **mean** | Numerical, no outliers |
-| Fill with **median** | Numerical, with outliers |
+| Fill with **median** | Numerical, with outliers (robust) |
 | Fill with **mode** | Categorical |
-| Fill with constant | Domain knowledge (e.g. "Unknown") |
+| Fill with constant | Domain knowledge (e.g. `"Unknown"`) |
 
-⚠️ **Always impute AFTER train/test split** — otherwise data leakage!
+⚠️ The fill value is a **statistic** → compute it on the **training set** only (`SimpleImputer` does exactly that).
 
 <!--
-CRITICAL: 'Always impute AFTER train/test split!' Repeat this multiple times.
-Data leakage is the central concept of this chapter.
+~4 min. Quick check: "Salary column, one CEO with 5 M in it — mean or median?" (median). Preview: SimpleImputer(strategy='median').fit(X_train) learns the value, .transform() applies it to train AND test.
 -->
 
 ---
@@ -86,45 +86,45 @@ Data leakage is the central concept of this chapter.
 
 ![outlier_boxplot](./outlier_boxplot.png)
 
-**Detection:** boxplot · IQR rule (`Q1 − 1.5·IQR` / `Q3 + 1.5·IQR`) · Z-score `|z| > 3`
-
-**Treatment:** Remove · Cap/clip · Log-transform · Keep (if real signal)
+**Detection:** boxplot · IQR rule (`Q1 − 1.5·IQR` / `Q3 + 1.5·IQR`) — bounds from **train**
+**Treatment:** Remove (if clearly an error) · Cap/clip · Log-transform · **Keep** (if real signal)
 
 <!--
-Context matters! A $1M salary is an outlier in general population but normal in a CEO dataset.
+~3 min. Two different things: an IMPOSSIBLE value (age 999) is an error → set to NaN and impute. A LARGE value (200 m² house) may be real → don't delete blindly. Ask: "Is a 1 M salary an outlier?" — in the general population yes, in a CEO dataset no. Z-score rule → bonus slide at the end.
 -->
 
 ---
 
-# Feature Types
+# Feature Types & Encoding
 
 | Type | Example | Ready for ML? |
 |------|---------|--------------|
-| Numerical continuous | Age, salary | After scaling |
-| Numerical discrete | # children | Usually yes |
-| Categorical nominal | City, color | Need encoding |
-| Categorical ordinal | S / M / L / XL | Need ordered encoding |
-| Binary | Yes / No | Encode as 0 / 1 |
+| Numerical continuous | age, salary | after scaling |
+| Numerical discrete | # children | usually yes |
+| Categorical nominal | city, colour | **one-hot** encoding |
+| Categorical ordinal | S / M / L / XL | ordered integer encoding |
+| Binary | yes / no | 0 / 1 |
+
+![onehot_encoding](./onehot_encoding.png)
 
 <!--
-~7 min for encoding block. One-hot encoding can be shown visually on the board.
+~3 min. Draw one-hot on the board if needed. Quick check: "Is 'grade A/B/C' nominal or ordinal?" (ordinal). "Zip code?" (nominal — although numeric!).
 -->
 
 ---
 
-# Encoding Categorical Features
-
-![onehot_encoding](./onehot_encoding.png)
+# One-Hot in Practice
 
 ```python
-pd.get_dummies(df, columns=['city'])   # pandas
-# or: sklearn OneHotEncoder
+pd.get_dummies(df, columns=['city'])                 # quick & dirty (pandas)
+OneHotEncoder(handle_unknown='ignore')               # sklearn — learns the categories on TRAIN,
+                                                     # unseen test category → all zeros, no crash
 ```
 
-⚠️ With 100 cities → 100 new columns. Consider target encoding for high-cardinality features.
+⚠️ 100 cities → 100 new columns. High cardinality → target encoding / embeddings (not in this course).
 
 <!--
-Warning: 100 cities → 100 columns. Mention target encoding for high-cardinality.
+~2 min. get_dummies on train and test separately can give DIFFERENT columns (a category missing in test) → misaligned matrices. That is why we use OneHotEncoder inside a ColumnTransformer in the demo.
 -->
 
 ---
@@ -133,12 +133,13 @@ Warning: 100 cities → 100 columns. Mention target encoding for high-cardinalit
 
 ![feature_scaling](./feature_scaling.png)
 
-**StandardScaler** → mean=0, std=1 · **MinMaxScaler** → [0, 1]
+**StandardScaler** → mean 0, std 1 · **MinMaxScaler** → [0, 1]
 
+Needed for **distance- and gradient-based** models (KNN — next chapter!, linear/logistic regression, SVM, neural nets).
 **Tree-based models** (Decision Tree, Random Forest) → no scaling needed.
 
 <!--
-Key: tree-based models don't need scaling. Distance/gradient-based models do.
+~3 min. Motivation for KNN in Ch03: distance between (age 30, income 90 000) and (age 60, income 90 100) is dominated by income. Mean/std are statistics → fit the scaler on train only.
 -->
 
 ---
@@ -150,73 +151,79 @@ Key: tree-based models don't need scaling. Distance/gradient-based models do.
 ```python
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
+    X, y, test_size=0.2, random_state=42,
+    stratify=y)      # ← classification only! keeps class proportions. Omit for regression.
 ```
 
-**Always set `random_state`** — makes results reproducible.
+**Always set `random_state`** — reproducible splits. **The test set is locked away until the very end.**
 
 <!--
-Always set random_state for reproducibility. Stratify for imbalanced classes.
+~2 min. Golden rule: never evaluate on data the model has seen. stratify=y with a continuous target raises an error — students WILL copy this into the housing exercise, so say it explicitly.
 -->
 
 ---
 
-# Data Leakage ⚠️
+# Data Leakage ⚠️ — the #1 beginner mistake
 
-![data_leakage](./data_leakage.png)
+<img src="./leakage_impute.gif" style="max-height:300px !important; margin: 0 auto !important;" />
 
-**Fix:** Use sklearn Pipelines — `fit()` only on train, `transform()` on both.
+<!--
+~2 min. Let the GIF run through once (7 s). Narrate: the mean over ALL rows is pulled up by the test rows → the filled value carries test information into training → the test score is too optimistic. Right: split, mean over TRAIN, fill both with it.
+-->
+
+---
+
+# The Right Order
+
+![preprocess_order](./preprocess_order.png)
 
 ```python
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler
-
-pipe = Pipeline([('imputer', SimpleImputer()), ('scaler', StandardScaler())])
-pipe.fit(X_train)
-X_test_clean = pipe.transform(X_test)
+pipe = Pipeline([('imputer', SimpleImputer(strategy='median')), ('scaler', StandardScaler())])
+pipe.fit(X_train)                       # statistics from TRAIN only
+X_test_ready = pipe.transform(X_test)   # same statistics applied to test
 ```
 
 <!--
-This is the KEY slide. Use sklearn Pipelines — fit() on train only, transform() on both.
-Plant this seed now, reinforce in Ch06.
+~2 min. KEY slide. Rule to repeat: "Everything that computes a statistic — mean, median, min/max, std, IQR, category list — is fit on train and transformed on both." Pipelines make this automatic; ColumnTransformer routes numeric vs categorical columns. Both appear in the demo.
 -->
 
 ---
 
-# The Preprocessing Checklist
+# Quick Check — Which of These Steps Leak?
 
-```
-✅ Inspect shape, dtypes, head
-✅ Check missing values & outliers (visual inspection)
-✅ Fix obvious errors (typos, wrong dtypes)
-✅ Train / test split ← BEFORE any fitting!
-✅ Impute missing values (fit on train, transform both)
-✅ Detect and treat outliers (based on train statistics)
-✅ Encode categorical features
-✅ Scale numerical features (fit on train, transform both)
-```
+You have `df` with 1 000 rows. Steps, in this order:
 
-**Golden rule:** Everything that computes statistics (mean, median, IQR, scaler params) must be **fit on train only**.
+1. `df['city'] = df['city'].str.lower()`
+2. `df['age'] = df['age'].fillna(df['age'].median())`
+3. `train_test_split(...)`
+4. `scaler.fit(X_train); scaler.transform(X_test)`
+5. `df.drop_duplicates()` before the split
+6. Dropping the column `"final_invoice_amount"` when predicting `"will_customer_buy"`
+
+<v-click>
+
+**Leaks:** 2 (median over all rows — must be after the split, fit on train). **Safe:** 1, 3, 4, 5. **6 is *removing* target leakage** — the invoice only exists after the purchase.
+
+</v-click>
 
 <!--
-Golden rule: everything that computes statistics must be fit on train only.
+~2 min. Let students vote per step with hands. Common wrong answer: "5 leaks" — no, dropping exact duplicates uses no statistic (though it changes the split, that's fine). Discuss 6 briefly: what would the model learn if you kept it? A useless 100 %.
 -->
 
 ---
 
-# Now: Exercises!
+# Now: Live Demo, Then Exercises
 
-→ Open `03-exercises/ch02_data_cleaning_exercises.ipynb`
+**Demo (~8 min):** `02-examples/ch02_data_cleaning_examples.ipynb`
+messy student survey → duplicates, text fixes, target leakage (`grade`), split, `SimpleImputer`, IQR, encoding, scaling → **`ColumnTransformer` + `Pipeline` in 10 lines**
 
-**You will:**
-- Work with a messy dataset
-- Apply all today's techniques step by step
-- ~10 minutes
+**Exercises (~10 min):** `03-exercises/ch02_data_cleaning_exercises.ipynb`
+messy housing data · Task 1 fixes → Task 2 split → Task 3 impute → Task 4 `ColumnTransformer` · Bonus: IQR, mean vs median, Z-score, correlation
 
 <!--
-~10 min. Students work with a messy housing dataset. Walk around and help.
+Demo: sections 6–9 by hand, section 10 = pipeline. Do not spend >8 min — skip the boxplot cell if late.
+Exercises: walk around. Typical errors: fit_transform on X_test (leak!), stratify=y on price (ValueError), forgetting .reset_index after drop_duplicates.
+Fast students: bonus B (mean vs median with the 9999 still in) is the most instructive.
 -->
 
 ---
@@ -224,13 +231,26 @@ Golden rule: everything that computes statistics must be fit on train only.
 # Key Takeaways
 
 - Real data is always messy — cleaning is non-negotiable
-- Impute missing values (after the split!)
-- Encode all categories to numbers
-- Scale features when using distance or gradient-based algorithms
-- **Always split first, then preprocess**
+- Deterministic fixes (text, duplicates, impossible values) → before the split
+- **Split first**, then impute / clip / encode / scale — **fit on train, transform both**
+- Ask: does any feature secretly contain the answer? (target leakage)
+- `Pipeline` + `ColumnTransformer` make the right order automatic
 
 <!--
-Transition: 'Now that our data is clean, let's teach a machine to learn from it.'
+~1 min. Transition: "Now that our data is clean and in a pipeline, let's put a model at the end of it."
+-->
+
+---
+
+# Bonus — Z-Score Outlier Rule
+
+- Standardise: `z = (x − mean) / std` (mean/std from **train**)
+- Flag `|z| > 3` as outliers (≈ 0.3 % of a normal distribution)
+- Sensitive to the very outliers it looks for (they inflate the std) → the IQR rule is usually the more robust default
+- Try it: exercise **Bonus C**
+
+<!--
+Appendix — only if a student asks or as homework pointer.
 -->
 
 ---
