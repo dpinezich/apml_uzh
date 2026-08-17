@@ -8,199 +8,91 @@
 ## Learning Objectives
 
 By the end of this chapter, students will be able to:
-- Apply K-Means clustering and interpret its output
-- Use the Elbow Method and Silhouette Score to select k
-- Apply hierarchical clustering and read a dendrogram
-- Apply DBSCAN and understand its density-based approach
-- Choose the right clustering method for a given dataset
+- Explain the K-Means loop (assign → update) and why it converges to a *local* optimum (`k-means++`, `n_init`)
+- Scale features before any distance-based clustering (Pipeline with StandardScaler)
+- Use elbow and silhouette to choose k — and explain why they can disagree
+- Recognise that K-Means always returns k clusters and check whether structure is real
+- Apply DBSCAN and read its noise label as outliers
+- (Bonus) Read a dendrogram / cut a hierarchical clustering
 
 ---
 
-## Timing Breakdown
+## Timing Breakdown (planned 43 min + buffer)
 
 | Block | Content | Time |
 |-------|---------|------|
-| 1 | K-Means Algorithm | 12 min |
-| 2 | Choosing k: Elbow & Silhouette | 8 min |
-| 3 | Hierarchical Clustering | 8 min |
-| 4 | DBSCAN | 7 min |
-| 5 | Algorithm Comparison | 5 min |
-| 6 | **Exercises** | **10 min** |
-| **Total** | | **50 min** |
+| 1 | What is clustering + K-Means algorithm (GIF `kmeans_iterations.gif`) | 7 min |
+| 2 | Parameters, `init`/`n_init` — local optima (`kmeans_init.png`) | 3 min |
+| 3 | Scale first (`scaling_kmeans.png`, Pipeline idiom) | 3 min |
+| 4 | Choosing k: elbow + silhouette (`elbow_silhouette.png`); clustering noise (`kmeans_uniform.png`) | 6 min |
+| 5 | DBSCAN (`kmeans_vs_dbscan.png`) + algorithm table | 4 min |
+| 6 | Quiz (2 questions) | 2 min |
+| 7 | Live demo notebook | 8 min |
+| 8 | **Exercises** | **10 min** |
+| **Total** | | **43 min** |
 
-> **Exercise time: 10 minutes**
+> Hierarchical clustering is a **bonus/appendix** slide (`dendrogram.png`) and Bonus B in the exercise — show only if time allows.
 
 ---
 
 ## Content Outline
 
-### Block 1 — K-Means Algorithm (12 min)
+### Block 1 — K-Means (7 min)
+- Clustering: similar within, dissimilar between; output = new column of arbitrary ids.
+- Algorithm: pick k random points → ASSIGN each point to nearest centroid → UPDATE centroids to cluster means → repeat until nothing moves. Minimises inertia = Σ‖x − μ_c(x)‖²; inertia only decreases → converges.
+- GIF shows ~6 iterations with the inertia counter; `0-animations/01_kmeans_convergence.ipynb` is the interactive version (`SEED` knob, seed 1 = bad local optimum).
 
-**The most popular clustering algorithm.**
-
-**Idea:** Partition n samples into k clusters, minimizing within-cluster variance.
-
-**Algorithm:**
-1. Randomly initialize k cluster centers (centroids)
-2. Assign each sample to its nearest centroid
-3. Recompute centroids as the mean of all samples in the cluster
-4. Repeat steps 2-3 until centroids stop moving (convergence)
-
-**What K-Means optimizes:**
-- Inertia = Σᵢ Σₓ∈Cᵢ ||x - μᵢ||²
-- (Sum of squared distances from each point to its cluster center)
-
-**Hyperparameters:**
-- `k` (n_clusters): number of clusters — the key decision
-- `init`: initialization method ('k-means++' is smarter than random)
-- `n_init`: number of runs (use 10 to avoid bad local optima)
-- `max_iter`: maximum iterations
-
-**Limitations of K-Means:**
-- Assumes clusters are spherical (equal variance)
-- Sensitive to outliers (they can distort centroids)
-- Must specify k in advance
-- Can get stuck in local optima
-
+### Block 2 — Parameters (3 min)
 ```python
-from sklearn.cluster import KMeans
-kmeans = KMeans(n_clusters=3, init='k-means++', n_init=10, random_state=42)
-kmeans.fit(X)
-labels = kmeans.labels_         # cluster assignment for each sample
-centroids = kmeans.cluster_centers_  # cluster center coordinates
-inertia = kmeans.inertia_       # within-cluster sum of squares
+KMeans(n_clusters=3, init='k-means++', n_init=10, random_state=42)
+kmeans.labels_ / cluster_centers_ / inertia_
 ```
+- `kmeans_init.png`: random single-run start ends with inertia ~4× worse than k-means++ with n_init=10. Kill the misconception "K-Means finds THE clusters".
 
----
+### Block 3 — Scale first (3 min)
+- Distances are dominated by the feature with the largest numbers → `make_pipeline(StandardScaler(), KMeans(...))`. Applies to K-Means, DBSCAN, hierarchical, KNN.
+- Caveat (Ch07 exercise): on digit pixels scaling *hurts* K-Means (near-constant border pixels get amplified) — default, not law.
 
-### Block 2 — Choosing k: Elbow & Silhouette (8 min)
+### Block 4 — Choosing k (6 min)
+- Elbow: inertia always decreases with k; look for the flattening (often ambiguous).
+- Silhouette per sample s = (b − a)/max(a, b); average it; +1 good, 0 boundary, −1 wrong; pick the max — favours few round clusters.
+- **Iris**: elbow ≈ 3, silhouette max at 2 — both defensible (exercise Task 2c).
+- `kmeans_uniform.png`: uniform noise → K-Means still returns 3 clusters, elbow plot looks "normal"; silhouette 0.38 vs 0.83 for real blobs. Always plot (PCA 2-D) and check the silhouette *value*.
 
-**The central question: how many clusters should we use?**
+### Block 5 — DBSCAN (4 min)
+- Core point: ≥ `min_samples` neighbours within `eps`; border; noise (−1) = built-in outlier detection.
+- No k, arbitrary shapes; price: `eps` tuning (scale first!), and it struggles when clusters have very *different* densities (one eps for all — HDBSCAN/OPTICS fix that, out of scope). Rule of thumb: `min_samples ≈ 2 × n_features`, eps from the k-distance knee.
 
-**Method 1: Elbow Method**
-- Run K-Means for k = 1, 2, 3, ..., N
-- Plot inertia vs k
-- Look for the "elbow" — the point where improvement levels off
-- That k is a good choice
+| Algorithm | Shape | k needed | Outliers | Notes |
+|---|---|---|---|---|
+| K-Means | round, similar size | yes | pulled by them | fast, first try |
+| DBSCAN | any (density) | no | flagged −1 | eps tuning; mixed densities hard |
+| Hierarchical (bonus) | any | no (cut) | no | dendrogram, O(n²) |
+| GMM (mention) | ellipses, soft | yes | no | probabilities |
 
-**Method 2: Silhouette Score**
-- For each sample, compute:
-  - a = mean distance to all points in the same cluster
-  - b = mean distance to all points in the nearest other cluster
-  - Silhouette = (b - a) / max(a, b)
-- Range: [-1, 1]
-  - +1: sample is far from neighboring clusters → well clustered
-  - 0: sample is on the boundary
-  - -1: sample is in the wrong cluster
-- Choose k that maximizes the average silhouette score
+### Block 6 — Quiz (2 min)
+- Q1 elbow 3 vs silhouette 2 → look at both, choose by usefulness. Q2 age vs income unscaled → income dominates.
 
-```python
-from sklearn.metrics import silhouette_score
-score = silhouette_score(X, labels)
-```
+### Block 7 — Live Demo (8 min) → `02-examples/ch08_clustering_examples.ipynb`
+1. Elbow + silhouette on 4 blobs **and** on uniform noise (both give a "best k" — only the value/plot tells them apart)
+2. Scale + Pipeline; K-Means vs DBSCAN on moons (robust colour map, noise grey)
+3. Customer segmentation: silhouette-chosen k → **profile table** → names derived from the numbers (never from ids)
+4. Bonus: Ward dendrogram with a computed cut
 
-**Practical advice:** Combine both methods — neither is definitive alone.
-
----
-
-### Block 3 — Hierarchical Clustering (8 min)
-
-**A different approach: build a tree of clusters.**
-
-**Agglomerative (bottom-up):**
-1. Start: every sample is its own cluster (n clusters)
-2. Merge the two most similar clusters
-3. Repeat until all samples are in one cluster
-4. Cut the tree at any level to get k clusters
-
-**Linkage criteria (how to measure cluster similarity):**
-- Ward: minimizes total within-cluster variance (most popular)
-- Complete: maximum distance between clusters
-- Average: mean distance between clusters
-- Single: minimum distance between clusters (can create long chains)
-
-**Dendrogram:** Tree visualization of the hierarchical merging process.
-- y-axis: distance/dissimilarity at which clusters were merged
-- Cut horizontally to choose the number of clusters
-- A long vertical line = a natural gap in the data
-
-**Advantage over K-Means:** No need to specify k in advance; dendrogram reveals natural structure.
-
-```python
-from sklearn.cluster import AgglomerativeClustering
-from scipy.cluster.hierarchy import dendrogram, linkage
-
-Z = linkage(X, method='ward')
-dendrogram(Z)
-```
-
----
-
-### Block 4 — DBSCAN (7 min)
-
-**Density-Based Spatial Clustering of Applications with Noise.**
-
-**Core idea:** Clusters are dense regions separated by sparse regions.
-
-**Key concepts:**
-- **Core point:** has at least `min_samples` neighbors within radius `eps`
-- **Border point:** within `eps` of a core point but not a core point itself
-- **Noise point:** not a core or border point → labeled -1 (outlier!)
-
-**Algorithm:**
-1. Find all core points
-2. Connect core points that are within `eps` of each other
-3. Assign border points to the nearest core point's cluster
-4. Label remaining points as noise
-
-**Hyperparameters:**
-- `eps`: neighborhood radius (critical to tune — use knee of k-distance graph)
-- `min_samples`: minimum points to form a core point (try 2 × n_features)
-
-**Strengths vs K-Means:**
-- Does NOT require k in advance
-- Finds arbitrarily shaped clusters
-- Explicitly identifies outliers (noise)
-- Handles clusters of varying density (somewhat)
-
-```python
-from sklearn.cluster import DBSCAN
-dbscan = DBSCAN(eps=0.5, min_samples=5)
-labels = dbscan.fit_predict(X)
-print(f'Clusters found: {len(set(labels)) - (1 if -1 in labels else 0)}')
-print(f'Outliers: {(labels == -1).sum()}')
-```
-
----
-
-### Block 5 — Algorithm Comparison (5 min)
-
-| Algorithm | Shape | Outliers | k needed | Scales |
-|-----------|-------|---------|---------|--------|
-| K-Means | Spherical | No | Yes | Well |
-| Hierarchical | Any | No | No (cut) | Poorly (O(n²)) |
-| DBSCAN | Any | Yes (labels them) | No | Moderate |
-
-**Rule of thumb:**
-- Unknown k, roughly spherical → K-Means + Elbow
-- Want to explore hierarchy → Agglomerative + Dendrogram
-- Irregular shapes, outliers expected → DBSCAN
+### Block 8 — Exercises (10 min) → `03-exercises/ch08_clustering_exercises.ipynb`
+Iris without species: Task 1 elbow · Task 2 silhouette + explain the disagreement · Task 3 Pipeline(StandardScaler, KMeans), petal plot with inverse-transformed centroids · Task 4 ARI vs species framed as *sanity check* (crosstab shows which species mix) · Bonus A DBSCAN (eps 0.5 vs 0.8) · Bonus B hierarchical.
 
 ---
 
 ## Instructor Notes
-
-- K-Means: animate the iterations if possible — it's very visual
-- The elbow method: warn students the "elbow" is often ambiguous
-- Silhouette scores: explain intuitively before the formula
-- DBSCAN: the eps parameter is the hardest to tune — show the k-distance graph trick
-- Comparison: emphasize that no algorithm is universally best
+- The uniform-noise slide is the most important one: K-Means never says "no structure".
+- Whenever species labels appear: "sanity check, not accuracy — clusters ≠ classes".
+- Segment names in the demo are computed from the profile table; cluster ids are arbitrary and change with the seed.
 
 ---
 
 ## Materials
-
-- Slides: `01-slides/ch08_slides.md`
+- Slides: `01-slides/ch08_slides.md` (images from `imagegen/ch08.py`: `kmeans_iterations.gif`, `kmeans_init.png`, `scaling_kmeans.png`, `elbow_silhouette.png`, `kmeans_uniform.png`, `kmeans_vs_dbscan.png`, `dendrogram.png`)
 - Examples: `02-examples/ch08_clustering_examples.ipynb`
-- Exercises: `03-exercises/ch08_clustering_exercises.ipynb`
-- Solutions: `04-solutions/ch08_clustering_solutions.ipynb`
+- Exercises / Solutions: `03-exercises/ch08_clustering_exercises.ipynb`, `04-solutions/ch08_clustering_solutions.ipynb`
+- Animation: `0-animations/01_kmeans_convergence.ipynb`

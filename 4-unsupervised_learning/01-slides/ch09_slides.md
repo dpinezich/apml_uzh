@@ -13,251 +13,192 @@ fonts:
 **Applied Machine Learning — Session 3, Chapter 3**
 
 <!--
-~50 min. 10 min exercises.
+~50 min total, planned ~45 min incl. demo + exercises.
+Blocks: curse of dimensionality (5) → PCA intuition + code (8) → PCA ≠ feature selection (3)
+→ how many components / two regimes (4) → PCA as preprocessing + leakage (4) → t-SNE (4)
+→ quiz (2) → live demo (5) → exercises (10).
+Kernbotschaft: PCA builds NEW axes (combinations of features) — it does not select features.
 -->
 
 ---
 
 # The Curse of Dimensionality
 
-As dimensions grow, data becomes increasingly **sparse**.
+<img src="./curse_dimensionality.gif" class="h-80 mx-auto" />
 
-```
-1D: ••••••••••  (10 points, close together)
-2D: • • •       (10 points, more spread out)
-              •   •
-    •    •      •
-100D: ????????   (10 points — vastly empty space)
-```
-
-**Consequences:**
-- Distance-based algorithms fail
-- Exponentially more data needed
-- Visualization impossible beyond 3D
-- Overfitting risk increases
+As dimensions grow, random points become **equally far from each other** → distance-based methods (KNN, K-Means, DBSCAN) lose their signal; more data is needed; overfitting risk grows; plotting is impossible beyond 3-D.
 
 <!--
-~7 min. As dimensions grow, data becomes increasingly sparse.
-Distance-based algorithms fail.
+~5 min. Left: histogram of pairwise distances gets NARROWER as d grows. Right: nearest ÷ farthest → 1.
+Ask: "What does 'nearest neighbour' mean when every neighbour is at the same distance?" → nothing.
+Counterpoint (manifold hypothesis): real high-D data usually lives near a low-D structure
+(face photos: millions of pixels, but a few dozen meaningful directions) — that is what PCA exploits.
 -->
 
 ---
 
-# The Blessing of Dimensionality
+# PCA: Find the Direction With the Most Spread
 
-**High-dimensional data often has low intrinsic dimensionality.**
+<img src="./pca_rotation.gif" class="h-80 mx-auto" />
 
-Example: millions of face photos  
-→ vary in expression, lighting, angle, identity  
-→ only ~50 "meaningful" dimensions
-
-**Dimensionality reduction finds this low-dimensional structure.**
+**PC1** = direction of maximum variance · **PC2** = max remaining variance, ⊥ PC1 · … keep the top ones, drop the rest.
 
 <!--
-The face example: billions of pixels but ~50 meaningful dimensions.
-High-dim data often has low intrinsic dimensionality.
+~8 min block (this + next slide). Narrate: we rotate a line, project the points, measure their spread.
+The line with the biggest spread is PC1 (89% here). Rotating a coordinate system loses nothing —
+DROPPING the low-variance axes is the compression. PCA never looks at y — it is unsupervised.
 -->
 
 ---
 
-# PCA: Principal Component Analysis
-
-**Find the directions of maximum variance.**
-
-![pca_directions](./pca_directions.png)
-
-- **PC1:** direction of most variance
-- **PC2:** direction of most remaining variance, ⊥ PC1
-- Keep top k components → compression!
-
-<!--
-~15 min for PCA block. Find directions of maximum variance.
-PC1 = most variance, PC2 = next most, perpendicular.
--->
-
----
-
-# PCA in Code
+# PCA in Code — Always in a Pipeline With Scaling
 
 ```python
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import make_pipeline
 
-# Always scale before PCA!
-pca_pipe = Pipeline([
-    ('scaler', StandardScaler()),
-    ('pca', PCA(n_components=2))
-])
+pca_pipe = make_pipeline(StandardScaler(), PCA(n_components=2))   # scale first — PCA is variance-based
+X_2d = pca_pipe.fit_transform(X)                                 # no y!
 
-X_2d = pca_pipe.fit_transform(X)
-
-# How much variance did we keep?
-ratios = pca_pipe['pca'].explained_variance_ratio_
-print(f'Variance explained: {ratios.sum():.1%}')
+pca = pca_pipe['pca']
+pca.explained_variance_ratio_        # e.g. [0.44, 0.19] → share of variance per component
+pca.explained_variance_ratio_.sum()  # how much of the total spread the 2-D picture keeps
+pca.components_                      # the directions: one row of weights per PC (next slide)
 ```
 
+Without scaling, the feature with the biggest numbers *is* PC1 (same lesson as K-Means).
+
 <!--
-MUST scale before PCA — it's scale-sensitive.
-Always use Pipeline with StandardScaler.
+Same Pipeline idiom as Ch02/04/08. Ask: "Which feature would dominate PC1 in the breast-cancer data
+if we skip the scaler?" → 'mean area' / 'worst area' (values in the hundreds/thousands).
 -->
 
 ---
 
-# Choosing the Number of Components
+# PCA ≠ Feature Selection
 
-**Scree plot:** plot cumulative explained variance vs. n_components
+![pca_loadings](./pca_loadings.png)
 
-![scree_plot](./scree_plot.png)
-
-```python
-pca_full = Pipeline([('s', StandardScaler()), ('p', PCA())])
-pca_full.fit(X)
-
-cumvar = pca_full['p'].explained_variance_ratio_.cumsum()
-plt.plot(cumvar)
-plt.axhline(0.95, color='red', linestyle='--', label='95% variance')
-plt.xlabel('Number of components')
-plt.ylabel('Cumulative explained variance')
-```
-
-**Choose:** fewest components that explain ≥ 95% variance
+Each PC is a **weighted sum of ALL original features** (`components_`). PCA does not pick "the best 2 columns" — it builds 2 new axes. Consequence: PCs are harder to interpret; if you need "which raw features matter", use feature selection / model importances instead.
 
 <!--
-Scree plot: let students choose the cutoff themselves.
-Observe that choices differ — there's no single right answer.
+~3 min. Kernbotschaft slide. Read PC1: nearly all weights positive & similar → "overall tumour size/irregularity".
+PC2 contrasts size features (negative) with texture/fractal features (positive).
+Ask: "Can I say 'the model uses radius'? " → no, it uses a mix.
 -->
 
 ---
 
-# PCA Visualization
+# How Many Components? — Two Different Jobs
 
-```python
-X_2d = pca_pipe.fit_transform(X)
+![pca_two_regimes](./pca_two_regimes.png)
 
-plt.scatter(X_2d[:, 0], X_2d[:, 1], c=y, cmap='tab10')
-plt.xlabel('PC1')
-plt.ylabel('PC2')
-plt.title('PCA: 2D projection of high-dimensional data')
-```
-
-**Even 2 components often reveal clear class structure!**
+**Visualise:** 2 PCs — the % is whatever it is (22 % here); judge the picture, not the number.  
+**Preprocess:** keep enough PCs for ≈ 90–95 % → `PCA(n_components=0.95)` (float = variance share; here 40 of 64).
 
 <!--
-Even 2 components often reveal class structure.
-Great for initial data exploration.
+~4 min. Code: cumvar = PCA().fit(X_scaled).explained_variance_ratio_.cumsum() → plot = scree/cumulative plot.
+Common misreading: "only 22% → PCA failed". No: 22% is what a 2-D shadow of 64-D data keeps;
+judge the picture by whether structure of interest is visible. See 0-material/pca_low_variance_microbiome.ipynb
+for a 500-feature example. Colours in the left panel are the true labels added AFTERWARDS — PCA never saw them.
 -->
 
 ---
 
-# PCA as Preprocessing
+# PCA as Preprocessing (Inside the Pipeline!)
 
 ```python
-from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
 
-pipeline = Pipeline([
-    ('scaler', StandardScaler()),
-    ('pca', PCA(n_components=0.95)),  # float = keep 95% variance
-    ('clf', RandomForestClassifier())
-])
-
-pipeline.fit(X_train, y_train)
-print('Components used:', pipeline['pca'].n_components_)
-print('Accuracy:', pipeline.score(X_test, y_test))
+pipe = make_pipeline(StandardScaler(), PCA(n_components=0.95),
+                     RandomForestClassifier(random_state=42))
+scores = cross_val_score(pipe, X, y, cv=5)          # scaler+PCA re-fitted on each training fold
+pipe.fit(X_train, y_train); pipe['pca'].n_components_   # how many PCs were kept
 ```
 
+- ✅ PCA is fitted **only on the training part** of each fold → no leakage (same rule as imputation/scaling in Ch02)
+- Helps when features are many & correlated, or for speed/denoising; a tree model on 30 clean features often does **not** improve — always compare with the no-PCA pipeline and a **DummyClassifier baseline**
+
 <!--
-~5 min. Float parameter = keep 95% variance.
-Can speed up training and reduce overfitting.
+~4 min. Fitting PCA on ALL data before splitting = leakage (the components have seen the test rows).
+Expected result on digits/breast-cancer: accuracy roughly equal or slightly LOWER with PCA, fewer features.
+Say "trade-off", not "free lunch". Cross-validation appears again here — spiral from Ch04/06.
 -->
 
 ---
 
-# t-SNE: Non-linear Visualization
+# t-SNE: Non-Linear Visualisation
 
-**t-Distributed Stochastic Neighbor Embedding**
-
-**Key difference from PCA:**
-- Non-linear: reveals curved structure
-- Preserves **local** similarity
-- Great for visualization — **not for preprocessing**
+![pca_vs_tsne](./pca_vs_tsne.png)
 
 ```python
 from sklearn.manifold import TSNE
-
-X_tsne = TSNE(
-    n_components=2,
-    perplexity=30,    # ~5-50, controls local vs global
-    random_state=42
-).fit_transform(X_scaled)
+X_tsne = TSNE(n_components=2, perplexity=30, random_state=42).fit_transform(X_scaled)
 ```
 
 <!--
-~8 min. Non-linear, preserves local structure.
-Great for visualization — NEVER for preprocessing.
+~4 min (this + next slide). t-SNE keeps NEIGHBOURS: points close in 64-D stay close in 2-D.
+It does not keep distances between groups or group sizes. Perplexity (~5–50) = "how many neighbours matter";
+change it and the picture changes. Barnes-Hut version is O(n log n) — fine for ~10k points, slow beyond.
 -->
 
 ---
 
-# t-SNE: Common Mistake
+# t-SNE: What You Can and Cannot Conclude
 
-> "This t-SNE shows 5 clusters → the data has 5 natural groups."
+✅ "These samples sit together → they are similar in the original space"  
+✅ "This island looks isolated → maybe a distinct group — verify with clustering/domain knowledge"
 
-**Wrong!** t-SNE cluster size and distance are NOT meaningful.
+❌ "Cluster A is 3× farther from B than from C" — inter-cluster distances are **not** meaningful  
+❌ "The plot shows 5 clusters → the data has 5 groups" — perplexity and seed change the picture  
+❌ Using t-SNE coordinates as model features: **there is no `.transform()`** for new data → cannot go into a train/test pipeline
 
-✅ **What t-SNE does well:**
-- Shows local neighborhood structure
-- Reveals which samples are similar to each other
-
-❌ **What t-SNE does NOT show:**
-- Global distances between clusters
-- The actual number of clusters (perplexity changes this!)
-- Anything useful for further ML steps
-
-> **Use t-SNE for exploration only — never for preprocessing.**
+Different `random_state` → different picture. **Visualisation only.** (UMAP: similar idea, faster, has `transform`, `pip install umap-learn`.)
 
 <!--
-CRITICAL: 't-SNE cluster sizes and distances are NOT meaningful.'
-Address this head-on. Students WILL overinterpret t-SNE.
+Students WILL over-interpret t-SNE. The `.transform()` argument is the practical killer: PCA can map new
+rows into the same space, t-SNE cannot. Ask: "Would you report a t-SNE silhouette score?" → no (it inflates it by design).
 -->
 
 ---
 
-# t-SNE: What You CAN and CANNOT Conclude
+# Quick Check
 
-✅ **Can:**
-- "These samples cluster together in t-SNE → probably similar"
-- "This group looks isolated → might be a distinct class"
+**Q1.** Your 2-D PCA of a 500-feature dataset shows 18 % explained variance, but the two patient groups separate nicely. Good or bad?
 
-❌ **Cannot:**
-- "Cluster A is 3× farther from B than C" — distances not meaningful
-- "This t-SNE has 5 clusters → data has 5 groups" — perplexity matters
+<v-click>
 
-> **Never over-interpret t-SNE plots!**
+→ Fine for a picture: 18 % is normal for 500 features; judge the plot by the structure you see. For *preprocessing* you would keep many more PCs (≈90–95 %).
+
+</v-click>
+
+**Q2.** A colleague fits PCA on the full dataset, then splits train/test and reports 97 % accuracy. What is the problem?
+
+<v-click>
+
+→ Leakage: the components were computed using test rows. Put PCA in the Pipeline so it is fitted per training fold. (Often a small effect for PCA — but the same rule as scaling/imputation.)
+
+</v-click>
 
 <!--
-Can: 'these samples are similar.' Cannot: 'cluster A is farther from B.'
-Perplexity changes the picture entirely.
+~2 min. Both questions are the exercise's Task 1/3 in disguise.
 -->
 
 ---
 
-# PCA vs t-SNE vs UMAP
+# Live Demo
 
-| | PCA | t-SNE | UMAP |
-|-|:---:|:-----:|:----:|
-| Linear | ✅ | ❌ | ❌ |
-| Use for ML prep | ✅ | ❌ | ⚠️ |
-| Use for visualization | ✅ | ✅ | ✅ |
-| Speed | Fast | Slow | Medium |
-| Global structure | ✅ | ❌ | ⚠️ |
-| Sklearn | ✅ | ✅ | pip install |
+→ Open `02-examples/ch09_dimensionality_reduction_examples.ipynb` (~5 min)
 
-**Default choice:** PCA for preprocessing, t-SNE/UMAP for visualization.
+1. Digits: scree plot → how many PCs for 80/90/95 %?
+2. 2-D PCA vs t-SNE side by side
+3. PCA inside a classification pipeline (with baseline) — does it help?
 
 <!--
-~5 min. Default: PCA for preprocessing, t-SNE/UMAP for visualization only.
+Keep short — the slides already showed the pictures; the point is the CODE pattern.
+Section 3: expect a small drop with PCA (≈0.98 → 0.965, 40 of 64 features); phrase it as trade-off, read the numbers live.
 -->
 
 ---
@@ -266,29 +207,28 @@ Perplexity changes the picture entirely.
 
 → Open `03-exercises/ch09_dimensionality_reduction_exercises.ipynb`
 
-**Task:** Apply PCA to a high-dimensional dataset.  
-Visualize, choose components, use as preprocessing.
+**Task (breast cancer, 30 features):** scree plot → 2-D picture → PCA inside a classifier pipeline vs. no-PCA vs. dummy baseline.  
+Bonus: t-SNE comparison · read the PC1 loadings
 
 ~10 minutes
 
 <!--
-~10 min. Apply PCA to high-dimensional dataset.
-Visualize, choose components, use as preprocessing.
+~10 min. Positive class: we flip the sklearn target so malignant = 1 (as in Ch05/06) — point it out.
+Expected: 10 PCs for 95 %; RF ≈ 0.95–0.96 with or without PCA; dummy ≈ 0.63.
 -->
 
 ---
 
 # Key Takeaways
 
-- High dimensions → sparse data, distance fails, overfitting
-- PCA: linear, preserves variance, for preprocessing AND visualization
-- Always StandardScale before PCA
-- Choose components that explain ≥ 95% variance
-- t-SNE: non-linear, local structure, visualization ONLY
-- Never interpret t-SNE distances as meaningful
+- High-D → distances lose meaning → reduce dimensions
+- PCA: **new axes** = weighted combinations of all features, ordered by variance; scale first; unsupervised
+- 2 PCs for pictures (whatever %); ≈ 95 % for preprocessing — inside the Pipeline (no leakage)
+- PCA ≠ feature selection
+- t-SNE: neighbours only, no distances, no `.transform()` → visualisation only
 
 <!--
-Transition: 'What if the machine learns by trial and error — like us? -> Reinforcement Learning.'
+Transition: "What if the machine learns by trial and error — like us? → Reinforcement Learning."
 -->
 
 ---
