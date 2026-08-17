@@ -1,186 +1,156 @@
 # Chapter 04 — Regression Models
 
 **Session:** 2 | **Chapter:** 1 of 3 | **Duration:** 50 min  
-**Audience:** Students who completed Session 1 (Ch01-03)  
-**Format:** Slides + Examples + Exercises
+**Audience:** Students who completed Session 1 (Ch01-03: data prep, train/test split, over/underfitting, KNN, CV as a concept)  
+**Format:** Slides + live demo notebook (interleaved) + exercises
 
 ---
 
 ## Learning Objectives
 
 By the end of this chapter, students will be able to:
-- Apply linear regression and understand what it learns
-- Understand polynomial regression as an extension
-- Apply Ridge and Lasso regularization and explain why they help
-- Use Decision Tree and Random Forest regressors
-- Choose an appropriate model for a regression task
+- Start every regression task with a `DummyRegressor` baseline and know what R² = 0 means
+- Apply linear regression and interpret its coefficients (units!)
+- Explain training as loss minimization (MSE) and gradient descent as "step downhill" (intuition only)
+- Recognize model complexity (polynomial degree, 1/α, tree depth) as a dial and choose it with **cross-validation**, not training error
+- Use `cross_val_score` with `KFold(shuffle=True)` and read mean ± std
+- Apply Ridge and Lasso, explain shrinkage vs. selection, and choose α with `RidgeCV` / `GridSearchCV`
+- Use Decision Tree and Random Forest regressors and read feature importances
 
 ---
 
-## Timing Breakdown
+## Timing Breakdown (sum 45 min → ~5 min buffer)
 
 | Block | Content | Time |
 |-------|---------|------|
-| 1 | Regression: The Task | 5 min |
-| 2 | Linear Regression | 10 min |
-| 3 | Polynomial Regression | 7 min |
-| 4 | Regularization: Ridge & Lasso | 8 min |
-| 5 | Tree-based Regression | 5 min |
-| 6 | Live example | 5 min |
-| 7 | **Exercises** | **10 min** |
-| **Total** | | **50 min** |
+| 1 | Regression: the task + baseline (`DummyRegressor`) | 5 min |
+| 2 | Linear regression, reading coefficients, MSE loss, gradient-descent hook (GIF) | 8 min |
+| 3 | Overfitting revisited: polynomial degree sweep (GIF) → CV in practice (spiral from Ch03) | 7 min |
+| 4 | Regularization: Ridge & Lasso, coefficient paths, choosing α with RidgeCV / GridSearchCV | 7 min |
+| 5 | Tree & Random Forest regression, model-choice table | 5 min |
+| 6 | Quick-check quiz | 2 min |
+| 7 | **Exercises** (core) | **10 min** |
+| 8 | Debrief | 1 min |
+| **Total** | | **45 min** |
 
-> **Exercise time: 10 minutes**
+The demo notebook (`02-examples/ch04_regression_examples.ipynb`, ~12 min if run end-to-end) is **interleaved**: §1 during block 3, §2–6 during blocks 1–5, §7–8 during block 5.
 
 ---
 
 ## Content Outline
 
-### Block 1 — Regression: The Task (5 min)
+### Block 1 — Regression: The Task + Baseline (5 min)
 
-**Goal:** Predict a continuous numerical output.
+**Goal:** predict a continuous number (house price, energy demand, recovery time).
 
-**Examples:**
-- Predict house price from size, location, rooms
-- Predict temperature from historical weather data
-- Predict exam score from study hours
+**Metrics (preview, Ch06 details):** MAE (average absolute error, units of y), RMSE (large errors weigh more), R² (share of variance explained; 1 = perfect, 0 = predicting the mean).
 
-**Key metric (preview — details in Ch06):**
-- Mean Absolute Error (MAE): average absolute distance between prediction and truth
-- Root Mean Squared Error (RMSE): penalizes large errors more heavily
-- R² Score: fraction of variance explained (1.0 = perfect)
-
----
-
-### Block 2 — Linear Regression (10 min)
-
-**The simplest and most interpretable regression model.**
-
-**Model:** ŷ = β₀ + β₁x₁ + β₂x₂ + ... + βₙxₙ
-
-- β₀ = intercept (bias)
-- β₁...βₙ = coefficients (weights)
-- Each βᵢ tells us: "if xᵢ increases by 1, ŷ changes by βᵢ"
-
-**Learning:** Find the βs that minimize the sum of squared residuals (Ordinary Least Squares).
-
-**Assumptions:**
-- Linear relationship between features and target
-- No extreme multicollinearity
-- Residuals roughly normally distributed
-
-**Strengths:** Interpretable, fast, strong baseline  
-**Weaknesses:** Assumes linearity, sensitive to outliers
-
+**Baseline first:**
 ```python
-from sklearn.linear_model import LinearRegression
-model = LinearRegression()
-model.fit(X_train, y_train)
-print(model.coef_)       # feature coefficients
-print(model.intercept_)  # bias term
+from sklearn.dummy import DummyRegressor
+DummyRegressor(strategy='mean')      # R² = 0 by definition — every real model must beat it
 ```
 
 ---
 
-### Block 3 — Polynomial Regression (7 min)
+### Block 2 — Linear Regression, Loss, Gradient Descent (8 min)
 
-**Problem:** What if the relationship is non-linear?
-
-**Solution:** Add polynomial features (x², x³, x₁·x₂, ...) and then fit a linear model on them.
+**Model:** ŷ = β₀ + β₁x₁ + … + βₙxₙ  
+**Learning:** minimize the MSE loss (ordinary least squares, closed form).
 
 ```python
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.pipeline import Pipeline
-
-poly_pipeline = Pipeline([
-    ('poly', PolynomialFeatures(degree=2)),
-    ('linear', LinearRegression())
-])
+model = LinearRegression().fit(X_train, y_train)
+model.coef_, model.intercept_
 ```
 
-**Warning:** High degree → overfitting. Polynomial features grow fast (degree 3 with 5 features → many new columns).
+**Reading β:** target in k€, `area_sqm` β = 3.5 → each extra m² adds 3.5 k€ = 3 500 €, all else equal.  
+Raw β depends on the feature's unit → standardize (`StandardScaler` in a pipeline) if you want to compare features.  
+Scaling does **not** change OLS predictions; it matters for interpretability and for Ridge/Lasso.
 
-**Rule of thumb:** Degree 2 is often enough. Always cross-validate.
+**Loss function (moved here from Ch03):** MSE(β) = (1/n) Σ (yᵢ − ŷᵢ)². Training = finding the β at the bottom of the bowl.  
+**Gradient descent hook (GIF `gradient_descent_steps.gif`):** w ← w − η ∇L(w). Linear regression is closed-form; logistic regression, boosting, neural nets iterate. Full animation: `0-animations/03_gradient_descent.ipynb`.
 
 ---
 
-### Block 4 — Regularization: Ridge & Lasso (8 min)
-
-**Problem:** Linear models with many features can overfit.
-
-**Solution:** Add a penalty term to the loss function that discourages large coefficients.
-
-**Ridge (L2 regularization):**
-- Adds penalty: α × Σβᵢ²
-- Shrinks all coefficients toward zero (but rarely to exactly zero)
-- Good when all features are somewhat relevant
-
-**Lasso (L1 regularization):**
-- Adds penalty: α × Σ|βᵢ|
-- Can shrink coefficients to *exactly* zero → automatic feature selection
-- Good when you suspect many irrelevant features
-
-**α (alpha):** The regularization strength. Larger α → more shrinkage.
+### Block 3 — Overfitting Revisited → CV in Practice (7 min)
 
 ```python
-from sklearn.linear_model import Ridge, Lasso
-ridge = Ridge(alpha=1.0)
-lasso = Lasso(alpha=0.1)
+make_pipeline(StandardScaler(), PolynomialFeatures(degree=3), LinearRegression())
 ```
+Scale **before** powering (numerical stability at high degree).
 
-**ElasticNet:** Combines Ridge and Lasso (not in exercises, but worth mentioning).
+**GIF `poly_degree_sweep.gif`:** degree 1 → 15 on the sine data; train MSE falls monotonically, 5-fold CV MSE has a minimum then explodes.  
+Message: *train error always says "more complex"; CV error tells you where to stop.* Full animation: `0-animations/05_polynomial_overfitting.ipynb`.
+
+```python
+cv = KFold(n_splits=5, shuffle=True, random_state=42)     # shuffle unless time series
+scores = cross_val_score(pipeline, X, y, cv=cv, scoring='r2')
+scores.mean(), scores.std()
+```
+Rules: pass the **pipeline** (scaler re-fit inside each fold → no leakage, Ch02 callback); compare mean ± std — a difference smaller than the std is noise.
+
+---
+
+### Block 4 — Regularization: Ridge & Lasso (7 min)
+
+Penalty added to the loss: Ridge α Σβ² (shrinks smoothly, never exactly 0), Lasso α Σ|β| (sets some β = 0 → feature selection). Needs scaled features.  
+Image `ridge_lasso_paths.png`: coefficient paths on the diabetes data as α grows.  
+α → 0: plain OLS; α → ∞: all β = 0 = the baseline.
+
+**Choosing α — show it, don't just say it:**
+```python
+make_pipeline(StandardScaler(), RidgeCV(alphas=np.logspace(-3, 3, 30), cv=5))
+GridSearchCV(RandomForestRegressor(), {'max_depth': [3, 5, 10]}, cv=5)
+```
+Never tune on the test set.
 
 ---
 
 ### Block 5 — Tree-based Regression (5 min)
 
-**Decision Tree Regressor:**
-- Splits the feature space into rectangular regions
-- Predicts the mean of training samples in each region
-- No need for feature scaling
-- Can capture non-linear relationships and interactions
-- Prone to overfitting → needs pruning (`max_depth` parameter)
-
-**Random Forest Regressor:**
-- Ensemble of decision trees
-- Each tree trained on a random subset of data and features
-- Final prediction = average of all trees
-- Much more robust than a single tree
-- Key hyperparameter: `n_estimators` (number of trees)
-
-```python
-from sklearn.ensemble import RandomForestRegressor
-rf = RandomForestRegressor(n_estimators=100, max_depth=5, random_state=42)
-```
+Decision tree: split into boxes, predict the mean per box; no scaling; `max_depth` = complexity dial (same role as degree / 1/α).  
+Random forest: many trees on random rows + features, average → variance drops; `feature_importances_` (model-specific, not causal).  
+Model-choice table (interpretable / non-linear / scaling / outliers) — corrected: OLS needs no scaling for predictions; all squared-error models are hurt by outliers in y.
 
 ---
 
-### Block 6 — Live Example (5 min)
+### Block 6 — Quick Check (2 min)
 
-→ See `02-examples/ch04_regression_examples.ipynb`
-
-Show: house price prediction with all 4 models, comparing their predictions visually.
+Three questions (train R² 0.99 → ask for CV R²; RidgeCV picks the smallest α → regularization does not help; 0.481 ± 0.085 vs 0.478 ± 0.083 → not distinguishable). Answers via click.
 
 ---
 
-### Block 7 — Exercises (10 min)
+### Block 7 — Exercises (10 min core + bonus)
 
-→ See `03-exercises/ch04_regression_exercises.ipynb`
+→ `03-exercises/ch04_regression_exercises.ipynb` — diabetes progression (442 × 10). A `score()` helper is given.
+
+| Task | Content | Time |
+|------|---------|------|
+| 1 | `DummyRegressor` + linear-regression pipeline | 3 min |
+| 2 | Ridge vs Lasso (α = 1), which features does Lasso drop? | 3 min |
+| 3 | Random forest + feature importances, compare with linear β | 4 min |
+| Bonus A | 5-fold CV comparison (`KFold(shuffle=True)`) — result: linear ≈ RF, all within noise | |
+| Bonus B | `RidgeCV` picks α | |
+| Bonus C | predicted-vs-actual plot | |
+
+Expected outcome / debrief: on this small, near-linear dataset the forest does **not** beat linear regression; CV std (≈0.08) dwarfs the differences.
 
 ---
 
 ## Instructor Notes
 
-- Linear regression coefficients: make students interpret them in plain language
-- Regularization: the "penalty" analogy — you want simple explanations, not overly complex ones
-- Random Forest: emphasize it's a "crowd wisdom" model — many weak learners together
-- Feature importance from Random Forest is a nice bonus to show
+- Ask students to interpret one coefficient in plain language, with units — the 3.5 vs 3 500 confusion is real.
+- The demo's Ridge sweep uses α up to 10⁵ on 16k rows on purpose: with α = 1 nothing visible happens — regularization matters when data is scarce (exercise: 353 rows).
+- Spiral: overfitting (Ch03, pictures) → quantified here with CV → the same complexity dial returns in Ch05 (k, depth) and Ch06 (which metric to optimize).
+- Everything printed in the notebooks is computed from variables — no hard-coded "model X wins" text; safe if numbers shift.
+- Emphasize the habit: baseline row first in every results table.
 
 ---
 
 ## Materials
 
-- Slides: `01-slides/ch04_slides.md`
+- Slides: `01-slides/ch04_slides.md` (images: `baseline_regression.png`, `linear_reg_fit.png`, `gradient_descent_steps.gif`, `poly_degree_sweep.gif`, `ridge_lasso_paths.png`; generated by `imagegen/ch04.py`)
 - Examples: `02-examples/ch04_regression_examples.ipynb`
 - Exercises: `03-exercises/ch04_regression_exercises.ipynb`
 - Solutions: `04-solutions/ch04_regression_solutions.ipynb`
+- Animations: `0-animations/03_gradient_descent.ipynb`, `0-animations/05_polynomial_overfitting.ipynb`

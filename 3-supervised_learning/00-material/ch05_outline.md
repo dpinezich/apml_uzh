@@ -1,197 +1,110 @@
 # Chapter 05 — Classification Models
 
 **Session:** 2 | **Chapter:** 2 of 3 | **Duration:** 50 min  
-**Audience:** Students who completed Ch04  
-**Format:** Slides + Examples + Exercises
+**Audience:** Students who completed Ch04 (and KNN in Ch03)  
+**Format:** Slides + live demo notebook (interleaved) + exercises
 
 ---
 
 ## Learning Objectives
 
 By the end of this chapter, students will be able to:
-- Distinguish between binary and multi-class classification
-- Apply Logistic Regression, KNN, Decision Tree, Random Forest, and SVM
-- Visualize and interpret decision boundaries
-- Choose a classification model based on the problem context
-- Handle multi-class classification with sklearn
+- Distinguish binary from multi-class classification and hard labels from probabilities
+- Start with a `DummyClassifier` (majority-class) baseline
+- Apply Logistic Regression, KNN (recap), Decision Trees and Random Forests with correct pipelines (scaling where needed)
+- Recognize tree depth / k as the model-complexity dial (spiral from Ch03/Ch04)
+- Visualize and interpret decision boundaries (`DecisionBoundaryDisplay`)
+- Read a confusion matrix and a `classification_report` (rows = truth, positive class = what you look for), and **check the class encoding** (breast cancer target flipped: malignant = 1)
+
+SVM is an appendix slide + bonus task (cut from core for time).
 
 ---
 
-## Timing Breakdown
+## Timing Breakdown (sum 44 min → ~6 min buffer)
 
 | Block | Content | Time |
 |-------|---------|------|
-| 1 | Classification: The Task | 5 min |
-| 2 | Logistic Regression | 8 min |
-| 3 | K-Nearest Neighbors | 7 min |
-| 4 | Decision Trees & Random Forests | 8 min |
-| 5 | Support Vector Machines | 5 min |
-| 6 | Decision Boundaries (visualization) | 5 min |
-| 7 | **Exercises** | **12 min** |
-| **Total** | | **50 min** |
+| 1 | Classification: the task, predict vs predict_proba, majority baseline | 5 min |
+| 2 | Logistic Regression + sigmoid | 6 min |
+| 3 | KNN — 2-min recap (Ch03) | 2 min |
+| 4 | Decision Trees, depth-sweep GIF, Random Forest | 7 min |
+| 5 | Decision boundaries (demo, `DecisionBoundaryDisplay`) | 3 min |
+| 6 | Reading a confusion matrix + `classification_report` (mini-slide before the exercise) | 4 min |
+| 7 | Quick-check quiz | 2 min |
+| 8 | **Exercises** (core) | **12 min** |
+| 9 | Debrief | 1 min |
+| — | Appendix: SVM (only if ahead of time) | (2 min) |
+| **Total** | | **42–44 min** |
 
-> **Exercise time: 12 minutes**
+Demo notebook `02-examples/ch05_classification_examples.ipynb` (~12 min end-to-end) is interleaved: §1–2 in block 1, §3 in block 6, §4 in block 5, §5–6 in block 4.
 
 ---
 
 ## Content Outline
 
-### Block 1 — Classification: The Task (5 min)
+### Block 1 — The Task + Baseline (5 min)
 
-**Goal:** Predict a discrete category label.
+Binary vs multi-class (multi-label: mention only). `predict()` → label, `predict_proba()` → probabilities per class (rows sum to 1); the probability is what lets us move the threshold in Ch06.  
+Baseline: `DummyClassifier(strategy='most_frequent')` — 63 % on breast cancer by always saying "benign". Plants the accuracy-paradox seed.
 
-**Binary Classification:** Two classes (yes/no, spam/ham, disease/healthy)
-**Multi-class Classification:** More than two classes (iris species, hand-written digit, language)
-**Multi-label Classification:** Multiple labels at once (not covered here)
+**Positive class check (first use of breast cancer):** sklearn encodes 0 = malignant, 1 = benign. We flip once (`y = 1 - target`) so that **1 = malignant = the class we look for**; precision/recall/ROC default to `pos_label=1`.
 
-**What models output:**
-- Hard prediction: the class label (0, 1, 2, ...)
-- Probability: P(y=1 | X) — often more useful
+### Block 2 — Logistic Regression (6 min)
 
-**Key question:** Which class is the model most confident about?
+P(y=1|x) = σ(β₀ + β·x), σ(z) = 1/(1+e⁻ᶻ); σ(0) = 0.5 → linear decision boundary. Trained by gradient descent on cross-entropy (mention only). Pipeline with `StandardScaler`, `max_iter=1000`. Multi-class handled natively (softmax).
 
----
+### Block 3 — KNN recap (2 min)
 
-### Block 2 — Logistic Regression (8 min)
+Majority vote among k nearest; needs scaling; k = complexity dial (k = 1 overfits, huge k → majority class); choose k by CV. Details were in Ch03.
 
-**Despite the name: this is a classification model.**
+### Block 4 — Trees & Forests (7 min)
 
-**Idea:** Model the *probability* that a sample belongs to class 1.
+Tree = yes/no questions chosen for purity (Gini); `plot_tree`; fully interpretable; `random_state` even for a single tree.  
+**GIF `tree_depth_sweep.gif`:** depth 1 → 12 on make_moons; train acc → 1.0, test acc peaks around 5–6, boundary turns to confetti — third appearance of the complexity dial.  
+Random Forest: many deep trees on random rows + features, majority vote; low variance; feature importances (model-specific).
 
-```
-P(y=1 | X) = sigmoid(β₀ + β₁x₁ + ... + βₙxₙ)
-```
+### Block 5 — Decision Boundaries (3 min)
 
-**The sigmoid function:** Maps any real number to (0, 1)
-- σ(z) = 1 / (1 + e^-z)
-- σ(0) = 0.5 → decision boundary
-- σ(+∞) = 1, σ(-∞) = 0
+Image `decision_boundaries_2d.png` / demo §4 with `DecisionBoundaryDisplay.from_estimator` on two same-scale features (worst radius × worst texture): linear (LogReg) · wiggly (KNN) · axis-parallel boxes (tree) · smoothed boxes (forest). More complex ≠ better.
 
-**Decision:** If P(y=1) > 0.5 → predict class 1, else class 0
+### Block 6 — Reading a Confusion Matrix (4 min)
 
-**Multi-class:** Use One-vs-Rest (OvR) or Softmax (native multi-class)
+Image `confusion_matrix_card.png`: rows = truth, columns = prediction, positive class = 1 = what you look for; FN = the missed case. `ConfusionMatrixDisplay.from_predictions`, `classification_report` = precision / recall / F1 per class (multi-class: one row per class, off-diagonal cells show confusions). Ch06 deepens.
 
-**Strengths:** Fast, interpretable, outputs probabilities, good baseline  
-**Weaknesses:** Assumes linear decision boundary
+### Block 7 — Quick Check (2 min)
 
-```python
-from sklearn.linear_model import LogisticRegression
-model = LogisticRegression(max_iter=1000)
-proba = model.predict_proba(X_test)  # probabilities!
-```
+FN cell for a missed cancer; why scaling fixes KNN; which model for a regulator (tree / logistic).
 
----
+### Block 8 — Exercises (12 min core + bonus)
 
-### Block 3 — K-Nearest Neighbors (7 min)
+→ `03-exercises/ch05_classification_exercises.ipynb` — `load_wine`: 178 wines, 13 chemical features, **3 grape cultivars** (multi-class).
 
-**The simplest possible idea:** "Look at the k most similar training examples. Predict the majority class."
+| Task | Content | Time |
+|------|---------|------|
+| 1 | `DummyClassifier` + LogReg pipeline | 3 min |
+| 2 | KNN pipeline (k = 7) — why does KNN need the scaler and the forest not? | 2 min |
+| 3 | Random forest + `classification_report` | 4 min |
+| 4 | Confusion matrix of a deliberately weak depth-2 tree (the forest is perfect on 36 test wines → boring matrix) | 3 min |
+| Bonus A | 5-fold CV comparison (StratifiedKFold by default for classifiers) — most consistent model? | |
+| Bonus B | SVM (RBF) added to the comparison | |
 
-**Algorithm:**
-1. For a new sample x:
-2. Find the k training samples closest to x (Euclidean distance)
-3. Predict the most common class among those k neighbors
-
-**Hyperparameter k:**
-- k=1 → overfitting (every training point is its own neighbor)
-- Large k → smoother boundaries, risk of underfitting
-- Rule of thumb: try k = √n (n = number of training samples)
-
-**Important:** KNN requires feature scaling! Distance is scale-sensitive.
-
-**Strengths:** Simple, no training phase, naturally multi-class  
-**Weaknesses:** Slow at prediction time for large datasets, sensitive to irrelevant features
-
-```python
-from sklearn.neighbors import KNeighborsClassifier
-knn = KNeighborsClassifier(n_neighbors=5)
-```
-
----
-
-### Block 4 — Decision Trees & Random Forests (8 min)
-
-**Decision Tree Classifier:**
-- Learns a hierarchy of yes/no questions about features
-- Each internal node: a feature threshold test
-- Each leaf node: a class prediction
-- Splits chosen to maximize class purity (Gini impurity or Information Gain)
-
-**Reading a decision tree:** Each path from root to leaf = a rule
-
-**Random Forest Classifier:**
-- Ensemble of decision trees
-- Randomness in: which samples (bagging) and which features each tree sees
-- Final prediction: majority vote of all trees
-- Robust, handles mixed feature types, gives feature importances
-- Almost always better than a single decision tree
-
-```python
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-
-dt = DecisionTreeClassifier(max_depth=3)
-rf = RandomForestClassifier(n_estimators=100, random_state=42)
-```
-
----
-
-### Block 5 — Support Vector Machines (5 min)
-
-**Idea:** Find the hyperplane that maximally separates the two classes.
-
-**The margin:** Distance between the hyperplane and the nearest data points (support vectors).
-SVM maximizes this margin.
-
-**Kernels (key concept):**
-- Linear kernel: linear boundary
-- RBF (Radial Basis Function) kernel: non-linear, circular boundaries
-- Polynomial kernel
-
-**C parameter:** Controls the trade-off between a wide margin and classifying all training points correctly.
-
-**When to use:** Works well in high-dimensional spaces, effective with clear margin of separation.
-
-```python
-from sklearn.svm import SVC
-svm = SVC(kernel='rbf', C=1.0, probability=True)
-```
-
----
-
-### Block 6 — Decision Boundaries (5 min)
-
-Visualizing what each model actually learned:
-- Logistic Regression → linear boundary
-- KNN → irregular, local boundary
-- Decision Tree → rectangular regions
-- Random Forest → smoother than DT, still non-linear
-- SVM (RBF) → smooth, curved boundary
-
-**Key insight:** More complex boundaries are not always better — they can overfit.
-
----
-
-### Block 7 — Exercises (12 min)
-
-→ See `03-exercises/ch05_classification_exercises.ipynb`
-
-Task: Classify breast cancer tumors as malignant/benign using multiple models and compare results.
+Debrief: which cultivars does the tree confuse (class_1 → class_0)? Why is the CV std large (36 wines per fold → 1 wine = 2.8 %)?
 
 ---
 
 ## Instructor Notes
 
-- Logistic Regression: the name confuses students — address it head-on
-- KNN: the "vote among your neighbors" analogy is very intuitive
-- Decision boundaries visualization is very powerful — run it live
-- Random Forest feature importance: great for building intuition about "what the model uses"
-- SVM: keep it at an intuitive level — the math is complex
+- Address the "logistic *regression*" name head-on.
+- KNN is a recap — do not re-teach; Ch03 owns it (incl. animation 02).
+- All solution text is computed from variables (e.g. "most frequent confusion: …" is derived from the matrix; if the matrix is perfect it says so).
+- SVM: appendix only — show if ahead of schedule or on request. Bonus B keeps it available.
+- Spiral: complexity dial (Ch03 k → Ch04 degree/α → Ch05 depth) → Ch06 asks *which metric* to optimize.
 
 ---
 
 ## Materials
 
-- Slides: `01-slides/ch05_slides.md`
+- Slides: `01-slides/ch05_slides.md` (images: `sigmoid_curve.png`, `tree_depth_sweep.gif`, `decision_boundaries_2d.png`, `confusion_matrix_card.png`, `svm_margin.png`; generated by `imagegen/ch05.py`)
 - Examples: `02-examples/ch05_classification_examples.ipynb`
 - Exercises: `03-exercises/ch05_classification_exercises.ipynb`
 - Solutions: `04-solutions/ch05_classification_solutions.ipynb`
