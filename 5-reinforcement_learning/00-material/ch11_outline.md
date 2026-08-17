@@ -1,19 +1,19 @@
-# Chapter 11 — Basic RL Algorithms
+# Chapter 11 — Q-Learning
 
-**Session:** 4 | **Chapter:** 2 of 3 | **Duration:** 50 min  
-**Format:** Slides + Examples + Exercises
+**Session:** 4 | **Chapter:** 2 of 3 | **Duration:** ~45 min (blocks ~34 min + 10 min exercise)  
+**Format:** Slides + live demo (FrozenLake, Gymnasium) + exercise (GridWorld)
 
 ---
 
 ## Learning Objectives
 
 By the end of this chapter, students will be able to:
-- Implement the Q-Learning algorithm from scratch
-- Explain the Bellman equation intuitively
-- Use the ε-greedy strategy for exploration
-- Train a Q-Learning agent on FrozenLake (Gymnasium)
-- Visualize the Q-table and training progress
-- Understand the difference between model-free and model-based RL
+- Implement tabular Q-learning from scratch: Q-table, ε-greedy, TD update, training loop
+- Explain the TD update term by term (target, TD error, α) and how value flows backwards from the reward (credit assignment)
+- Explain the roles of α, γ, ε and their typical values; know why a large α fails in stochastic environments
+- Train and evaluate an agent on FrozenLake (deterministic and slippery) and read a Q-table / policy plot
+- Distinguish training success rate from the success rate of the greedy policy
+- (Further reading) name SARSA, DQN, policy gradient, model-based RL
 
 ---
 
@@ -21,164 +21,72 @@ By the end of this chapter, students will be able to:
 
 | Block | Content | Time |
 |-------|---------|------|
-| 1 | Model-Free vs Model-Based RL | 5 min |
-| 2 | Q-Learning: The Algorithm | 15 min |
-| 3 | SARSA: On-Policy Alternative | 5 min |
-| 4 | Policy Gradient (conceptual) | 5 min |
-| 5 | Live Example: FrozenLake | 10 min |
-| 6 | **Exercises** | **10 min** |
-| **Total** | | **50 min** |
-
-> **Exercise time: 10 minutes**
+| 1 | From Ch10 to Ch11 + Q-table GIF + the Q-table | 5 min |
+| 2 | TD update (idea) + worked step | 8 min |
+| 3 | Full algorithm + hyperparameters | 5 min |
+| 4 | FrozenLake: deterministic vs slippery · why RL is hard | 5 min |
+| 5 | Quick check (quiz) | 2 min |
+| 6 | Live demo: FrozenLake notebook | 8 min |
+| 7 | **Exercise** | **10 min** |
+| 8 | Further reading + takeaways | 1 min |
+| **Total** | | **44 min** |
 
 ---
 
 ## Content Outline
 
-### Block 1 — Model-Free vs Model-Based RL (5 min)
+### Block 1 — Motivation and the Q-table (5 min)
+- Ch10: know Q → argmax. Ch11: learn Q from experience.
+- `qtable_learning.gif`: max-Q heatmap + greedy arrows filling in from the goal backwards, success curve alongside
+- Q = zeros((16, 4)); ties in argmax → action 0 → why ε starts at 1
 
-**Model-Based RL:**
-- Agent learns a model of the environment (transition probabilities P, reward R)
-- Plans ahead using this model
-- Sample efficient, but hard to learn an accurate model
-- Example: AlphaGo (learned to model Go positions)
+### Block 2 — The TD update (8 min)
+- Naming: a **temporal-difference update derived from the Bellman optimality equation** (the equation is the fixed point; the update is how we get there)
+- `target = r + γ · max_a' Q(s', a')` (no future if done) · `Q(s,a) += α · (target − Q(s,a))`
+- Worked step with our numbers (α = 0.1, γ = 0.99): Q(14,→) = 0.10, then Q(13,→) = 0.0089 → value flows backwards = credit assignment
+- `td_error_flow.png`
 
-**Model-Free RL:**
-- Agent does NOT learn a model of the environment
-- Learns directly from experience (trial and error)
-- More practical for complex environments
-- Two sub-types:
-  - Value-based: learn Q(s, a) → derive policy (Q-Learning, DQN)
-  - Policy-based: learn π(s) directly (Policy Gradient, PPO)
+### Block 3 — Algorithm + hyperparameters (5 min)
+- Full loop (our `env_step(state, action)` API; Gymnasium 5-tuple `obs, reward, terminated, truncated, info`)
+- Table: α = 0.1, γ = 0.99, ε 1 → 0.01 (×0.999), 3000–5000 episodes — **identical in slides, demo, exercise, animation**
+- `alpha_effect_slippery.png` (real numbers): α ≤ 0.5 fine, α ≥ 0.9 collapses on slippery ice
 
-**This chapter:** Model-free, value-based → Q-Learning
+### Block 4 — FrozenLake and why RL is hard (5 min)
+- Same map as the GridWorld; reward only at the goal; `is_slippery=True` → p = 1/3 intended direction
+- `frozenlake_learning_curves.png` (real): deterministic ~100 %, slippery ~70 %; optimal policy on slippery ice ≈ 75 % → **the environment sets the ceiling**
+- Sparse rewards · stochasticity · credit assignment; convergence guarantee (visit everything, α decreasing)
 
----
+### Block 5 — Quiz (2 min)
+- α = 1 deterministic vs slippery · γ = 0 in FrozenLake · training success ≠ greedy-policy success
 
-### Block 2 — Q-Learning: The Algorithm (15 min)
+### Block 6 — Live demo (8 min)
+→ `02-examples/ch11_rl_algorithms_examples.ipynb`
+1. Gymnasium wrapper (`make_env(slippery)`), fallback GridWorld if gymnasium is missing
+2. `q_learning(...)` ~25 lines; train deterministic (~99 %) and slippery (~65–70 %); `evaluate_greedy`
+3. Learning curves + ε curve; Q heatmaps per action + greedy policy arrows (slippery policy: "into the wall" next to holes is the safe move)
 
-**Goal:** Learn the optimal Q-table — Q(s, a) for all state-action pairs.
+### Block 7 — Exercise (10 min)
+→ `03-exercises/ch11_rl_algorithms_exercises.ipynb`
+- Task 1 Q-table (1 min) · Task 2 ε-greedy (3 min) · Task 3 TD update with two numeric checks (3 min) · Task 4 fill three lines of the given loop + learning curve/policy plot (3 min)
+- Bonus A: run your loop on slippery FrozenLake · Bonus B: SARSA (one changed line), comparison text derived from the numbers
 
-**The Bellman Equation (the heart of Q-Learning):**
-```
-Q(s, a) ← Q(s, a) + α · [r + γ · max_{a'} Q(s', a') - Q(s, a)]
-```
-
-**Breaking it down:**
-- `Q(s, a)`: current estimate of taking action a in state s
-- `r`: reward received after taking action a in state s
-- `γ · max Q(s', a')`: discounted best future value from new state s'
-- `α` (alpha): learning rate — how much we update toward the new estimate
-- `[r + γ · max Q(s', a') - Q(s, a)]`: the "TD error" (Temporal Difference error)
-
-**Intuition:** "The estimate of Q should move toward the observed reward plus the best we can do from the next state."
-
-**The Q-Learning Algorithm:**
-```
-Initialize Q(s, a) = 0 for all s, a
-
-For each episode:
-  Reset environment → get initial state s
-  
-  Repeat:
-    Choose action a using ε-greedy:
-      if random < ε: a = random action  (explore)
-      else:          a = argmax_a Q(s, a)  (exploit)
-    
-    Take action a → get reward r and next state s'
-    
-    Update Q:
-      Q(s, a) ← Q(s, a) + α · [r + γ · max Q(s', a') - Q(s, a)]
-    
-    s ← s'
-    
-  Until episode ends (goal reached or timeout)
-
-Decay ε after each episode
-```
-
-**Convergence:** Q-Learning is guaranteed to converge to the optimal Q* (given enough exploration and proper learning rate)
-
----
-
-### Block 3 — SARSA: On-Policy Alternative (5 min)
-
-**SARSA = State, Action, Reward, State, Action**
-
-Like Q-Learning, but the update uses the *actual* next action taken, not the best possible one:
-
-```
-Q(s, a) ← Q(s, a) + α · [r + γ · Q(s', a') - Q(s, a)]
-```
-
-**Key difference:**
-- **Q-Learning** is **off-policy**: learns the optimal Q* regardless of the policy being followed (greedy update)
-- **SARSA** is **on-policy**: learns Q for the policy being currently followed (including exploration)
-
-**When SARSA is better:** In risky environments — SARSA learns to avoid risky actions even during exploration, while Q-Learning can learn an optimal but dangerous policy.
-
----
-
-### Block 4 — Policy Gradient (Conceptual, 5 min)
-
-**A completely different approach:** Instead of learning Q-values, directly learn the policy π(a|s).
-
-**Idea:** Parametrize the policy (e.g., with a neural network). Adjust parameters to make better actions more likely.
-
-**REINFORCE algorithm (vanilla policy gradient):**
-```
-Collect full episode trajectory
-Compute cumulative reward G at each timestep
-Update parameters: θ ← θ + α · G · ∇log π(a|s; θ)
-```
-
-**Modern algorithms:** PPO (Proximal Policy Optimization), A3C, SAC — all extensions of policy gradients combined with deep networks.
-
-**When to use:** Continuous action spaces (robot joints), where Q-tables are impossible.
-
----
-
-### Block 5 — Live Example: FrozenLake (10 min)
-
-→ See `02-examples/ch11_rl_algorithms_examples.ipynb`
-
-FrozenLake environment:
-- 4×4 grid, frozen lake
-- States: 16 cells (0–15)
-- Actions: 4 (left, down, right, up)
-- Goal: reach cell 15 without falling into holes (cells 5, 7, 11, 12)
-- Reward: +1 at goal, 0 otherwise
-
-Demonstrate:
-1. Environment setup with Gymnasium
-2. Q-table initialization
-3. Training loop with ε-greedy
-4. Visualizing Q-table evolution
-5. Success rate over episodes
-
----
-
-### Block 6 — Exercises (10 min)
-
-→ See `03-exercises/ch11_rl_algorithms_exercises.ipynb`
-
-Students implement Q-Learning step by step from scratch on FrozenLake.
+### Block 8 — Further reading (1 min)
+- SARSA (on-policy), DQN, policy gradient / PPO (RLHF), model-based, off- vs on-policy — words only
 
 ---
 
 ## Instructor Notes
 
-- The Bellman equation: go through it slowly — each term has a clear meaning
-- TD error analogy: "prediction error correction" — like adjusting a GPS estimate as you drive
-- Q-table on FrozenLake: show it as a heatmap — students can see which actions are valued
-- SARSA vs Q-Learning: this difference matters in practice — use the cliff example
-- Policy gradient: keep it conceptual — this is just to show the landscape of RL
-
----
+- Let the Q-table GIF loop once in silence; ask "where does knowledge appear first?"
+- Go slowly through the worked TD step; the exercise's check values (0.1, 0.0089) are exactly these
+- "Training success rate" includes 5 % random actions — always evaluate the greedy policy (train ≠ test, again)
+- Typical exercise bugs: missing `0 if done`, updating the wrong state, `max` over the wrong axis
+- Fast students: Bonus A/B or the Ch10 reward-shaping bonus notebook
 
 ## Materials
 
-- Slides: `01-slides/ch11_slides.md`
-- Examples: `02-examples/ch11_rl_algorithms_examples.ipynb`
-- Exercises: `03-exercises/ch11_rl_algorithms_exercises.ipynb`
-- Solutions: `04-solutions/ch11_rl_algorithms_solutions.ipynb`
+- Slides: `01-slides/ch11_slides.md` (images: `qtable_learning.gif`, `td_error_flow.png`, `alpha_effect_slippery.png`, `frozenlake_learning_curves.png`; also `gridworld_env.png`, `epsilon_decay.png`, `deterministic_vs_slippery.png`, `agent_paths_improving.gif` shared with Ch10)
+- Examples: `02-examples/ch11_rl_algorithms_examples.ipynb` (requires `gymnasium>=1.0`, falls back to GridWorld)
+- Exercises / Solutions: `03-exercises/ch11_rl_algorithms_exercises.ipynb`, `04-solutions/ch11_rl_algorithms_solutions.ipynb`
+- Animation: `0-animations/04_rl_agent_learning.ipynb`
+- Image generator: `imagegen/ch11.py`

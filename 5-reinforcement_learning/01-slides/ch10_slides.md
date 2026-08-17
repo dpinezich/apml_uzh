@@ -13,231 +13,260 @@ fonts:
 **Applied Machine Learning — Session 4, Chapter 1**
 
 <!--
-~50 min. No formal exercises — conceptual chapter. Session 4 starts here.
+~45 min chapter, blocks sum to ~39 min (buffer 6). No exercise phase — the Ch10 exercise
+notebook is a BONUS (reward shaping with a learning agent; do it after Ch11 or at home).
+Session 4 plan: Ch10 ~45 · Ch11 ~45 (incl. 10 min exercise) · Ch12 65 (5 intro + 50 work + 10 debrief).
+Opening question: "How does a dog learn a trick?" → treats → learning from feedback, not from labels.
 -->
 
 ---
 
 # The Third Paradigm
 
-| Paradigm | Signal | Example |
-|----------|--------|---------|
-| Supervised | Labels (X, y) | Predict house price |
-| Unsupervised | None | Find customer groups |
-| **Reinforcement** | **Rewards from trial & error** | **Train a game agent** |
+| Paradigm | What the data gives you | Example |
+|----------|---------|---------|
+| Supervised | inputs **and** the right answer (X, y) | predict house price |
+| Unsupervised | inputs only (X) | find customer groups |
+| **Reinforcement** | **no data set at all — only rewards for actions you try** | **learn to play a game** |
+
+**RL:** an *agent* acts, the *environment* answers with a new situation and a reward. The agent learns from that feedback loop.
 
 <!--
-~10 min. Position RL relative to supervised/unsupervised:
-different signal type entirely.
+~3 min (paradigm + loop = 5). Key contrast to draw out: in supervised learning someone tells you the right answer.
+In RL nobody does — you only get a score, often late. Ask: "Where does the data come from in RL?"
+Expected: the agent generates it by acting. That is the whole difference.
 -->
 
 ---
 
-# What Is Reinforcement Learning?
-
-**An agent learns to make decisions by interacting with an environment.**
+# The RL Loop
 
 ![rl_loop](./rl_loop.png)
 
-**Goal:** Maximize total cumulative reward over time.
+**Goal:** maximise the **total** reward over an episode — not the next reward.
 
 <!--
-Use the dog training analogy: treats = positive reward, no treat = no reward.
-Dog learns which actions lead to treats.
+~2 min. Walk the loop with the dog: state = "owner says sit", action = sit / bark / run,
+reward = treat or nothing, new state. Emphasise "total": sometimes a bad step now buys a big reward later.
 -->
 
 ---
 
 # Everyday Analogies
 
-**Training a dog:**
-- Give treats for good behavior → positive reward
-- Ignore bad behavior → no reward
-- Dog learns: some actions lead to treats
+| | State | Action | Reward |
+|---|---|---|---|
+| Training a dog | command + situation | sit / bark / run | treat (or nothing) |
+| Learning to ride a bike | lean angle, speed | steer, pedal | stay up (+) / fall (−) |
+| Video game | screen | controller input | score |
+| Chess | board position | legal move | win / lose at the **end** |
 
-**Learning to ride a bike:**
-- Falling → negative reward
-- Staying balanced → positive reward
-- You adapt through experience alone
-
-**Playing a video game:**
-- Score = reward. Controls = actions. Game = environment.
+**Ask yourself:** who tells the chess agent which of its 40 moves was the mistake?
+→ Nobody. That is the **credit assignment problem** — the core difficulty of RL.
 
 <!--
-Dog, bike, video game — all trial-and-error learning.
-Ask students for their own examples.
+~2 min. Ask students for their own examples (learning to cook, negotiating, ...).
+The chess row sets up credit assignment; come back to it in Ch11 when γ propagates value backwards.
 -->
 
 ---
 
-# Core Components
+# Core Vocabulary — on a GridWorld
 
-| Term | Meaning | Example (grid world) |
-|------|---------|---------------------|
-| **State (s)** | Current situation | Position (row, col) |
-| **Action (a)** | What the agent can do | Move North/South/East/West |
-| **Reward (r)** | Feedback signal | +1 at goal, -1 in hole |
-| **Policy (π)** | Strategy: s → a | "If at (3,2), go North" |
-| **Episode** | One full run | Start → goal (or failure) |
+<div class="grid grid-cols-2 gap-6">
+<div>
+
+| Term | Meaning | GridWorld |
+|------|---------|-----------|
+| **State** s | the situation | cell id 0–15 |
+| **Action** a | what the agent can do | ← ↓ → ↑ |
+| **Reward** r | feedback | +1 goal, −1 hole, −0.01 per step |
+| **Episode** | one run | start → hole or goal |
+| **Return** | sum of rewards in an episode | e.g. 6 steps to G: 0.95 |
+| **Policy** π | strategy: state → action | a table with 16 entries |
+
+</div>
+<div>
+
+![gridworld_env](./gridworld_env.png)
+
+</div>
+</div>
 
 <!--
-~12 min. State, Action, Reward, Policy, Episode.
-Grid world makes these concrete.
+~4 min. This grid is used in the demo, in Ch11, in the exercise and in the animation.
+Ask: "What is the return of the shortest path?" (5 steps × −0.01 + 1 = 0.95).
+"Why the −0.01?" → without it, a 6-step and a 60-step path score the same.
+-->
+
+---
+
+# Same World, Different Policy
+
+![random_vs_optimal_paths](./random_vs_optimal_paths.png)
+
+**The learning problem:** find a policy that maximises the expected return — *without* being told the map.
+
+<!--
+~1 min. Left: a random walker (this one falls into a hole). Right: a good policy.
+The demo notebook measures both: random reaches the goal in ~1–2% of episodes.
 -->
 
 ---
 
 # Markov Decision Process (MDP)
 
-**Formal framework:** (S, A, P, R, γ)
+**The formal frame:** (S, A, P, R, γ)
 
-- **S** = states, **A** = actions
-- **P(s'|s, a)** = transition probability
-- **R(s, a)** = reward function
-- **γ** = discount factor (0 to 1)
+- **S** states, **A** actions
+- **P(s' | s, a)** transition probabilities: where do I land?
+- **R(s, a)** reward function
+- **γ** discount factor (0 … 1)
 
-**The Markov Property:**  
-"The future depends only on the current state — not on history."
-
-→ You only need to know *where you are*, not *how you got there*.
+**Markov property:** *the future depends only on the current state, not on how you got there.*
+→ Like GPS: to plan the route, it needs to know where you are — not where you were an hour ago.
 
 <!--
-Keep intuitive. Markov Property: 'You only need to know where you are,
-not how you got there.' Like GPS.
--->
-
----
-
-# The Discount Factor γ
-
-How much do we value future rewards?
-
-![discount_factor](./discount_factor.png)
-
-- **γ = 0:** Only care about immediate reward (greedy, shortsighted)
-- **γ = 1:** Care equally about all future rewards
-- **γ = 0.9:** Typical — future rewards worth 90% of current
-
-**Intuition:** €100 today > €100 next year (same in RL — nearby rewards matter more).
-
-<!--
-€100 today > €100 next year. gamma=0.9 means nearby rewards matter more.
-gamma=0 is shortsighted.
--->
-
----
-
-# Exploration vs Exploitation
-
-**The fundamental dilemma:**
-
-- **Exploitation:** Do what you know works best
-- **Exploration:** Try something new — might be better!
-
-```
-Restaurant analogy:
-  Exploit → go to your favorite restaurant (safe)
-  Explore → try somewhere new (risky, but maybe amazing!)
-```
-
-<!--
-~8 min. Restaurant analogy: exploit (go to favorite) vs explore (try something new).
-The fundamental dilemma.
--->
-
----
-
-# ε-Greedy: The Solution
-
-**With probability ε → explore (random action)**  
-**With probability 1-ε → exploit (best known action)**
-
-```python
-if random() < epsilon:
-    action = random_action()           # explore
-else:
-    action = argmax(Q[state])          # exploit
-```
-
-**Epsilon decay:** Start high (0.9), reduce over time (end at 0.01)
-→ "Learn first, then use what you learned."
-
-<!--
-With probability epsilon = random. With 1-epsilon = best known.
-Simple but effective.
--->
-
----
-
-# Epsilon Decay Schedule
-
-```
-ε = max(ε × decay_rate, min_epsilon)
-```
-
-| Phase | Episodes | ε range | Behavior |
-|-------|---------|---------|----------|
-| Early | 0–200 | 0.9 → 0.5 | Mostly exploring |
-| Mid | 200–600 | 0.5 → 0.1 | Balancing |
-| Late | 600–1000 | 0.1 → 0.01 | Mostly exploiting |
-
-**Why decay?**  
-→ At start: know nothing → explore everything  
-→ At end: know the environment → use that knowledge
-
-> Too fast decay = stops exploring before learning enough  
-> Too slow decay = wastes episodes on random actions
-
-<!--
-Start high (explore everything), reduce over time (use what you learned).
-Too fast = didn't learn enough. Too slow = wasted episodes.
--->
-
----
-
-# Value Functions
-
-**Q(s, a):** Expected total reward after taking action a in state s
-
-```
-Q-Table:
-          Left  Down  Right  Up
-State 0:  0.1   0.3   0.5   0.0
-State 1:  0.0   0.8   0.2   0.1
-...
-```
-
-**Optimal policy:** Always take the action with the highest Q-value!
-
-```python
-optimal_action(s) = argmax_a Q(s, a)
-```
-
-<!--
-~5 min. Q(s,a) = expected total reward. Optimal policy = always pick highest Q.
-This leads to Q-Learning in Ch11.
+~2 min. Keep the math light. Only P and γ are new: P will matter in the next slide (slippery ice),
+γ in the one after. Ask: "Is chess Markov?" (yes: the board is the state) "Is poker?" (no: hidden info).
 -->
 
 ---
 
 # Deterministic vs Stochastic Environments
 
-Our grid world is **deterministic** — actions always go as planned.
+![deterministic_vs_slippery](./deterministic_vs_slippery.png)
 
-Real environments are often **stochastic** — the agent may slip!
-
-```
-Deterministic: action=Right → always move Right
-Stochastic:    action=Right → 70% Right, 15% Up, 15% Down
-```
-
-> Our grid world in the examples is deterministic.  
-> FrozenLake (Ch11) adds **stochasticity** — the agent slips!  
-> The Q-Learning algorithm handles both.
+- Our GridWorld is **deterministic**: `Right` always moves right.
+- FrozenLake (Ch11, `is_slippery=True`): intended direction with prob. **1/3**, else it slips sideways.
+- P(s' | s, a) captures exactly this. The learning algorithm stays the same — only the numbers get harder.
 
 <!--
-Our grid world is deterministic. FrozenLake (Ch11) adds stochasticity —
-the agent slips!
+~2 min. This slide is here so that Ch11's slippery results are not a surprise.
+Ask: "On slippery ice next to a hole — is walking along the hole a good idea?" → No, better to bump the wall.
+-->
+
+---
+
+# The Discount Factor γ
+
+![discount_factor](./discount_factor.png)
+
+- **γ = 0:** only the immediate reward counts (short-sighted)
+- **γ → 1:** far-away rewards count almost fully (far-sighted)
+- **γ = 0.9 … 0.99:** typical — we use **0.99** in Ch11
+
+**Intuition:** €100 today > €100 next year. Same in RL — but γ also lets value *flow backwards* from the goal to earlier states.
+
+<!--
+~2 min. Two jobs of γ: (1) impatience, (2) mathematically keeps the total finite for endless tasks.
+Preview: in Ch11 the goal reward "leaks" backwards through the grid at rate γ per step — that is how the agent
+solves credit assignment.
+-->
+
+---
+
+# Exploration vs Exploitation
+
+**The dilemma every learner faces:**
+
+- **Exploit:** do what you already know works best
+- **Explore:** try something new — it might be better (or worse)
+
+```
+Restaurant analogy:
+  exploit → your favourite restaurant   (safe, but you never discover a better one)
+  explore → the new place on the corner (risky, but maybe amazing)
+```
+
+If you only exploit you may be stuck with a mediocre policy forever.
+If you only explore you never *use* what you learned.
+
+<!--
+~2 min. Ask: "How do you personally decide when to try a new restaurant?" — most answers are ε-greedy in disguise:
+"most of the time my favourite, sometimes something new".
+-->
+
+---
+
+# ε-Greedy and ε-Decay
+
+<div class="grid grid-cols-2 gap-6">
+<div>
+
+```python
+if rng.random() < epsilon:
+    action = random_action()        # explore
+else:
+    action = argmax(Q[state])       # exploit
+
+# after every episode:
+epsilon = max(epsilon * 0.999, 0.01)
+```
+
+- start **ε = 1** (know nothing → explore everything)
+- decay towards **ε = 0.01** (know the world → exploit it)
+- too fast: stops exploring before it has learned
+- too slow: wastes episodes on random walks
+
+</div>
+<div>
+
+![epsilon_decay](./epsilon_decay.png)
+
+</div>
+</div>
+
+<!--
+~3 min. These are the exact numbers used in the Ch11 code (α=0.1, γ=0.99, ε 1→0.01 with 0.999 per episode).
+Point at the curve: at episode ~700 ε≈0.5, at ~2300 ε≈0.1.
+-->
+
+---
+
+# Value: how good is an action in a state?
+
+**Q(s, a)** = expected total (discounted) reward if I take action *a* in state *s* and act well afterwards.
+
+```
+Q-table (16 states × 4 actions)
+          ←      ↓      →      ↑
+state 0:  0.90   0.92   0.88   0.90
+state 1:  0.90   0.10   0.83   0.88
+...
+state 14: 0.96   0.98   1.00   0.95   ← next to the goal: → is worth ≈ 1
+```
+
+**If you know Q, the policy is trivial:** `π(s) = argmax_a Q(s, a)`
+
+→ Chapter 11: **learn** this table from experience (Q-Learning).
+
+<!--
+~3 min. The numbers are illustrative but plausible for our GridWorld with γ=0.99 and step cost −0.01.
+Ask: "Why is Q(14, →) ≈ 1 and Q(0, ↓) ≈ 0.9?" → the goal is 1 step vs 6 steps away; value shrinks with distance.
+-->
+
+---
+
+# Quick Check
+
+**1.** A robot vacuum gets +1 for every square metre cleaned and −5 for falling down the stairs.
+State? Action? Reward? Episode?
+
+**2.** ε = 0 during the whole training. What goes wrong?
+
+**3.** γ = 0. Which action does the GridWorld agent prefer in state 14 (next to the goal) — and in state 0?
+
+<v-click>
+
+- **1.** state = position + dirt map (+ battery), action = move direction / suck, reward as given, episode = one cleaning run until docking.
+- **2.** it never explores: it repeats the first action that ever got a non-zero Q (or action 0 forever) → stuck with a bad policy.
+- **3.** state 14: → (immediate +1). State 0: every action gives −0.01 now → indifferent, it cannot "see" the goal.
+
+</v-click>
+
+<!--
+~3 min. Give 60 s to think, then click. Q3 is the important one: with γ=0 there is no credit assignment.
 -->
 
 ---
@@ -246,59 +275,64 @@ the agent slips!
 
 | Domain | Agent | Environment | Reward |
 |--------|-------|------------|--------|
-| Games | AI player | Game board | Win/lose/score |
-| Robotics | Robot | Physical world | Task complete |
-| Finance | Trading bot | Market | Profit |
-| Healthcare | Treatment planner | Patient | Health outcome |
-| Traffic | Signal controller | Road network | Reduced delays |
+| Games | AI player | board / screen | win / lose / score |
+| Robotics | controller | physical world | task done, no damage |
+| Recommender systems | ranking policy | users | clicks, watch time |
+| Data-centre cooling | controller | temperatures, load | energy saved |
+| LLM fine-tuning (RLHF) | language model | human raters | preference score |
+
+**Milestones:** Atari from pixels (2013) · AlphaGo (2016) · AlphaStar (2019) · RLHF for ChatGPT (2022)
 
 <!--
-~5 min. Ask which applications surprise students most.
+~2 min. Ask which one surprises them. RLHF is the one they use daily — worth 30 seconds:
+the "reward" is a model of human preferences, the "action" is the next token.
 -->
 
 ---
 
-# Famous Milestones
+# Now: Live Demo (~8 min)
 
-- **2013:** DeepMind — superhuman Atari games from pixels
-- **2016:** AlphaGo — defeats world Go champion
-- **2019:** AlphaStar — defeats top StarCraft II players
-- **2022:** AlphaCode — competitive programming
+<div class="grid grid-cols-2 gap-4">
+<div>
 
-<!--
-AlphaGo 2016 is the hook. Show the progression —
-games to robotics to real-world.
--->
+→ `02-examples/ch10_rl_intro_examples.ipynb`
 
----
+1. Build the GridWorld (16 states, 4 actions, rewards)
+2. Random agent — success rate ≈ 1–2 %
+3. Hand-craft a good policy — 100 %, return 0.95
+4. Sanity-check the policy for *every* state
 
-# Now: Live Example!
+**Teaser for Ch11:** the same agent after 1 / 50 / 3000 training episodes →
 
-→ Open `02-examples/ch10_rl_intro_examples.ipynb`
+</div>
+<div>
 
-We will:
-1. Build a grid world environment
-2. Watch a random agent bumble around
-3. Compare it to an optimal policy
-4. See the learning problem clearly
+<img src="./agent_paths_improving.gif" class="w-full" />
+
+</div>
+</div>
 
 <!--
-~10 min. Build grid world, watch random agent, compare to optimal policy.
-Very visual.
+~8 min. Run the notebook top to bottom, talk while it runs. Stop at the hand-crafted policy:
+"Writing this table by hand for 16 cells is fine. For chess it is impossible — the agent has to LEARN it. That is Ch11."
+The GIF (episode 1 → 50 → 3000 of a Q-learning agent) is the teaser for the next chapter.
 -->
 
 ---
 
 # Key Takeaways
 
-- RL = learning by trial and error with rewards
-- Agent ↔ Environment loop: state → action → reward → next state
-- MDP: formal framework (S, A, P, R, γ)
-- Exploration vs Exploitation: the core dilemma
-- Q-values: estimate of long-term value of each (state, action) pair
+- RL = learning from **rewards** by trial and error — the agent creates its own data
+- Loop: state → action → reward + next state; **episode**, **return**, **policy**
+- MDP (S, A, P, R, γ): P = "where do I land?", γ = "how much is the future worth?"
+- **Explore vs exploit** — ε-greedy with decay
+- **Q(s, a)** = long-term value of an action; know Q → policy is `argmax`
+- Reward design decides what you get (Bonus exercise: reward shaping)
 
 <!--
-Transition: 'Now let's teach the agent to learn on its own — with Q-Learning.'
+Transition: "The whole trick of Ch11 is how to fill the Q-table from experience."
+Bonus exercise 03-exercises/ch10_rl_intro_exercises.ipynb: students change rewards and watch a learning agent
+farm step rewards or jump into holes — do it after Ch11 or as homework.
 -->
 
 ---
@@ -307,6 +341,6 @@ layout: end
 
 # Next: Chapter 11
 
-## Basic RL Algorithms
+## Q-Learning
 
-> _"Now let's teach the agent to learn — with Q-Learning."_
+> _"Now let's teach the agent to fill in the table itself."_

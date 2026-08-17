@@ -1,6 +1,6 @@
 ---
 layout: cover
-title: "Ch11 — Basic RL Algorithms"
+title: "Ch11 — Q-Learning"
 controls: false
 fonts:
   sans: Lato
@@ -8,300 +8,308 @@ fonts:
   weights: '300,400,700,900'
 ---
 
-# Basic RL Algorithms
+# Q-Learning
 
 **Applied Machine Learning — Session 4, Chapter 2**
 
 <!--
-~50 min. 10 min exercises.
+~45 min chapter: blocks sum to ~34 min + 10 min exercise = 44 (buffer ~1–6 min depending on demo length).
+Focus: ONE algorithm (tabular Q-learning) done properly. SARSA / policy gradient / model-based are a
+"further reading" slide only (bonus task B in the exercise implements SARSA).
+Show the qtable_learning.gif early — it carries the whole chapter.
 -->
 
 ---
 
-# Two Approaches to RL
+# From Ch10 to Ch11
 
-**Model-Based:** Learn a model of the environment, then plan
-→ Sample efficient, but hard to build an accurate model
+**Ch10:** if we *know* Q(s, a) for every state and action, the policy is trivial: `argmax`.
 
-**Model-Free:** Learn directly from experience (no model)
-→ More practical for complex environments
+**Ch11:** how do we **learn** Q from experience — without knowing the map, the transition probabilities or the reward function?
 
-**Today: Model-Free RL**
-- Value-based: learn Q(s, a) → Q-Learning
-- Policy-based: learn π directly → Policy Gradient
+**Answer:** start with Q = 0 everywhere, act (ε-greedy), and after *every step* nudge Q(s, a) toward what we just observed.
+
+<img src="./qtable_learning.gif" class="h-64 mx-auto" />
 
 <!--
-~5 min. Model-free is more practical. Today: value-based (Q-Learning)
-and briefly policy-based.
+~3 min. Let the GIF loop once in silence. Left: max Q per cell + greedy arrow ("·" = never updated).
+Right: success rate. Ask: "Where does knowledge appear first?" → next to the goal, then it spreads backwards.
+That backwards spread is the whole idea; the formula on the next slide just makes it precise.
 -->
 
 ---
 
-# Q-Learning: The Idea
-
-**Build a table of Q(s, a) — the long-term value of each action in each state.**
+# The Q-Table
 
 ```
-Q-Table (4×4 Grid, 4 actions):
-         ← ↓ → ↑
-State 0: [0.1, 0.3, 0.5, 0.0]
-State 1: [0.0, 0.8, 0.2, 0.1]
+Q-table (16 states × 4 actions) — all zeros at the start
+           ←      ↓      →      ↑
+state 0:   0.00   0.00   0.00   0.00
+state 1:   0.00   0.00   0.00   0.00
 ...
-State 15:[0.0, 0.0, 0.0, 0.0]  ← goal
+state 14:  0.00   0.00   0.00   0.00
+state 15:  0.00   0.00   0.00   0.00   ← goal (never left)
 ```
 
-**Optimal policy:** `a* = argmax_a Q(s, a)`
-
-**Learning:** Update Q-values using observed experience.
+- One number per (state, action): *"how good is it to do a in s?"*
+- **Policy** = `argmax` per row
+- **Learning** = updating these numbers from experience
 
 <!--
-~15 min for Q-Learning block. Build a table of Q(s,a).
-Optimal policy = pick highest Q value per state.
+~2 min. In numpy: Q = np.zeros((16, 4)). Ties in argmax → action 0 (Left): the untrained greedy agent
+bumps the left wall forever — that is why ε starts at 1.
 -->
 
 ---
 
-# The Bellman Equation
+# The TD Update (1/2): the idea
 
-**The core update rule of Q-Learning:**
+After one step (s, a) → r, s' we have **new information**:
 
 ```
-Q(s, a) ← Q(s, a) + α · [r + γ · max Q(s', a') - Q(s, a)]
-                          └─────────────────────┘
-                               TD Error
+what we thought:   Q(s, a)
+what we just saw:  r  +  γ · max_a' Q(s', a')          ← "target"
+                   ^        ^
+             reward now     best we believe we can still get from s'
 ```
 
-![td_error_flow](./td_error_flow.png)
+**Move the estimate a little toward the target:**
 
-**Each term:**
-- `Q(s, a)`: current estimate
-- `r`: reward we just received
-- `γ · max Q(s', a')`: discounted best future value
-- `α`: learning rate (how fast we update)
-- TD Error: "how wrong was our estimate?"
+```
+Q(s, a)  ←  Q(s, a)  +  α · ( target − Q(s, a) )
+                              └──── TD error ────┘
+```
+
+α = learning rate (how big a step). If the episode ended at s', there is no future: target = r.
 
 <!--
-Go through SLOWLY. Each term: current estimate, reward, discounted future,
-learning rate, TD error. This is the heart of Q-Learning.
+~4 min. Go SLOWLY, one term at a time. Name it correctly: this is a temporal-difference (TD) update
+derived from the Bellman optimality equation Q*(s,a) = E[r + γ max Q*(s',a')] — the equation is the fixed
+point, the update is how we get there. Students may hear "Bellman equation" for the update in blogs; fine,
+but know the difference.
 -->
 
 ---
 
-# TD Error Intuition
+# The TD Update (2/2): a worked step
 
-**Like a GPS updating its arrival estimate:**
+GridWorld, α = 0.1, γ = 0.99, Q all zeros. The agent stands in state 14 and steps **→** into the goal:
 
 ```
-GPS predicts: 30 min
-Reality: road closed, +10 min
-GPS update: now predicts 40 min
-
-Q-Learning:
-Current Q: 0.5
-Observed reward: 0 + future value: 0.8
-TD Error: 0.8 - 0.5 = +0.3
-Updated Q: 0.5 + α * 0.3
+target  = 1.0 + (episode ended → no future) = 1.0
+TD err  = 1.0 − 0.0 = 1.0
+Q(14,→) = 0.0 + 0.1 · 1.0 = 0.10
 ```
+
+Next episode: from state 13 it steps **→** into 14 (reward −0.01):
+
+```
+target  = −0.01 + 0.99 · max Q(14, ·) = −0.01 + 0.99 · 0.10 = 0.089
+Q(13,→) = 0.0 + 0.1 · (0.089 − 0.0)   = 0.0089
+```
+
+→ Value **flows backwards** from the goal, one cell per successful visit. Small numbers, but the *ordering* of actions is what matters for `argmax`.
 
 <!--
-GPS analogy: GPS predicts 30 min, road closed adds 10 = update to 40.
-Same idea: correct your estimate based on new info.
+~4 min. This is the credit-assignment answer from Ch10: nobody says "step 3 was good", but the goal
+reward propagates back through γ. Ask: "How many successful passes until state 0 has a non-zero Q?" (≥ 6).
+The exercise's Task 3 check uses exactly these two numbers (0.1 and 0.0089).
 -->
 
 ---
 
-# The Q-Learning Algorithm
+# The Full Algorithm
 
 ```python
-Initialize Q[states, actions] = 0
-
+Q, epsilon = np.zeros((n_states, n_actions)), 1.0
 for episode in range(n_episodes):
-    state = env.reset()
-    done = False
-    
-    while not done:
-        # ε-greedy action selection
-        if random() < epsilon:
-            action = env.action_space.sample()  # explore
-        else:
-            action = argmax(Q[state])            # exploit
-        
-        # Take action, observe outcome
-        next_state, reward, done, _ = env.step(action)
-        
-        # Bellman update
-        Q[state, action] += alpha * (
-            reward + gamma * max(Q[next_state]) - Q[state, action]
-        )
-        
+    state = env_reset()
+    for step in range(max_steps):
+        # ε-greedy
+        if rng.random() < epsilon:  action = rng.integers(n_actions)      # explore
+        else:                       action = np.argmax(Q[state])          # exploit
+
+        next_state, reward, done = env_step(state, action)   # Gymnasium: obs, r, terminated, truncated, info
+        target = reward + (0 if done else gamma * np.max(Q[next_state]))  # TD target
+        Q[state, action] += alpha * (target - Q[state, action])           # TD update
+
         state = next_state
-    
-    epsilon = max(epsilon * epsilon_decay, min_epsilon)
+        if done: break
+    epsilon = max(epsilon * 0.999, 0.01)                                  # decay
 ```
 
 <!--
-Show the full pseudocode. Epsilon-greedy for action selection,
-Bellman update, epsilon decay.
+~3 min. Three building blocks — Q-table, ε-greedy, TD update — plus a loop. That is the exercise.
+Point out the Gymnasium 5-tuple (terminated vs truncated) — old tutorials show 4 values, that API is gone.
 -->
 
 ---
 
-# Hyperparameters
+# Hyperparameters (the ones we use)
 
-| Parameter | Symbol | Typical value | Effect |
-|-----------|--------|---------------|--------|
-| Learning rate | α | 0.1 – 0.5 | How fast we update Q |
-| Discount | γ | 0.95 – 0.99 | How much we value future |
-| Initial epsilon | ε | 0.9 – 1.0 | Start with lots of exploration |
-| Epsilon decay | | 0.99 – 0.999 | Slow shift to exploitation |
-| Min epsilon | | 0.01 | Always keep a little exploration |
-| Episodes | | 1,000 – 10,000 | More = better learning |
+<div class="grid grid-cols-2 gap-4">
+<div>
+
+| Parameter | Symbol | Ours | Typical |
+|-----------|--------|------|---------|
+| learning rate | α | **0.1** | 0.05 – 0.5 |
+| discount | γ | **0.99** | 0.9 – 0.99 |
+| exploration | ε | **1 → 0.01** | ×0.999 / episode |
+| episodes | | **3 000 – 5 000** | 10³ – 10⁵ |
+
+- α: step size of each update
+- γ: how far value flows backwards
+- more episodes = better, slower
+
+</div>
+<div>
+
+<img src="./alpha_effect_slippery.png" class="w-full" />
+
+</div>
+</div>
 
 <!--
-alpha=0.1-0.5, gamma=0.95-0.99, epsilon starts high.
-More episodes = better learning but slower.
+~2 min. Same numbers in the demo, the exercise and the animation notebook. The bar chart is REAL
+(slippery FrozenLake, greedy success after 5000 episodes): α up to 0.5 all fine, α ≥ 0.9 collapses because
+each lucky/unlucky slip overwrites the estimate. Deterministic worlds tolerate large α; stochastic ones do not.
 -->
 
 ---
 
-# SARSA: The On-Policy Alternative
+# FrozenLake (Gymnasium) — same map, two difficulty levels
 
-**SARSA** = State, Action, Reward, State, Action
+<div class="grid grid-cols-2 gap-6">
+<div>
 
 ```
-Q(s, a) ← Q(s, a) + α · [r + γ · Q(s', a') - Q(s, a)]
+SFFF      S start (0)
+FHFH      F frozen
+FFFH      H hole → episode ends, reward 0
+HFFG      G goal (15) → reward +1
 ```
 
-**Key difference:** Uses the *actual next action taken*, not the *best possible*
+- 16 states, 4 actions (←0 ↓1 →2 ↑3)
+- reward **only** at the goal → sparse signal
+- `is_slippery=True`: intended move with p = 1/3, else sideways
 
-| | Q-Learning | SARSA |
-|-|-----------|-------|
-| Type | Off-policy | On-policy |
-| Updates with | max Q(s', a') | Q(s', a') actually taken |
-| Risk | Can be dangerous during exploration | Safer — avoids risky paths |
+</div>
+<div>
+
+![frozenlake_learning_curves](./frozenlake_learning_curves.png)
+
+</div>
+</div>
+
+**Same code, two worlds:** deterministic → ~100 %; slippery → ~70 %. On slippery ice even the *optimal* policy only wins ≈ 3 of 4 episodes.
 
 <!--
-~5 min. Key difference: uses actual next action, not best possible.
-On-policy = safer, avoids risky paths.
+~3 min. Curves are real (α=0.1, γ=0.99, 5000 episodes). Two messages: (1) sparse reward + stochasticity =
+slower learning, (2) the ceiling comes from the ENVIRONMENT, not the algorithm — an important habit:
+ask "what is the best achievable score?" before judging a model.
 -->
 
 ---
 
-# Policy Gradient (Conceptual)
+# Why is RL hard? (and why does it still work?)
 
-**Instead of Q-values → directly learn the policy π(a|s)**
+**Sparse rewards** — FrozenLake: one +1 at the very end, zeros everywhere else. Random exploration must stumble into the goal first.
 
-**REINFORCE:**
-```
-Collect trajectory: s₀, a₀, r₁, s₁, a₁, r₂, ...
-For each step: increase probability of actions that led to high reward
-               decrease probability of actions that led to low reward
-```
+**Stochasticity** — same state, same action, different outcome. Estimates need many samples (→ small α).
 
-```python
-# Pseudocode
-loss = -sum(log_prob(actions) * returns)
-optimizer.step(loss)
-```
+**Credit assignment** — which of the 20 earlier moves caused the success? Answer: γ propagates value backwards, one step per success.
 
-**Modern algorithms:** PPO, A3C, SAC — all extend this idea with neural networks.
+**It still works because:** tabular Q-learning provably converges to Q* if every (s, a) is visited infinitely often and α decreases suitably. In practice: enough episodes + ε-decay.
 
 <!--
-~5 min. Keep conceptual. Directly learn the policy.
-Modern RL: PPO, A3C, SAC all extend this.
+~2 min. Keep it short; the "still works" line answers the natural question "then how does it ever learn?".
 -->
 
 ---
 
-# The FrozenLake Environment
+# Quick Check
 
-```
-SFFF       S = Start  (0)
-FHFH       F = Frozen (safe)
-FFFH       H = Hole   (game over)
-HFFG       G = Goal   (+1 reward)
-```
+**1.** α = 1 in a deterministic world. What happens? And on slippery ice?
 
-- 16 states (cells 0–15)
-- 4 actions (Left=0, Down=1, Right=2, Up=3)
-- Reward: +1 at goal, 0 everywhere else
-- Slippery ice: actions don't always go as planned!
+**2.** γ = 0. Which Q-values ever become non-zero in FrozenLake (reward only at the goal)?
+
+**3.** After training, ε is still 0.05. Is the "success rate during training" the success rate of the *learned policy*?
+
+<v-click>
+
+- **1.** Deterministic: fine — the target is exact, so overwrite it. Slippery: each slip overwrites the estimate; Q jumps around and never settles (see the α bar chart: 0 % at α = 1).
+- **2.** Only entries whose step lands *in* the goal — essentially Q(14, →) (on slippery ice also slips from 14). Nothing flows backwards → the agent cannot find the goal from the start.
+- **3.** No — 5 % of the actions are random. Evaluate the greedy policy separately (`evaluate_greedy` in the demo).
+
+</v-click>
 
 <!--
-~10 min. 16 states, 4 actions. Only +1 reward at goal.
-The ice is slippery!
+~2 min. 60 seconds thinking, then click. Q3 is a subtle but very practical point (train vs eval, like train vs test).
 -->
 
 ---
 
-# Why FrozenLake Is Hard
+# Now: Live Demo (~8 min)
 
-**Problem 1 — Sparse rewards:**  
-Only one reward (+1 at goal). All other transitions give 0.  
-The agent must explore many steps before seeing any signal.
+→ `02-examples/ch11_rl_algorithms_examples.ipynb`
 
-**Problem 2 — Stochasticity:**  
-Even good actions may fail. The agent slips randomly.  
-→ Same action, same state → different outcome each time.
-
-**Problem 3 — Delayed credit:**  
-The goal is far from the start.  
-Which earlier actions caused the success? (Credit assignment problem)
-
-**This is why RL is hard — and why Q-Learning with enough episodes works anyway.**
+1. Wrap Gymnasium's FrozenLake in our `reset / step` interface
+2. Q-Learning in ~25 lines — train on solid ice
+3. **Same code** on slippery ice → compare success rates
+4. Q-table heatmaps + greedy policy arrows: read what the agent learned
 
 <!--
-Three challenges: sparse rewards, stochasticity, delayed credit.
-This is why RL is hard in general.
+~8 min. Run all; while training (a few seconds) explain the loop. On the slippery policy plot, point at
+arrows that go "into a wall": that is the safe move next to a hole when you may slip sideways.
+If gymnasium is missing the notebook falls back to the GridWorld — say so.
 -->
 
 ---
 
-# Now: Live Example!
+# Now: Exercise (~10 min)
 
-→ Open `02-examples/ch11_rl_algorithms_examples.ipynb`
+→ `03-exercises/ch11_rl_algorithms_exercises.ipynb`
 
-We will:
-1. Set up FrozenLake with Gymnasium
-2. Implement Q-Learning step by step
-3. Watch the agent improve over thousands of episodes
-4. Visualize the learned Q-table
+**Tasks 1–4 (10 min):** Q-table → ε-greedy → TD update → fill three lines in the given training loop.
+Each task has a ▶ check cell with the expected numbers.
 
-![learning_curve](./learning_curve.png)
+**Bonus A:** run *your* loop on slippery FrozenLake (Gymnasium) — why not 100 %?
+**Bonus B:** SARSA — change one line, compare learning curves.
 
 <!--
-Show Q-Learning converging on FrozenLake.
-Q-table heatmap is very visual.
+~10 min. Walk around. Typical bugs: forgetting `0 if done`, updating Q[next_state] instead of Q[state],
+using max over the wrong axis. Fast students → Bonus A/B or the Ch10 reward-shaping bonus notebook.
 -->
 
 ---
 
-# Now: Exercises!
+# Further Reading (not needed for the capstone)
 
-→ Open `03-exercises/ch11_rl_algorithms_exercises.ipynb`
-
-**Task:** Implement Q-Learning from scratch.  
-Train the agent, tune epsilon, visualize progress.
-
-~10 minutes
+| Idea | One line | Where |
+|---|---|---|
+| **SARSA** (on-policy) | target uses the action you *actually* take next: `r + γ Q(s', a')` — learns the value of the ε-greedy behaviour → more cautious near cliffs | Bonus B |
+| **Deep Q-Network (DQN)** | replace the table by a neural network Q(s, a; θ) — Atari from pixels (2013) | |
+| **Policy gradient / PPO** | learn π(a\|s) directly; needed for continuous actions (robot joints); PPO is the workhorse behind RLHF | |
+| **Model-based RL** | learn P and R, then plan (AlphaZero uses a known model + search) | |
+| **Off- vs on-policy** | Q-learning learns the *greedy* policy while behaving ε-greedy (off-policy); SARSA learns the policy it follows (on-policy) | |
 
 <!--
-~10 min. Students implement Q-Learning from scratch.
-Step-by-step scaffolding provided.
+~1 min. Just so the words are not new when they meet them. Do not teach these now.
 -->
 
 ---
 
 # Key Takeaways
 
-- Q-Learning: off-policy, learns Q(s,a) via Bellman equation
-- Bellman update: current estimate + α × TD error
-- ε-greedy: start exploring, gradually exploit
-- SARSA: on-policy, safer in risky environments
-- Policy Gradient: learn the policy directly (for continuous actions)
+- Q-Learning: **Q-table + ε-greedy + TD update**, repeated over many episodes
+- Target `r + γ · max Q(s', ·)`; TD error = target − estimate; move by α
+- Value flows **backwards** from the reward — that solves credit assignment
+- Same code works on deterministic and stochastic worlds; the **environment** sets the ceiling
+- Evaluate the **greedy** policy, not the training run (train ≠ test — again)
 
 <!--
-Transition: 'Time to put everything together — the Capstone project.'
+Transition: "Time to put everything from Sessions 1–3 together — the Titanic capstone.
+Warning ahead: the next 50 minutes are self-work; nobody talks at the front."
 -->
 
 ---
