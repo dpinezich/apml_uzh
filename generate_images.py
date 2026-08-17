@@ -250,12 +250,13 @@ df_raw = pd.DataFrame(raw_data)
 
 
 def make_pipeline_overview():
-    fig, ax = plt.subplots(figsize=(10, 2.6))
-    ax.set_xlim(0, 10); ax.set_ylim(0, 1); ax.axis("off")
-    steps = ["Raw\nData", "Inspect", "Clean", "Encode", "Split", "Scale", "Model"]
-    colors = [MUTED, TEAL, TEAL, TEAL, TEAL, TEAL, TEAL_DARK]
+    """Data-prep pipeline in the order the course teaches it: split BEFORE any fitting."""
+    fig, ax = plt.subplots(figsize=(11, 2.8))
+    ax.set_xlim(-0.2, 11.2); ax.set_ylim(0, 1); ax.axis("off")
+    steps  = ["Raw\nData", "Inspect", "Clean", "SPLIT", "Impute", "Encode", "Scale", "Model"]
+    colors = [MUTED, TEAL, TEAL, RED, TEAL, TEAL, TEAL, TEAL_DARK]
     n = len(steps)
-    xs = np.linspace(0.5, 9.5, n)
+    xs = np.linspace(0.5, 10.5, n)
     for i, (x, label, color) in enumerate(zip(xs, steps, colors)):
         box = mpatches.FancyBboxPatch((x-0.55, 0.22), 1.1, 0.56,
             boxstyle="round,pad=0.05", facecolor=color, edgecolor="white",
@@ -266,8 +267,13 @@ def make_pipeline_overview():
         if i < n - 1:
             ax.annotate("", xy=(xs[i+1]-0.58, 0.50), xytext=(x+0.57, 0.50),
                         arrowprops=dict(arrowstyle="->", color=MUTED, lw=1.5), zorder=1)
-    ax.text(5.0, 0.92, "The ML Pipeline", ha="center", va="center",
-            fontsize=13, fontweight="bold", color=DARK)
+    # bracket: everything after the split is fit on TRAIN only
+    x0, x1 = xs[4]-0.55, xs[7]+0.55
+    ax.plot([x0, x0, x1, x1], [0.16, 0.10, 0.10, 0.16], color=RED, lw=1.5)
+    ax.text((x0+x1)/2, 0.02, "fit on TRAIN only → transform train + test  (= Pipeline)",
+            ha="center", va="center", color=RED, fontsize=9, fontweight="bold")
+    ax.text(5.5, 0.92, "The ML Pipeline — split first, then fit every step on the training data",
+            ha="center", va="center", fontsize=12.5, fontweight="bold", color=DARK)
     save(fig, "pipeline_overview.png", ["ch02"])
 
 

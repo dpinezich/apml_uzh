@@ -48,6 +48,7 @@ Red thread: ONE algorithm (KNN) all the way — slide → GIF → demo → exerc
 ```
 
 **Training accuracy** = how well the model repeats what it has seen
+
 **Test accuracy** = how well it **generalises** to new data ← what matters
 
 <!--
@@ -71,7 +72,7 @@ Red thread: ONE algorithm (KNN) all the way — slide → GIF → demo → exerc
 
 # The Bias–Variance Tradeoff
 
-![bias_variance](./bias_variance.png)
+<img src="./bias_variance.png" style="max-height:340px !important; margin: 0 auto !important;" />
 
 **Goal:** the sweet spot where test error is minimal — neither too simple nor too flexible.
 
@@ -83,7 +84,7 @@ Red thread: ONE algorithm (KNN) all the way — slide → GIF → demo → exerc
 
 # K-Nearest Neighbours (KNN)
 
-![knn_vote](./knn_vote.png)
+<img src="./knn_vote.png" style="max-height:340px !important; margin: 0 auto !important;" />
 
 **No formula, no training** — to predict a new point: ① measure the distance to all training points, ② take the **k closest**, ③ **majority vote**.
 
@@ -95,7 +96,10 @@ Red thread: ONE algorithm (KNN) all the way — slide → GIF → demo → exerc
 
 # The Effect of k
 
-<img src="./knn_boundary_k.gif" style="max-height:330px !important; margin: 0 auto !important;" />
+<div class="flex justify-center">
+  <img src="./knn_boundary_k.gif" class="anim-gif" style="max-height:330px !important" />
+  <img src="./knn_boundary_k.png" class="anim-static" style="max-height:330px !important" />
+</div>
 
 <!--
 ~3 min. Let the GIF loop (k = 1 → 100, ~12 s). k = 1: every training point gets its own island → train 100 %, test lower = overfitting. k ≈ 5–30: smooth boundary following the moons. k = 100: almost a straight line, train AND test drop = underfitting. The right panel is the bias–variance curve, live. Static: knn_k_sweep.png. Same experiment in the notebook animation 0-animations/02_knn_decision_boundary.ipynb.
@@ -170,7 +174,7 @@ A KNN model reaches **100 % training accuracy** and **72 % test accuracy**. Base
 
 <v-click>
 
-1. Overfitting (train ≫ test). 2. **Increase** k → smoother boundary, less variance. 3. Training accuracy is not evidence of anything — report test accuracy, and mention it is only 7 points above the baseline.
+**Answers:** 1 → Overfitting (train ≫ test). 2 → **Increase** k → smoother boundary, less variance. 3. Training accuracy is not evidence of anything — report test accuracy, and mention it is only 7 points above the baseline.
 
 </v-click>
 

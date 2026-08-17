@@ -146,7 +146,7 @@ def make_leaderboard_gif():
         ax.legend(loc="upper left", frameon=False); ax.grid(True, axis="y", alpha=0.3)
         for sp in ("top", "right"):
             ax.spines[sp].set_visible(False)
-    fig.tight_layout()
+    update(0); fig.tight_layout()
     save_gif(fig, update, n_frames, "titanic_leaderboard.gif", ["ch12"], fps=4, hold_last=8)
 
 

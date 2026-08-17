@@ -48,7 +48,7 @@ Keep metrics to the table; do not derive them here.
 
 # Baseline First
 
-<img src="./baseline_regression.png" style="max-height:200px !important" />
+<img src="./baseline_regression.png" style="max-height:230px !important; width:auto !important; margin: 0 auto !important;" />
 
 ```python
 from sklearn.dummy import DummyRegressor
@@ -71,7 +71,7 @@ Ask: 'What is R² of the baseline?' → 0. 'Can R² be negative?' → yes, if yo
 
 **Learning:** find the βs that make the squared residuals as small as possible (OLS)
 
-![linear_reg_fit](./linear_reg_fit.png)
+<img src="./linear_reg_fit.png" style="max-height:300px !important; width:auto !important; margin: 0 auto !important;" />
 
 <!--
 ~3 min. Point at the picture: residual = vertical distance from point to line. Squared, summed = the loss (next slide).
@@ -128,7 +128,10 @@ Cross-entropy for classification comes in Ch05 as a mention only.
 
 # How Do Models Find the Minimum? Gradient Descent
 
-<img src="./gradient_descent_steps.gif" style="max-height:330px !important" class="mx-auto" />
+<div class="flex justify-center">
+  <img src="./gradient_descent_steps.gif" class="anim-gif" style="max-height:330px !important" />
+  <img src="./gradient_descent_steps.png" class="anim-static" style="max-height:330px !important" />
+</div>
 
 **Rule:** w ← w − η · ∇L(w) — step downhill, repeat. η = learning rate: too small = slow, too big = overshoot.
 
@@ -165,7 +168,10 @@ Also mention: with several features, degree 3 creates x₁x₂, x₁²x₃, … 
 
 # Train Error Lies — Cross-Validation Error Tells the Truth
 
-<img src="./poly_degree_sweep.gif" style="max-height:340px !important" class="mx-auto" />
+<div class="flex justify-center">
+  <img src="./poly_degree_sweep.gif" class="anim-gif" style="max-height:340px !important" />
+  <img src="./poly_degree_sweep.png" class="anim-static" style="max-height:340px !important" />
+</div>
 
 <!--
 ~3 min. Let the GIF run once in silence, then narrate the second loop:
@@ -228,7 +234,7 @@ Must scale: otherwise a feature measured in mm gets a huge β and is punished fo
 
 # Watch the Coefficients Shrink
 
-![ridge_lasso_paths](./ridge_lasso_paths.png)
+<img src="./ridge_lasso_paths.png" style="max-height:330px !important; width:auto !important; margin: 0 auto !important;" />
 
 **Ridge** never reaches zero — **Lasso** kills features one by one → automatic feature selection.
 

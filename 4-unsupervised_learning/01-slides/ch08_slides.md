@@ -45,7 +45,10 @@ scaling matters (in 3 slides). Also: 0/1/2 are arbitrary ids, not classes.
 
 # K-Means: The Algorithm
 
-<img src="./kmeans_iterations.gif" class="h-80 mx-auto" />
+<div class="flex justify-center">
+  <img src="./kmeans_iterations.gif" class="anim-gif" style="max-height:300px !important" />
+  <img src="./kmeans_iterations.png" class="anim-static" style="max-height:300px !important" />
+</div>
 
 **1.** pick k random points as centroids → **2.** ASSIGN each point to its nearest centroid → **3.** UPDATE each centroid to the mean of its points → repeat 2–3 until nothing moves.
 
@@ -100,7 +103,7 @@ Ask: "How would you detect this in practice?" → compare inertia across runs (n
 
 # Scale First! (Distance-Based = Scale-Sensitive)
 
-![scaling_kmeans](./scaling_kmeans.png)
+<div class="flex justify-center"><img src="./scaling_kmeans.png" style="max-height:200px !important" /></div>
 
 ```python
 from sklearn.pipeline import make_pipeline
@@ -122,13 +125,13 @@ pixels and K-Means gets WORSE. Rule: scale by default, but check.
 
 # How to Choose k? — Elbow & Silhouette
 
-![elbow_silhouette](./elbow_silhouette.png)
+<div class="flex justify-center"><img src="./elbow_silhouette.png" style="max-height:190px !important" /></div>
 
 ```python
 from sklearn.metrics import silhouette_score
 for k in range(2, 9):
     labels = KMeans(n_clusters=k, n_init=10, random_state=42).fit_predict(X_scaled)
-    print(k, silhouette_score(X_scaled, labels))     # a = mean dist to own cluster, b = to nearest other
+    print(k, silhouette_score(X_scaled, labels))   # a = dist to own cluster, b = to nearest
 ```
 
 **Silhouette** = (b − a) / max(a, b) per sample, averaged: +1 well separated, 0 on a boundary, −1 wrong cluster.
@@ -261,7 +264,7 @@ Transition: "Sometimes 2 dimensions reveal more than 100 — next: PCA and t-SNE
 
 # Bonus / Appendix: Hierarchical Clustering
 
-![dendrogram](./dendrogram.png)
+<div class="flex justify-center"><img src="./dendrogram.png" style="max-height:190px !important" /></div>
 
 ```python
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster

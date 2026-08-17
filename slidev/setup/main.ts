@@ -10,4 +10,11 @@ export default function () {
   const style = document.createElement('style')
   style.textContent = `#page-root > [class*="shadow"] { display: none !important; }`
   document.head.appendChild(style)
+
+  // ── GIF animations in PDF export ────────────────────────────────────────
+  // The exporter loads slides with ?print=… . Mark the root so CSS can swap
+  // an animated <img class="anim-gif"> for its static final-frame twin
+  // <img class="anim-static"> (see style.css). On screen the GIF plays.
+  if (new URLSearchParams(location.search).has('print'))
+    document.documentElement.classList.add('is-print')
 }

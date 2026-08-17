@@ -87,6 +87,7 @@ df.duplicated().sum()      # while we're at it: duplicate rows
 ![outlier_boxplot](./outlier_boxplot.png)
 
 **Detection:** boxplot · IQR rule (`Q1 − 1.5·IQR` / `Q3 + 1.5·IQR`) — bounds from **train**
+
 **Treatment:** Remove (if clearly an error) · Cap/clip · Log-transform · **Keep** (if real signal)
 
 <!--
@@ -105,8 +106,6 @@ df.duplicated().sum()      # while we're at it: duplicate rows
 | Categorical ordinal | S / M / L / XL | ordered integer encoding |
 | Binary | yes / no | 0 / 1 |
 
-![onehot_encoding](./onehot_encoding.png)
-
 <!--
 ~3 min. Draw one-hot on the board if needed. Quick check: "Is 'grade A/B/C' nominal or ordinal?" (ordinal). "Zip code?" (nominal — although numeric!).
 -->
@@ -114,6 +113,8 @@ df.duplicated().sum()      # while we're at it: duplicate rows
 ---
 
 # One-Hot in Practice
+
+<img src="./onehot_encoding.png" style="max-height:230px !important; margin: 0 auto !important;" />
 
 ```python
 pd.get_dummies(df, columns=['city'])                 # quick & dirty (pandas)
@@ -131,12 +132,24 @@ OneHotEncoder(handle_unknown='ignore')               # sklearn — learns the ca
 
 # Feature Scaling
 
-![feature_scaling](./feature_scaling.png)
+<div class="grid grid-cols-5 gap-4 items-center">
+<div class="col-span-3">
 
-**StandardScaler** → mean 0, std 1 · **MinMaxScaler** → [0, 1]
+<img src="./feature_scaling.png" style="max-height:380px !important; margin: 0 auto !important;" />
+
+</div>
+<div class="col-span-2">
+
+**StandardScaler** → mean 0, std 1
+
+**MinMaxScaler** → [0, 1]
 
 Needed for **distance- and gradient-based** models (KNN — next chapter!, linear/logistic regression, SVM, neural nets).
+
 **Tree-based models** (Decision Tree, Random Forest) → no scaling needed.
+
+</div>
+</div>
 
 <!--
 ~3 min. Motivation for KNN in Ch03: distance between (age 30, income 90 000) and (age 60, income 90 100) is dominated by income. Mean/std are statistics → fit the scaler on train only.
@@ -146,7 +159,7 @@ Needed for **distance- and gradient-based** models (KNN — next chapter!, linea
 
 # Train / Test Split
 
-![train_test_split](./train_test_split.png)
+<img src="./train_test_split.png" style="max-height:230px !important; margin: 0 auto !important;" />
 
 ```python
 from sklearn.model_selection import train_test_split
@@ -165,7 +178,10 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Data Leakage ⚠️ — the #1 beginner mistake
 
-<img src="./leakage_impute.gif" style="max-height:300px !important; margin: 0 auto !important;" />
+<div class="flex justify-center">
+  <img src="./leakage_impute.gif" class="anim-gif" style="max-height:300px !important" />
+  <img src="./leakage_impute.png" class="anim-static" style="max-height:300px !important" />
+</div>
 
 <!--
 ~2 min. Let the GIF run through once (7 s). Narrate: the mean over ALL rows is pulled up by the test rows → the filled value carries test information into training → the test score is too optimistic. Right: split, mean over TRAIN, fill both with it.

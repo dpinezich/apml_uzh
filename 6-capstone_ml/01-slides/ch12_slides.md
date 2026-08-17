@@ -141,7 +141,10 @@ Debrief starts on the next slide.
 
 ## Debrief (1/3): the leaderboard
 
-<img src="./titanic_leaderboard.gif" class="h-72 mx-auto" />
+<div class="flex justify-center">
+  <img src="./titanic_leaderboard.gif" class="anim-gif" style="max-height:300px !important" />
+  <img src="./titanic_leaderboard.png" class="anim-static" style="max-height:300px !important" />
+</div>
 
 **Poll:** which model won on *your* CV? What F1 on the test set?
 

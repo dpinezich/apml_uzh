@@ -23,13 +23,14 @@ Show the qtable_learning.gif early — it carries the whole chapter.
 
 # From Ch10 to Ch11
 
-**Ch10:** if we *know* Q(s, a) for every state and action, the policy is trivial: `argmax`.
+**Ch10:** if we *know* Q(s, a), the policy is trivial: `argmax`. **Ch11:** how do we **learn** Q from experience — no map, no transition probabilities, no reward function?
 
-**Ch11:** how do we **learn** Q from experience — without knowing the map, the transition probabilities or the reward function?
+**Answer:** start with Q = 0, act ε-greedy, and after *every step* nudge Q(s, a) toward what we just observed.
 
-**Answer:** start with Q = 0 everywhere, act (ε-greedy), and after *every step* nudge Q(s, a) toward what we just observed.
-
-<img src="./qtable_learning.gif" class="h-64 mx-auto" />
+<div class="flex justify-center">
+  <img src="./qtable_learning.gif" class="anim-gif" style="max-height:256px !important" />
+  <img src="./qtable_learning.png" class="anim-static" style="max-height:256px !important" />
+</div>
 
 <!--
 ~3 min. Let the GIF loop once in silence. Left: max Q per cell + greedy arrow ("·" = never updated).
@@ -129,7 +130,7 @@ for episode in range(n_episodes):
         if rng.random() < epsilon:  action = rng.integers(n_actions)      # explore
         else:                       action = np.argmax(Q[state])          # exploit
 
-        next_state, reward, done = env_step(state, action)   # Gymnasium: obs, r, terminated, truncated, info
+        next_state, reward, done = env_step(state, action)   # gymnasium: 5-tuple, see demo
         target = reward + (0 if done else gamma * np.max(Q[next_state]))  # TD target
         Q[state, action] += alpha * (target - Q[state, action])           # TD update
 

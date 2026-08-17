@@ -152,7 +152,10 @@ Ask: 'What is the equivalent of polynomial degree here?' → max_depth → next 
 
 # The Complexity Dial Again: Tree Depth
 
-<img src="./tree_depth_sweep.gif" style="max-height:330px !important" class="mx-auto" />
+<div class="flex justify-center">
+  <img src="./tree_depth_sweep.gif" class="anim-gif" style="max-height:330px !important" />
+  <img src="./tree_depth_sweep.png" class="anim-static" style="max-height:330px !important" />
+</div>
 
 <!--
 ~2 min. Third time students see the same shape (Ch03 KNN k, Ch04 degree, now depth): train accuracy → 1.0,
@@ -187,7 +190,7 @@ not causal truth.
 
 # Decision Boundaries: What Each Model Learned
 
-<img src="./decision_boundaries_2d.png" style="max-height:400px !important" class="mx-auto" />
+<div class="flex justify-center"><img src="./decision_boundaries_2d.png" style="max-height:400px !important" /></div>
 
 <!--
 ~3 min. Demo notebook §4 draws this live with DecisionBoundaryDisplay (2 features so we can see the plane).
@@ -278,7 +281,7 @@ Transition: 'Which model is best? Depends on how you measure it — and accuracy
 
 **Find the separating boundary with the widest margin** to the nearest points (the *support vectors*).
 
-<img src="./svm_margin.png" style="max-height:200px !important" />
+<div class="flex justify-center"><img src="./svm_margin.png" style="max-height:200px !important" /></div>
 
 ```python
 from sklearn.svm import SVC

@@ -106,7 +106,10 @@ Mitchell's definition: map E = data, T = task, P = metric. We will meet all thre
 
 # The Data Science Workflow
 
-<img src="./workflow_cycle_anim.gif" style="max-height:330px !important; margin: 0 auto !important;" />
+<div class="flex justify-center">
+  <img src="./workflow_cycle_anim.gif" class="anim-gif" style="max-height:380px !important" />
+  <img src="./workflow_cycle_anim.png" class="anim-static" style="max-height:380px !important" />
+</div>
 
 <!--
 ~4 min. Let the GIF run once while narrating each step (1 s per step). Then stop on the last frame: "cycle, not pipeline".
@@ -179,13 +182,25 @@ Static fallback: workflow_cycle.png.
 
 → Open `ch01_introduction_examples.ipynb`
 
+<div class="grid grid-cols-2 gap-4 items-center">
+<div>
+
 We will:
 1. Load the famous **Iris dataset**
 2. Inspect its structure
 3. Visualize features → **see the pattern before any model**
 4. Sneak preview: a baseline and a first model
 
-<img src="./ml_learns_boundary.gif" style="max-height:220px !important; margin: 0 auto !important;" />
+</div>
+<div>
+
+<div class="flex justify-center">
+  <img src="./ml_learns_boundary.gif" class="anim-gif" style="max-height:300px !important" />
+  <img src="./ml_learns_boundary.png" class="anim-static" style="max-height:300px !important" />
+</div>
+
+</div>
+</div>
 
 <!--
 ~12 min. Let students follow along. Stop at the pairplot and ask: "Which two features would YOU use to tell the species apart?" (petal length/width).
@@ -206,7 +221,7 @@ Point out: only 30 test flowers → 1 flower = 3.3 % accuracy → don't over-int
 
 <v-click>
 
-1. Supervised (regression) · 2. Unsupervised (clustering) · 3. Reinforcement · 4. Supervised (classification)
+**Answers:** 1 → Supervised (regression) · 2 → Unsupervised (clustering) · 3 → Reinforcement · 4 → Supervised (classification)
 
 </v-click>
 

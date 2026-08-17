@@ -24,7 +24,10 @@ Kernbotschaft: PCA builds NEW axes (combinations of features) — it does not se
 
 # The Curse of Dimensionality
 
-<img src="./curse_dimensionality.gif" class="h-80 mx-auto" />
+<div class="flex justify-center">
+  <img src="./curse_dimensionality.gif" class="anim-gif" style="max-height:320px !important" />
+  <img src="./curse_dimensionality.png" class="anim-static" style="max-height:320px !important" />
+</div>
 
 As dimensions grow, random points become **equally far from each other** → distance-based methods (KNN, K-Means, DBSCAN) lose their signal; more data is needed; overfitting risk grows; plotting is impossible beyond 3-D.
 
@@ -39,7 +42,10 @@ Counterpoint (manifold hypothesis): real high-D data usually lives near a low-D 
 
 # PCA: Find the Direction With the Most Spread
 
-<img src="./pca_rotation.gif" class="h-80 mx-auto" />
+<div class="flex justify-center">
+  <img src="./pca_rotation.gif" class="anim-gif" style="max-height:320px !important" />
+  <img src="./pca_rotation.png" class="anim-static" style="max-height:320px !important" />
+</div>
 
 **PC1** = direction of maximum variance · **PC2** = max remaining variance, ⊥ PC1 · … keep the top ones, drop the rest.
 
@@ -58,8 +64,8 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 
-pca_pipe = make_pipeline(StandardScaler(), PCA(n_components=2))   # scale first — PCA is variance-based
-X_2d = pca_pipe.fit_transform(X)                                 # no y!
+pca_pipe = make_pipeline(StandardScaler(), PCA(n_components=2))   # scale first!
+X_2d = pca_pipe.fit_transform(X)                                 # no y — unsupervised
 
 pca = pca_pipe['pca']
 pca.explained_variance_ratio_        # e.g. [0.44, 0.19] → share of variance per component

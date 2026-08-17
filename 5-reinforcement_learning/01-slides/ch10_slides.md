@@ -150,7 +150,7 @@ Ask: "On slippery ice next to a hole — is walking along the hole a good idea?"
 
 # The Discount Factor γ
 
-![discount_factor](./discount_factor.png)
+<img src="./discount_factor.png" class="h-56 mx-auto" />
 
 - **γ = 0:** only the immediate reward counts (short-sighted)
 - **γ → 1:** far-away rewards count almost fully (far-sighted)
@@ -307,7 +307,10 @@ the "reward" is a model of human preferences, the "action" is the next token.
 </div>
 <div>
 
-<img src="./agent_paths_improving.gif" class="w-full" />
+<div class="flex justify-center">
+  <img src="./agent_paths_improving.gif" class="anim-gif" style="max-height:320px !important; width:100%" />
+  <img src="./agent_paths_improving.png" class="anim-static" style="max-height:320px !important; width:100%" />
+</div>
 
 </div>
 </div>

@@ -100,7 +100,7 @@ Residual plot on housing shows the $500k cap as a straight diagonal streak → a
 
 # The Confusion Matrix
 
-<img src="./confusion_matrix_card.png" style="max-height:230px !important" />
+<div class="flex justify-center"><img src="./confusion_matrix_card.png" style="max-height:230px !important" /></div>
 
 ```python
 ConfusionMatrixDisplay.from_predictions(y_test, y_pred, display_labels=class_names)
@@ -158,7 +158,10 @@ classification_report prints all three per class + averages (next-next slide).
 
 # The Threshold Is Yours to Choose
 
-<img src="./threshold_sweep.gif" style="max-height:300px !important" class="mx-auto" />
+<div class="flex justify-center">
+  <img src="./threshold_sweep.gif" class="anim-gif" style="max-height:300px !important" />
+  <img src="./threshold_sweep.png" class="anim-static" style="max-height:300px !important" />
+</div>
 
 ```python
 y_pred = (model.predict_proba(X_test)[:, 1] >= 0.3).astype(int)   # instead of predict() = 0.5

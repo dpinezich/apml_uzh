@@ -59,7 +59,10 @@ labels are the luxury.
 
 # Find the Groups!
 
-<img src="./find_groups.gif" class="h-80 mx-auto" />
+<div class="flex justify-center">
+  <img src="./find_groups.gif" class="anim-gif" style="max-height:300px !important" />
+  <img src="./find_groups.png" class="anim-static" style="max-height:300px !important" />
+</div>
 
 <!--
 Let the GIF sit on the grey frame: "How many groups? Shout it out." (4 / 2 / 2).
@@ -71,7 +74,7 @@ Teaser: K-Means will nail the blobs and FAIL on moons/circles — remember this 
 
 # Three Questions You Can Ask Unlabeled Data
 
-![unsupervised_tasks](./unsupervised_tasks.png)
+<div class="flex justify-center"><img src="./unsupervised_tasks.png" style="max-height:185px !important" /></div>
 
 | | Question | Output | Chapter |
 |---|---|---|---|
@@ -118,7 +121,7 @@ No new syntax to learn: `fit_predict` / `fit_transform` return the invented colu
 
 **Without labels — how do we know if we did a good job?**
 
-![two_valid_groupings](./two_valid_groupings.png)
+<div class="flex justify-center"><img src="./two_valid_groupings.png" style="max-height:210px !important" /></div>
 
 **Internal metrics (no labels):** Silhouette score, inertia — "are groups compact and separated?"  
 **External checks:** compare with labels *if you happen to have some* (ARI) — a sanity check, not the goal  

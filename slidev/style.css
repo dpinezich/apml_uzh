@@ -455,3 +455,8 @@ html.dark .slidev-layout .shiki span {
 #slidev-goto-dialog {
   display: none !important;
 }
+
+/* ── GIF animations: GIF on screen, final-frame PNG in PDF export (see setup/main.ts) ── */
+.anim-static { display: none !important; }
+html.is-print .anim-gif { display: none !important; }
+html.is-print .anim-static { display: block !important; }
