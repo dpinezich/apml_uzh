@@ -1,7 +1,8 @@
 """
 APML UZH — Master image generator
 ===================================
-Generates all slide images for all 12 chapters.
+Generates all slide images for all 12 chapters (legacy generators here +
+per-chapter modules in imagegen/chNN.py incl. GIF animations).
 
 Usage (from repo root):
     python generate_images.py
@@ -379,37 +380,6 @@ def make_train_test_split():
     save(fig, "train_test_split.png", ["ch02"])
 
 
-def make_data_leakage():
-    fig, axes = plt.subplots(1, 2, figsize=(10, 3.0))
-    def draw_panel(ax, title, split_first, ok):
-        ax.set_xlim(0, 10); ax.set_ylim(0, 1); ax.axis("off")
-        color = TEAL if ok else RED
-        icon  = "✓" if ok else "✗"
-        if split_first:
-            boxes = [(0.2,"All data",MUTED),(2.5,"Split",color),
-                     (5.0,"Impute\n(train)",color),(7.5,"Impute\n(test)",color)]
-        else:
-            boxes = [(0.2,"All data",MUTED),(2.5,"Impute\n(all!)",RED),
-                     (5.0,"Split",MUTED),(7.5,"Train/Test",MUTED)]
-        for i, (x, lbl, c) in enumerate(boxes):
-            ax.add_patch(mpatches.FancyBboxPatch((x-0.85, 0.28), 1.7, 0.44,
-                boxstyle="round,pad=0.05", facecolor=c, edgecolor="white", lw=1.5, zorder=2))
-            ax.text(x, 0.50, lbl, ha="center", va="center",
-                    color="white", fontsize=8.5, fontweight="bold", zorder=3)
-            if i < len(boxes)-1:
-                ax.annotate("", xy=(boxes[i+1][0]-0.87, 0.50), xytext=(x+0.87, 0.50),
-                            arrowprops=dict(arrowstyle="->", color=MUTED, lw=1.4))
-        ax.text(5, 0.90, f"{icon} {title}", ha="center", va="center",
-                fontsize=11, fontweight="bold", color=color)
-        if not ok:
-            ax.text(3.5, 0.10, "Test data leaked into imputer fit!",
-                    ha="center", va="center", fontsize=8.5, color=RED, style="italic")
-    draw_panel(axes[0], "Wrong — leakage", split_first=False, ok=False)
-    draw_panel(axes[1], "Correct — Pipeline", split_first=True, ok=True)
-    fig.suptitle("Data Leakage", fontsize=13, fontweight="bold", color=DARK, y=1.02)
-    fig.tight_layout()
-    save(fig, "data_leakage.png", ["ch02"])
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Ch03 — Supervised Learning Intro
@@ -584,42 +554,6 @@ def make_linear_reg_fit():
     save(fig, "linear_reg_fit.png", ["ch04"])
 
 
-def make_regularization_coefs():
-    """Grouped bar: coefficient magnitudes for Linear / Ridge / Lasso."""
-    from sklearn.linear_model import LinearRegression, Ridge, Lasso
-    np.random.seed(42)
-    n, p = 80, 8
-    X = np.random.randn(n, p)
-    # Only first 4 features are truly relevant
-    true_coef = np.array([3.0, -2.0, 1.5, -1.0, 0.1, 0.05, -0.02, 0.01])
-    y = X @ true_coef + np.random.randn(n) * 0.5
-
-    feature_names = [f"f{i+1}" for i in range(p)]
-    models = [
-        ("Linear", LinearRegression().fit(X, y), BLUE),
-        ("Ridge (α=1)", Ridge(alpha=1.0).fit(X, y), TEAL),
-        ("Lasso (α=0.1)", Lasso(alpha=0.1, max_iter=5000).fit(X, y), ORANGE),
-    ]
-
-    fig, ax = plt.subplots(figsize=(10, 5))
-    x = np.arange(p)
-    width = 0.26
-    for i, (name, model, color) in enumerate(models):
-        ax.bar(x + i*width, model.coef_, width, label=name,
-               color=color, alpha=0.82, edgecolor="white", lw=0.8)
-
-    ax.axhline(0, color=DARK, lw=0.8)
-    ax.set_xticks(x + width)
-    ax.set_xticklabels(feature_names, fontsize=10)
-    ax.set_xlabel("Feature", fontsize=12)
-    ax.set_ylabel("Coefficient value", fontsize=12)
-    ax.set_title("Regularization: How Coefficients Shrink\n"
-                 "(Features 5–8 are irrelevant noise)", fontsize=13, fontweight="bold")
-    ax.legend(fontsize=10)
-    ax.grid(True, axis="y", alpha=0.3)
-    fig.tight_layout()
-    save(fig, "regularization_coefs.png", ["ch04"])
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Ch05 — Classification
@@ -712,101 +646,10 @@ def make_svm_margin():
     save(fig, "svm_margin.png", ["ch05"])
 
 
-def make_decision_boundaries():
-    """5 classifiers decision boundaries on same 2D data."""
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.neighbors import KNeighborsClassifier
-    from sklearn.tree import DecisionTreeClassifier
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.svm import SVC
-    from sklearn.preprocessing import StandardScaler
-    from sklearn.pipeline import Pipeline
-
-    np.random.seed(0)
-    X, y = make_blobs(n_samples=200, centers=2, cluster_std=1.6, random_state=4)
-    ss = StandardScaler()
-    X_sc = ss.fit_transform(X)
-
-    classifiers = [
-        ("Logistic\nRegression", LogisticRegression()),
-        ("KNN\n(k=5)", KNeighborsClassifier(n_neighbors=5)),
-        ("Decision\nTree", DecisionTreeClassifier(max_depth=4)),
-        ("Random\nForest", RandomForestClassifier(n_estimators=50, random_state=42)),
-        ("SVM\n(RBF)", SVC(kernel="rbf", C=1.0, probability=True)),
-    ]
-
-    h = 0.05
-    x_min, x_max = X_sc[:,0].min()-1, X_sc[:,0].max()+1
-    y_min, y_max = X_sc[:,1].min()-1, X_sc[:,1].max()+1
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-                          np.arange(y_min, y_max, h))
-
-    fig, axes = plt.subplots(1, 5, figsize=(16, 4))
-    colors_cls = [BLUE, ORANGE]
-
-    for ax, (name, clf) in zip(axes, classifiers):
-        clf.fit(X_sc, y)
-        Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
-        Z = Z.reshape(xx.shape)
-        acc = clf.score(X_sc, y)
-        ax.contourf(xx, yy, Z, alpha=0.25,
-                    cmap=plt.cm.RdYlGn)
-        for cls, color in enumerate(colors_cls):
-            mask = y == cls
-            ax.scatter(X_sc[mask,0], X_sc[mask,1], color=color,
-                       s=20, alpha=0.8, edgecolors="white", lw=0.3)
-        ax.set_title(f"{name}\nacc={acc:.2f}", fontsize=9.5,
-                     fontweight="bold", color=DARK)
-        ax.set_xticks([]); ax.set_yticks([])
-
-    fig.suptitle("Decision Boundaries — Same Data, Five Classifiers",
-                 fontsize=13, fontweight="bold", color=DARK, y=1.02)
-    fig.tight_layout()
-    save(fig, "decision_boundaries.png", ["ch05"])
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Ch06 — Metrics & Evaluation
 # ══════════════════════════════════════════════════════════════════════════════
-
-def make_confusion_matrix_viz():
-    """Color-coded 2×2 confusion matrix with labels and icons."""
-    fig, ax = plt.subplots(figsize=(7, 5.5))
-    ax.set_xlim(0, 4); ax.set_ylim(0, 3.5); ax.axis("off")
-
-    cells = [
-        # (col, row, color, label, formula, icon)
-        (0, 1, "#d5f5e3", "True Negative\n(TN)", "Pred=0, Actual=0", "✓"),
-        (1, 1, "#fadbd8", "False Positive\n(FP)", "Pred=1, Actual=0", "✗"),
-        (0, 0, "#fadbd8", "False Negative\n(FN)", "Pred=0, Actual=1", "✗"),
-        (1, 0, "#d5f5e3", "True Positive\n(TP)", "Pred=1, Actual=1", "✓"),
-    ]
-    icon_colors = {"✓": GREEN, "✗": RED}
-
-    for col, row, color, label, formula, icon in cells:
-        x0, y0 = col * 2, row * 1.4 + 0.4
-        ax.add_patch(plt.Rectangle((x0, y0), 2.0, 1.35,
-                                   facecolor=color, edgecolor="white", lw=3))
-        ax.text(x0+1.0, y0+0.95, label, ha="center", va="center",
-                fontsize=10, fontweight="bold", color=DARK)
-        ax.text(x0+1.0, y0+0.55, formula, ha="center", va="center",
-                fontsize=8.5, color=MUTED)
-        ax.text(x0+1.0, y0+0.18, icon, ha="center", va="center",
-                fontsize=18, color=icon_colors[icon], fontweight="bold")
-
-    # Headers
-    ax.text(1.0, 3.15, "Predicted: 0", ha="center", va="center",
-            fontsize=11, fontweight="bold", color=DARK)
-    ax.text(3.0, 3.15, "Predicted: 1", ha="center", va="center",
-            fontsize=11, fontweight="bold", color=DARK)
-    ax.text(-0.35, 2.07, "Actual: 0", ha="center", va="center",
-            fontsize=11, fontweight="bold", color=DARK, rotation=90)
-    ax.text(-0.35, 0.77, "Actual: 1", ha="center", va="center",
-            fontsize=11, fontweight="bold", color=DARK, rotation=90)
-
-    ax.set_title("Confusion Matrix — Binary Classification",
-                 fontsize=13, fontweight="bold", color=DARK, pad=8)
-    save(fig, "confusion_matrix_viz.png", ["ch06"])
 
 
 def make_roc_curve():
@@ -836,45 +679,6 @@ def make_roc_curve():
     fig.tight_layout()
     save(fig, "roc_curve.png", ["ch06"])
 
-
-def make_precision_recall():
-    """Precision-Recall tradeoff vs threshold."""
-    thresholds = np.linspace(0.01, 0.99, 200)
-    # Simulate realistic curves
-    recall    = 1 / (1 + np.exp(6 * (thresholds - 0.4)))
-    precision = 1 / (1 + np.exp(-6 * (thresholds - 0.55)))
-    precision = np.clip(precision, 0.5, 1)
-    f1 = 2 * precision * recall / (precision + recall + 1e-9)
-
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-
-    # Panel 1: P & R vs threshold
-    ax = axes[0]
-    ax.plot(thresholds, precision, color=BLUE, lw=2.5, label="Precision")
-    ax.plot(thresholds, recall,    color=RED,  lw=2.5, label="Recall")
-    ax.axvline(0.5, color=MUTED, lw=1.5, linestyle="--", label="Default (0.5)")
-    ax.set_xlabel("Decision Threshold", fontsize=12)
-    ax.set_ylabel("Score", fontsize=12)
-    ax.set_title("Precision vs Recall vs Threshold", fontsize=12, fontweight="bold")
-    ax.legend(fontsize=11); ax.grid(True, alpha=0.3)
-    ax.set_ylim(0, 1.05)
-
-    # Panel 2: F1 peak
-    ax = axes[1]
-    ax.plot(thresholds, f1, color=TEAL_DARK, lw=2.5, label="F1 Score")
-    best_t = thresholds[np.argmax(f1)]
-    ax.axvline(best_t, color=ORANGE, lw=2, linestyle="-.",
-               label=f"Best threshold ≈ {best_t:.2f}")
-    ax.set_xlabel("Decision Threshold", fontsize=12)
-    ax.set_ylabel("F1 Score", fontsize=12)
-    ax.set_title("F1 Score Peaks at Optimal Threshold", fontsize=12, fontweight="bold")
-    ax.legend(fontsize=11); ax.grid(True, alpha=0.3)
-    ax.set_ylim(0, 1.05)
-
-    fig.suptitle("Precision-Recall Tradeoff — Adjusting the Decision Threshold",
-                 fontsize=13, fontweight="bold", color=DARK, y=1.02)
-    fig.tight_layout()
-    save(fig, "precision_recall.png", ["ch06"])
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -920,199 +724,11 @@ def make_supervised_vs_unsupervised():
 #  Ch08 — Clustering
 # ══════════════════════════════════════════════════════════════════════════════
 
-def make_kmeans_steps():
-    """4-panel K-Means convergence: Init → Assign → Move → Converged."""
-    from sklearn.cluster import KMeans
-
-    np.random.seed(42)
-    X, _ = make_blobs(n_samples=80, centers=3, cluster_std=0.9, random_state=7)
-    colors_k = [RED, TEAL, BLUE]
-
-    fig, axes = plt.subplots(1, 4, figsize=(15, 4))
-    titles = ["Step 1: Initialize\n(random centroids)",
-              "Step 2: Assign\n(color by nearest centroid)",
-              "Step 3: Move\n(recompute centroids)",
-              "Converged\n(no more changes)"]
-
-    # Step 1: random initial centroids
-    init_centroids = X[np.random.choice(len(X), 3, replace=False)]
-    axes[0].scatter(X[:,0], X[:,1], color=MUTED, s=30, alpha=0.6)
-    axes[0].scatter(init_centroids[:,0], init_centroids[:,1],
-                    marker="X", s=220, c=colors_k, edgecolors="white", lw=1.5, zorder=6)
-
-    # Step 2–4: run KMeans with increasing iterations
-    for ax, title, n_iter in zip(axes[1:], titles[1:], [1, 2, 100]):
-        km = KMeans(n_clusters=3, max_iter=n_iter, n_init=1,
-                    init=init_centroids, random_state=0)
-        km.fit(X)
-        labels = km.labels_
-        for k, color in enumerate(colors_k):
-            mask = labels == k
-            ax.scatter(X[mask,0], X[mask,1], color=color, s=30, alpha=0.6)
-        ax.scatter(km.cluster_centers_[:,0], km.cluster_centers_[:,1],
-                   marker="X", s=220, c=colors_k, edgecolors="white", lw=1.5, zorder=6)
-
-    for ax, title in zip(axes, titles):
-        ax.set_title(title, fontsize=10, fontweight="bold")
-        ax.set_xticks([]); ax.set_yticks([])
-
-    fig.suptitle("K-Means: Step-by-Step Convergence",
-                 fontsize=13, fontweight="bold", color=DARK, y=1.02)
-    fig.tight_layout()
-    save(fig, "kmeans_steps.png", ["ch08"])
-
-
-def make_elbow_curve():
-    """Inertia vs k with annotated elbow."""
-    from sklearn.cluster import KMeans
-
-    np.random.seed(42)
-    X, _ = make_blobs(n_samples=200, centers=3, cluster_std=0.9, random_state=42)
-    ks = range(1, 10)
-    inertias = [KMeans(n_clusters=k, n_init=10, random_state=42).fit(X).inertia_
-                for k in ks]
-
-    fig, ax = plt.subplots(figsize=(8, 5))
-    ax.plot(list(ks), inertias, "o-", color=TEAL, lw=2.5, markersize=8)
-    ax.axvline(3, color=RED, lw=2, linestyle="--", label="Optimal k = 3")
-    ax.scatter([3], [inertias[2]], color=RED, s=120, zorder=6)
-    ax.annotate("Elbow point", xy=(3, inertias[2]),
-                xytext=(4.5, inertias[2]+30),
-                arrowprops=dict(arrowstyle="->", color=RED, lw=1.5),
-                fontsize=11, color=RED, fontweight="bold")
-    ax.set_xlabel("Number of clusters (k)", fontsize=12)
-    ax.set_ylabel("Inertia (within-cluster sum of squares)", fontsize=12)
-    ax.set_title("Elbow Method — Choosing k", fontsize=14, fontweight="bold")
-    ax.legend(fontsize=11)
-    ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    save(fig, "elbow_curve.png", ["ch08"])
-
-
-def make_dbscan_points():
-    """DBSCAN: core, border, noise points with epsilon circles."""
-    from sklearn.cluster import DBSCAN
-
-    np.random.seed(42)
-    X_core = np.random.randn(40, 2) * 0.5 + [2, 2]
-    X_noise = np.array([[-1, 4], [5, 0], [0, -1], [4, 4.5]])
-    X = np.vstack([X_core, X_noise])
-
-    eps = 0.8
-    db = DBSCAN(eps=eps, min_samples=4).fit(X)
-    labels = db.labels_
-
-    fig, ax = plt.subplots(figsize=(8, 6))
-
-    # Classify points
-    core_samples = set(db.core_sample_indices_)
-    for i, (x, y_) in enumerate(X):
-        if labels[i] == -1:
-            ax.scatter(x, y_, color=RED, s=80, marker="x", lw=2.5, zorder=5)
-        elif i in core_samples:
-            ax.scatter(x, y_, color=TEAL, s=60, zorder=5)
-        else:
-            ax.scatter(x, y_, color=TEAL, s=60, facecolors="none",
-                       edgecolors=TEAL, lw=2, zorder=5)
-
-    # Draw epsilon circles around 2 core points
-    for idx in list(db.core_sample_indices_)[:2]:
-        circle = plt.Circle(X[idx], eps, color=TEAL, fill=False,
-                             linestyle="--", lw=1.5, alpha=0.6)
-        ax.add_patch(circle)
-        ax.annotate(f"ε = {eps}", xy=X[idx],
-                    xytext=(X[idx][0]+eps+0.1, X[idx][1]),
-                    fontsize=8.5, color=TEAL_DARK)
-
-    # Legend
-    ax.scatter([], [], color=TEAL, s=60, label="Core point")
-    ax.scatter([], [], color=TEAL, s=60, facecolors="none",
-               edgecolors=TEAL, lw=2, label="Border point")
-    ax.scatter([], [], color=RED, s=80, marker="x", lw=2.5, label="Noise (−1)")
-
-    ax.set_title("DBSCAN — Core, Border, and Noise Points",
-                 fontsize=13, fontweight="bold")
-    ax.legend(fontsize=10)
-    ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    save(fig, "dbscan_points.png", ["ch08"])
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Ch09 — Dimensionality Reduction
 # ══════════════════════════════════════════════════════════════════════════════
 
-def make_pca_directions():
-    """2D scatter of correlated data with PC1 and PC2 arrows."""
-    from sklearn.decomposition import PCA
-
-    np.random.seed(42)
-    cov = [[3, 2], [2, 2]]
-    X = np.random.multivariate_normal([0, 0], cov, 150)
-    pca = PCA(n_components=2)
-    pca.fit(X)
-
-    fig, ax = plt.subplots(figsize=(7, 6))
-    ax.scatter(X[:,0], X[:,1], color=TEAL, s=30, alpha=0.5, edgecolors="white")
-
-    origin = np.mean(X, axis=0)
-    scale = 2.5
-    for i, (comp, color, label) in enumerate(zip(
-            pca.components_,
-            [RED, BLUE],
-            [f"PC1 ({pca.explained_variance_ratio_[0]:.0%} variance)",
-             f"PC2 ({pca.explained_variance_ratio_[1]:.0%} variance)"])):
-        length = np.sqrt(pca.explained_variance_[i]) * scale
-        ax.annotate("", xy=origin + comp * length,
-                    xytext=origin,
-                    arrowprops=dict(arrowstyle="-|>", color=color,
-                                    lw=3, mutation_scale=18))
-        ax.text(*(origin + comp * (length + 0.4)), label,
-                color=color, fontsize=10, fontweight="bold", ha="center")
-
-    ax.set_xlabel("Feature 1", fontsize=12)
-    ax.set_ylabel("Feature 2", fontsize=12)
-    ax.set_title("PCA — Directions of Maximum Variance", fontsize=13,
-                 fontweight="bold")
-    ax.set_aspect("equal")
-    ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    save(fig, "pca_directions.png", ["ch09"])
-
-
-def make_scree_plot():
-    """Cumulative explained variance with 95% threshold annotated."""
-    from sklearn.decomposition import PCA
-    from sklearn.datasets import load_breast_cancer
-
-    data = load_breast_cancer()
-    X_sc = StandardScaler().fit_transform(data.data)
-    pca = PCA().fit(X_sc)
-    cumvar = pca.explained_variance_ratio_.cumsum()
-
-    fig, ax = plt.subplots(figsize=(9, 5))
-    ax.plot(range(1, len(cumvar)+1), cumvar, "o-", color=TEAL, lw=2.5, markersize=5)
-    ax.fill_between(range(1, len(cumvar)+1), 0, cumvar, alpha=0.1, color=TEAL)
-
-    thresh = 0.95
-    n_comp = int(np.argmax(cumvar >= thresh) + 1)
-    ax.axhline(thresh, color=RED, lw=2, linestyle="--")
-    ax.axvline(n_comp, color=RED, lw=2, linestyle="--")
-    ax.scatter([n_comp], [cumvar[n_comp-1]], color=RED, s=100, zorder=6)
-    ax.annotate(f"95% variance\n→ {n_comp} components",
-                xy=(n_comp, thresh),
-                xytext=(n_comp+2.5, thresh-0.12),
-                arrowprops=dict(arrowstyle="->", color=RED, lw=1.5),
-                fontsize=10, color=RED, fontweight="bold")
-
-    ax.set_xlabel("Number of Principal Components", fontsize=12)
-    ax.set_ylabel("Cumulative Explained Variance", fontsize=12)
-    ax.set_title("PCA Scree Plot — How Many Components to Keep?",
-                 fontsize=13, fontweight="bold")
-    ax.set_ylim(0, 1.05)
-    ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    save(fig, "scree_plot.png", ["ch09"])
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1158,7 +774,7 @@ def make_rl_loop():
                  fontsize=15, fontweight="bold", color=DARK, pad=12)
     ax.text(5.0, 0.4, "Goal: maximize total cumulative reward",
             ha="center", fontsize=11, color=MUTED, style="italic")
-    save(fig, "rl_loop.png", ["ch10"])
+    save(fig, "rl_loop.png", ["ch01", "ch10"])
 
 
 def make_discount_factor():
@@ -1243,41 +859,6 @@ def make_td_error_flow():
     save(fig, "td_error_flow.png", ["ch11"])
 
 
-def make_learning_curve():
-    """Simulated Q-Learning training curve: reward vs episodes."""
-    np.random.seed(42)
-    n_episodes = 2000
-    window = 50
-
-    # Simulate: early random, then learning, then convergence
-    t = np.arange(n_episodes)
-    success = 1 / (1 + np.exp(-0.006 * (t - 600)))
-    noise = np.random.randn(n_episodes) * 0.15
-    raw = success + noise
-    rolling = np.convolve(raw, np.ones(window)/window, mode="valid")
-
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(range(len(rolling)), rolling, color=TEAL, lw=2.5)
-    ax.fill_between(range(len(rolling)), 0, rolling, alpha=0.12, color=TEAL)
-
-    ax.axvline(300,  color=MUTED, lw=1.5, linestyle=":", alpha=0.7)
-    ax.axvline(1000, color=MUTED, lw=1.5, linestyle=":", alpha=0.7)
-    ax.text(150,  0.85, "Exploration\n(mostly random)", ha="center",
-            fontsize=10, color=MUTED)
-    ax.text(650,  0.85, "Learning\n(improving)", ha="center",
-            fontsize=10, color=TEAL_DARK, fontweight="bold")
-    ax.text(1400, 0.85, "Exploitation\n(converged)", ha="center",
-            fontsize=10, color=ORANGE, fontweight="bold")
-
-    ax.set_xlabel("Episode", fontsize=12)
-    ax.set_ylabel(f"Success Rate (rolling {window}-episode mean)", fontsize=12)
-    ax.set_title("Q-Learning: Agent Learns Over Time", fontsize=14,
-                 fontweight="bold")
-    ax.set_ylim(0, 1.05)
-    ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    save(fig, "learning_curve.png", ["ch11"])
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Main
@@ -1285,10 +866,12 @@ def make_learning_curve():
 
 if __name__ == "__main__":
     print("APML UZH — Generating all slide images\n")
+    from imagegen import ch01, ch02, ch03, ch04, ch05, ch06, ch07, ch08, ch09, ch10, ch11, ch12
 
     print("── Ch01: Introduction ─────────────────────────────────")
     make_workflow_cycle()
     make_ml_paradigms()
+    ch01.generate()
 
     print("── Ch02: Data Cleaning ────────────────────────────────")
     make_pipeline_overview()
@@ -1297,45 +880,47 @@ if __name__ == "__main__":
     make_onehot_encoding()
     make_feature_scaling()
     make_train_test_split()
-    make_data_leakage()
+    ch02.generate()
 
     print("── Ch03: Supervised Intro ─────────────────────────────")
     make_overfit_curves()
     make_bias_variance()
     make_cross_val_folds()
+    ch03.generate()
 
     print("── Ch04: Regression ───────────────────────────────────")
     make_linear_reg_fit()
-    make_regularization_coefs()
+    ch04.generate()
 
     print("── Ch05: Classification ───────────────────────────────")
     make_sigmoid_curve()
     make_svm_margin()
-    make_decision_boundaries()
+    ch05.generate()
 
     print("── Ch06: Metrics & Evaluation ─────────────────────────")
-    make_confusion_matrix_viz()
     make_roc_curve()
-    make_precision_recall()
+    ch06.generate()
 
     print("── Ch07: Unsupervised Intro ────────────────────────────")
     make_supervised_vs_unsupervised()
+    ch07.generate()
 
     print("── Ch08: Clustering ───────────────────────────────────")
-    make_kmeans_steps()
-    make_elbow_curve()
-    make_dbscan_points()
+    ch08.generate()
 
     print("── Ch09: Dimensionality Reduction ─────────────────────")
-    make_pca_directions()
-    make_scree_plot()
+    ch09.generate()
 
     print("── Ch10: RL Intro ─────────────────────────────────────")
     make_rl_loop()
     make_discount_factor()
+    ch10.generate()
 
     print("── Ch11: RL Algorithms ────────────────────────────────")
     make_td_error_flow()
-    make_learning_curve()
+    ch11.generate()
+
+    print("── Ch12: Capstone ─────────────────────────────────────")
+    ch12.generate()
 
     print(f"\n✅  Done — images written to each chapter's 01-slides/ and slidev/public/")
