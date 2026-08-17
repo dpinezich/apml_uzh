@@ -31,10 +31,10 @@ Press **S** in the browser for speaker/presenter notes.
 
 | Session | Chapters | Topic |
 |---------|----------|-------|
-| **1** | Ch01–Ch03 | Data fundamentals & first models |
-| **2** | Ch04–Ch06 | Regression, classification, evaluation |
+| **1** | Ch01–Ch03 | Data fundamentals, leakage-safe preprocessing, first model (KNN) |
+| **2** | Ch04–Ch06 | Regression, classification, evaluation & metrics |
 | **3** | Ch07–Ch09 | Clustering & dimensionality reduction |
-| **4** | Ch10–Ch12 | Reinforcement learning & capstone project |
+| **4** | Ch10–Ch12 | Reinforcement learning & 50-min Titanic capstone |
 
 ## Repository Layout
 
@@ -45,9 +45,14 @@ Press **S** in the browser for speaker/presenter notes.
 4-unsupervised_learning/ Ch07–Ch09 — Unsupervised learning
 5-reinforcement_learning/ Ch10–Ch11 — Reinforcement learning
 6-capstone_ml/           Ch12 — End-to-end Titanic project
-0-animations/            Supplementary animation notebooks
+0-animations/            Animation notebooks (match the GIFs in the slides)
+0-datasets/              Local datasets (Titanic CSV); penguins.csv lives in 1-introduction/03-exercises
+0-material/              Cheatsheet, slide summary, PCA/microbiome deep-dive
+imagegen/                Per-chapter image & GIF generators (called by generate_images.py)
 slidev/                  Slide theme, layouts, generated images
 ```
+
+Regenerate all slide images and GIF animations with `python generate_images.py`.
 
 Each chapter folder contains:
 - `00-material/` — Outline and teaching notes
